@@ -1,40 +1,26 @@
 package com.davidpe.tasker.application.ui.common;
 
-import java.io.IOException;
-
-import org.springframework.context.ApplicationContext;
+import javafx.scene.Parent;
 import org.springframework.stereotype.Component;
 
-import javafx.scene.Parent;
-import javafx.fxml.FXMLLoader;
-
-/**
- * Service class to load FXML screens.
- * This class is responsible for loading FXML files and providing the necessary
- * Spring context for the controllers.
- */
 @Component
 public class ScreenLoader {
 
-    private final ApplicationContext context;
+    private final FxmlLoader fxmlLoader;
 
-    public ScreenLoader(ApplicationContext context) {
-
-        this.context = context;
+    public ScreenLoader(FxmlLoader fxmlLoader) {
+        this.fxmlLoader = fxmlLoader;
     }
 
-    /**
-     * This method loads an FXML file and returns the root node, using the
-     * Spring context to provide the controller.
-     * @param fxmlPath
-     * @return
-     * @throws IOException
-     */
-    public Parent load(String fxmlPath) throws IOException {
+    public Parent loadMainScreen() {
+        return loadView(FxmlView.MAIN);
+    }
 
-        FXMLLoader loader = new FXMLLoader();
-        loader.setControllerFactory(context::getBean);
-        loader.setLocation(getClass().getResource(fxmlPath));
-        return loader.load();
+    private Parent loadView(FxmlView view) {
+        try {
+            return fxmlLoader.load(view.getFxmlPath());
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to load view: " + view, e);
+        }
     }
 }
