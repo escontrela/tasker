@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: tasker
+  datasource:
+    url: jdbc:sqlite:tasker.db
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-test-query: SELECT 1
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+server:
+  port: 8080
+application:
+  title: Tasker

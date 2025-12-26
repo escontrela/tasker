@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="12.0" xmlns="http://javafx.com/javafx/21.0.3" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.davidpe.tasker.application.ui.main.MainSceneController">
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24" />
+    </padding>
+    <Label fx:id="titleLabel" text="Tasker" />
+</VBox>
