@@ -16,8 +16,8 @@
     <description>Desktop task manager with JavaFX and Spring Boot</description>
 
     <properties>
-        <java.version>21</java.version>
-        <javafx.version>21.0.3</javafx.version>
+        <java.version>22</java.version>
+        <javafx.version>21.0.9</javafx.version>
     </properties>
 
     <dependencies>
