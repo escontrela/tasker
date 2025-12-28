@@ -36,6 +36,7 @@ public class TaskerApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        
         stageManager = applicationContext.getBean(StageManager.class, primaryStage);
         stageManager.switchScene(FxmlView.MAIN);
     }

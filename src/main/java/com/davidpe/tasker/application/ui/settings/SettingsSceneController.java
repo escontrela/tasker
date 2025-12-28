@@ -1,4 +1,4 @@
-package com.davidpe.tasker.application.ui.main;
+package com.davidpe.tasker.application.ui.settings;
  
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -12,17 +12,14 @@ import com.davidpe.tasker.application.ui.common.StageManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.Button; 
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.input.MouseEvent; 
+import javafx.scene.layout.Pane; 
 import javafx.scene.text.Text;
 
 @Component
-public class MainSceneController implements Initializable {
+public class SettingsSceneController implements Initializable {
     
 
     @FXML
@@ -45,12 +42,8 @@ public class MainSceneController implements Initializable {
 
     @FXML
     private ImageView imgMinimize12223;
-
-    @FXML
-    private ImageView imgSettings;
-
-    @FXML
-    private Label lbUserInitials;
+ 
+ 
 
     @FXML
     private Text lblChessboard;
@@ -60,68 +53,36 @@ public class MainSceneController implements Initializable {
 
     @FXML
     private Pane mainPane;
-
-    @FXML
-    private StackPane pnlMenu;
-
-    @FXML
-    private Pane pnlMessage11;
-
-    @FXML
-    private HBox taskBar;
-
-    @FXML
-    private StackPane taskOption_analysis;
-
-    @FXML
-    private StackPane taskOption_games;
-
-    @FXML
-    private StackPane taskOption_settings;
-
-    @FXML
-    private StackPane taskOption_stats;
-
+   
     private final StageManager stageManager;
 
     @Lazy
-    public MainSceneController(StageManager stageManager) {
+    public SettingsSceneController(StageManager stageManager) {
 
         this.stageManager = stageManager;
     }
+ 
 
     @FXML
     void buttonAction(ActionEvent event) {
 
          if (isButtonCloseClicked(event)) {
-
-            //TODO Send event to close;
+ 
+            lblPractice.setText("Bye.");
+            stageManager.switchToNextScene(FxmlView.MAIN);
             return;
          }
-
-        if (isButtonSettingsClicked(event)) {
-
-            stageManager.switchScene(FxmlView.SETTINGS);
-            return;
-         }
+ 
 
 
     }
-
- 
 
     @FXML
     void handleButtonClick(MouseEvent event) {
 
-        stageManager.switchScene(FxmlView.NEW_TASK);
-        return;
        
     }
-
-    private boolean isButtonSettingsClicked(ActionEvent event) {
-
-    return event.getSource() == btSettings || event.getSource() == imgSettings;
-  }
+ 
 
   private boolean isButtonCloseClicked(ActionEvent event) {
 

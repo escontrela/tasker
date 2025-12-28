@@ -356,4 +356,7 @@ This article explains:
 	•	How to manage lifecycle and dependency injection
 	•	Recommended project structure patterns for desktop applications
 
+Another articles that should be of interest:
+	•	https://jenkov.com/tutorials/javafx/stage.html
+
 This reference should be considered authoritative guidance for the JavaFX + Spring Boot integration used in this project.

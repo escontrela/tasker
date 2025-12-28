@@ -14,14 +14,18 @@ public class FxmlLoader {
     private final ApplicationContext applicationContext;
 
     public FxmlLoader(ApplicationContext applicationContext) {
+ 
         this.applicationContext = applicationContext;
     }
 
     public Parent load(String fxmlPath) throws IOException {
+
         URL resource = getClass().getResource(fxmlPath);
         if (resource == null) {
+        
             throw new IllegalArgumentException("FXML file not found at path: " + fxmlPath);
         }
+
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setControllerFactory(applicationContext::getBean);
         return loader.load();
