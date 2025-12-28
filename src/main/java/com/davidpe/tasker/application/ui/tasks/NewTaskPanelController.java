@@ -56,7 +56,7 @@ public class NewTaskPanelController implements Initializable {
          if (isButtonCancelClicked(event)) {
 
             System.out.println("Cancel button clicked, switching to main scene");
-            stageManager.switchToNextScene(FxmlView.MAIN);
+            stageManager.switchScene(FxmlView.MAIN);
             return;
          }
 

@@ -2,6 +2,7 @@ package com.davidpe.tasker.application.ui.common;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -44,6 +45,19 @@ public class StageManager {
         primaryStage.getScene().setRoot(rootNode);
 
         primaryStage.show();
+    }
+
+     public void switchToNextParentScene(final FxmlView view) {
+        
+        Parent rootNode = loadRootNode(view.getFxmlPath());
+
+
+        Stage stage = new Stage();
+        stage.setScene(new Scene(rootNode));
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(primaryStage);
+        stage.showAndWait();
+        
     }
 
     public void close() {

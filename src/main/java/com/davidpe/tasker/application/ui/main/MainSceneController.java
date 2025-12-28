@@ -113,7 +113,7 @@ public class MainSceneController implements Initializable {
     @FXML
     void handleButtonClick(MouseEvent event) {
 
-        stageManager.switchScene(FxmlView.NEW_TASK);
+        stageManager.switchToNextParentScene(FxmlView.NEW_TASK);
         return;
        
     }
