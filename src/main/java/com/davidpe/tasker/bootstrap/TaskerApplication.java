@@ -2,6 +2,8 @@ package com.davidpe.tasker.bootstrap;
 
 import com.davidpe.tasker.application.ui.common.FxmlView;
 import com.davidpe.tasker.application.ui.common.StageManager;
+import com.davidpe.tasker.application.ui.common.newer.ScreenFactory;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +15,7 @@ public class TaskerApplication extends Application {
 
     private ConfigurableApplicationContext applicationContext;
     private StageManager stageManager;
+    private ScreenFactory screenFactory;
 
     public static void main(String[] args) {
         launch(args);
@@ -36,8 +39,11 @@ public class TaskerApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        
+
         stageManager = applicationContext.getBean(StageManager.class, primaryStage);
         stageManager.switchScene(FxmlView.MAIN);
+
+        screenFactory = applicationContext.getBean(ScreenFactory.class,primaryStage);      
+
     }
 }

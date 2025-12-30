@@ -2,6 +2,8 @@ package com.davidpe.tasker.bootstrap;
 
 import com.davidpe.tasker.application.ui.common.FxmlLoader;
 import com.davidpe.tasker.application.ui.common.StageManager;
+import com.davidpe.tasker.application.ui.common.newer.ScreenFactory;
+
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,5 +27,11 @@ public class ApplicationConfig {
     @Lazy
     public StageManager stageManager(Stage stage) throws IOException {
         return new StageManager(fxmlLoader, stage, applicationTitle);
+    }
+
+    @Bean
+    @Lazy
+    public ScreenFactory screenFactory(Stage stage) throws IOException {
+        return new ScreenFactory(stage, fxmlLoader);
     }
 }

@@ -16,7 +16,7 @@
          <children>
             <StackPane fx:id="taskOption_analysis" prefHeight="40.0" prefWidth="97.0" styleClass="task-item">
                <children>
-                  <Label onMouseClicked="#handleButtonClick" prefWidth="80.0" text="new" />
+                  <Label fx:id="lblNewOp" onMouseClicked="#handleButtonClick" prefWidth="80.0" text="new" />
                </children>
             </StackPane>
             <StackPane fx:id="taskOption_games" prefHeight="40.0" prefWidth="123.0" styleClass="task-item">

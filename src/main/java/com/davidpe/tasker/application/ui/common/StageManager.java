@@ -43,8 +43,8 @@ public class StageManager {
         
         Parent rootNode = loadRootNode(view.getFxmlPath());
         primaryStage.getScene().setRoot(rootNode);
-
         primaryStage.show();
+
     }
 
      public void switchToNextParentScene(final FxmlView view) {
@@ -57,7 +57,7 @@ public class StageManager {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(primaryStage);
         stage.showAndWait();
-        
+
     }
 
     public void close() {

@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import com.davidpe.tasker.application.ui.common.FxmlView;
 import com.davidpe.tasker.application.ui.common.StageManager;
+import com.davidpe.tasker.application.ui.common.newer.Screen;
+import com.davidpe.tasker.application.ui.common.newer.ScreenFactory;
+import com.davidpe.tasker.application.ui.common.newer.ScreenId;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -82,12 +85,17 @@ public class MainSceneController implements Initializable {
     @FXML
     private StackPane taskOption_stats;
 
+    @FXML
+    private Label lblNewOp;
+
     private final StageManager stageManager;
+    private final ScreenFactory screenFactory;
 
     @Lazy
-    public MainSceneController(StageManager stageManager) {
+    public MainSceneController(StageManager stageManager,ScreenFactory screenFactory) {
 
         this.stageManager = stageManager;
+        this.screenFactory = screenFactory;
     }
 
     @FXML
@@ -95,6 +103,9 @@ public class MainSceneController implements Initializable {
 
          if (isButtonCloseClicked(event)) {
 
+            Screen settings = screenFactory.create(ScreenId.SETTINGS);
+            settings.show();
+            
             //TODO Send event to close;
             return;
          }
@@ -108,27 +119,32 @@ public class MainSceneController implements Initializable {
 
     }
 
- 
-
     @FXML
     void handleButtonClick(MouseEvent event) {
 
-        stageManager.switchToNextParentScene(FxmlView.NEW_TASK);
-        return;
-       
+        if (isButtonNewOpClicked(event)){
+            stageManager.switchToNextParentScene(FxmlView.NEW_TASK);
+            return;
+        }
     }
 
     private boolean isButtonSettingsClicked(ActionEvent event) {
 
-    return event.getSource() == btSettings || event.getSource() == imgSettings;
-  }
+        return event.getSource() == btSettings || event.getSource() == imgSettings;
+    }
 
-  private boolean isButtonCloseClicked(ActionEvent event) {
+    private boolean isButtonNewOpClicked(MouseEvent event) {
 
-    return event.getSource() == btClose || event.getSource() == imgClose;
-  }
+        return event.getSource() == lblNewOp;
+    }
 
- @Override
-    public void initialize(URL location, ResourceBundle resources) {} 
+    private boolean isButtonCloseClicked(ActionEvent event) {
 
+        return event.getSource() == btClose || event.getSource() == imgClose;
+    }
+
+    @Override
+     public void initialize(URL location, ResourceBundle resources) {
+
+    } 
 }
