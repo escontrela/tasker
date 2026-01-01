@@ -6,15 +6,13 @@ import java.util.ResourceBundle;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.davidpe.tasker.application.ui.common.FxmlView;
-import com.davidpe.tasker.application.ui.common.StageManager;
+import com.davidpe.tasker.application.ui.common.ScreenController;
 import com.davidpe.tasker.application.ui.common.newer.Screen;
 import com.davidpe.tasker.application.ui.common.newer.ScreenFactory;
 import com.davidpe.tasker.application.ui.common.newer.ScreenId;
 
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXML; 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -23,9 +21,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 @Component
-public class MainSceneController implements Initializable {
+public class MainSceneController extends ScreenController {
     
 
     @FXML
@@ -88,13 +88,11 @@ public class MainSceneController implements Initializable {
     @FXML
     private Label lblNewOp;
 
-    private final StageManager stageManager;
     private final ScreenFactory screenFactory;
 
     @Lazy
-    public MainSceneController(StageManager stageManager,ScreenFactory screenFactory) {
+    public MainSceneController(ScreenFactory screenFactory) {
 
-        this.stageManager = stageManager;
         this.screenFactory = screenFactory;
     }
 
@@ -103,27 +101,34 @@ public class MainSceneController implements Initializable {
 
          if (isButtonCloseClicked(event)) {
 
-            Screen settings = screenFactory.create(ScreenId.SETTINGS);
-            settings.show();
-            
+            if (mainPane.getScene() == null) return; 
+            Window window = mainPane.getScene().getWindow();
+            if (window instanceof Stage) {
+                Stage stage = (Stage) window;
+                // usar stage...
+                stage.setTitle("Nuevo título");
+                stage.hide();
+            }
+           
             //TODO Send event to close;
             return;
          }
 
         if (isButtonSettingsClicked(event)) {
 
-            stageManager.switchScene(FxmlView.SETTINGS);
+            Screen settings = screenFactory.create(ScreenId.SETTINGS);
+            settings.reset();
+            settings.show();
             return;
          }
-
-
     }
 
     @FXML
     void handleButtonClick(MouseEvent event) {
 
         if (isButtonNewOpClicked(event)){
-            stageManager.switchToNextParentScene(FxmlView.NEW_TASK);
+
+            screenFactory.create(ScreenId.NEW_TASK_DIALOG).show();
             return;
         }
     }
@@ -146,5 +151,11 @@ public class MainSceneController implements Initializable {
     @Override
      public void initialize(URL location, ResourceBundle resources) {
 
+    }
+
+    @Override
+    public void resetData() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'resetData'");
     } 
 }

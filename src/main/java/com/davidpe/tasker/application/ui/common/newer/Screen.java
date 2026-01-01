@@ -1,4 +1,6 @@
 package com.davidpe.tasker.application.ui.common.newer;
+ 
+import com.davidpe.tasker.application.ui.common.ScreenController;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -12,4 +14,5 @@ public sealed interface Screen permits PrimaryScreen, ModalScreen{
   void hide();
   void reset();           // volver a estado inicial (o recargar)
   boolean isShowing();
+  ScreenController controller();
 }

@@ -22,7 +22,7 @@ public class ScreenLoader {
 
         try {
         
-            return fxmlLoader.load(view.getFxmlPath());
+            return fxmlLoader.load(view.getFxmlPath()).root();
         } catch (Exception e) {
             throw new IllegalStateException("Unable to load view: " + view, e);
         }

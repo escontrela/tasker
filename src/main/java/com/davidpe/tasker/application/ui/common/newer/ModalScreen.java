@@ -2,50 +2,93 @@ package com.davidpe.tasker.application.ui.common.newer;
 
 
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import java.util.Objects;
 import java.util.function.Supplier;
 
+import com.davidpe.tasker.application.ui.common.ScreenController;
+
+/**
+ * This class represents a modal screen in the application using javafx
+ * framework to create a modal dialog.
+ */
 public final class ModalScreen implements Screen {
 
-  private final ScreenId id = null;
-  private final Stage owner = null;
-  private final Supplier<Stage> stageSupplier = null; // crea un stage modal
-  private Stage cachedModal;
+  private final ScreenId id;
+  private final Stage primaryStage;
+  private final Supplier<Scene> sceneSupplier; // crea un stage modal
+  private Stage cachedStage;
+  private Scene cachedScene;
+  private ScreenController controller;
+
+  public ModalScreen(ScreenId id, Stage primaryStage, Supplier<Scene> stageSupplier, ScreenController controller) {
+
+    this.id = id;
+    this.primaryStage = primaryStage;
+    this.sceneSupplier = stageSupplier;
+    this.controller = controller;
+
+  }
+
   @Override
   public ScreenId id() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'id'");
+  
+    return id;
   }
   @Override
   public Stage stage() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'stage'");
+
+    return primaryStage;
   }
   @Override
   public Scene scene() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'scene'");
+
+    if (Objects.isNull(cachedScene)) {
+
+      cachedScene = sceneSupplier.get();
+    }
+    return cachedScene;
   }
+
   @Override
   public void show() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'show'");
+
+     if (Objects.isNull(cachedStage)){
+
+        cachedStage = new Stage();
+        
+        //This is important because it makes the stage modal only the first time it is shown
+        cachedStage.initModality(Modality.WINDOW_MODAL);
+        cachedStage.initOwner(primaryStage); 
+        
+        Scene modalScene = scene(); 
+        cachedStage.setScene(modalScene);
+      }
+      
+      cachedStage.showAndWait();
   }
+
   @Override
   public void hide() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'hide'");
+
+    cachedStage.hide();
   }
+
   @Override
   public void reset() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'reset'");
+
+    controller.resetData();
   }
   @Override
   public boolean isShowing() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isShowing'");
+
+     return cachedStage.isShowing();
   }
 
-  // show() hace initOwner(owner), initModality(...)
+  @Override
+  public ScreenController controller() {
+
+    return controller;  
+  }
 }

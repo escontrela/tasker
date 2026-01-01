@@ -5,20 +5,28 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.util.function.Supplier;
 
+import com.davidpe.tasker.application.ui.common.ScreenController;
+
+/**
+ * This class represents the primary screen in the application using
+ * javafx framework to create the main user interface.
+ */
 public final class PrimaryScreen implements Screen {
 
     private final ScreenId id;
-    private final Stage stage;
+    private final Stage primaryStage;
     private final Supplier<Scene> sceneSupplier;
-
     private Scene cachedScene;
+    private ScreenController controller;    
 
     public PrimaryScreen(ScreenId id,
-                         Stage stage,
-                         Supplier<Scene> sceneSupplier) {
+                         Stage primaryStage,
+                         Supplier<Scene> sceneSupplier,
+                         ScreenController controller) {
         this.id = id;
-        this.stage = stage;
+        this.primaryStage = primaryStage;
         this.sceneSupplier = sceneSupplier;
+        this.controller = controller;
     }
 
     @Override
@@ -39,28 +47,38 @@ public final class PrimaryScreen implements Screen {
 
     @Override
     public void show() {
-        stage.setScene(scene());
-        stage.show();
+
+        primaryStage.setScene(scene());
+        primaryStage.show();
     }
 
     @Override
     public void hide() {
-        stage.hide();
+        
+        primaryStage.hide();
     }
 
     @Override
     public void reset() {
-        cachedScene = null;
+        
+        controller.resetData();
     }
 
     @Override
     public boolean isShowing() {
-        return stage.isShowing();
+        
+        return primaryStage.isShowing();
     }
 
     @Override
     public Stage stage() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'stage'");
+
+        return stage(); 
+    }
+
+    @Override
+    public ScreenController controller() {
+
+        return controller;
     }
 }

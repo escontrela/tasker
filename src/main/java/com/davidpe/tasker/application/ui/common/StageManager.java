@@ -68,7 +68,8 @@ public class StageManager {
     private Parent loadRootNode(String fxmlPath) {
 
         try {
-            return fxmlLoader.load(fxmlPath);
+
+            return fxmlLoader.load(fxmlPath).root();
         
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -1,9 +1,10 @@
 package com.davidpe.tasker.application.ui.common;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import com.davidpe.tasker.application.ui.common.newer.FxmlLoaderContext;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,7 +19,7 @@ public class FxmlLoader {
         this.applicationContext = applicationContext;
     }
 
-    public Parent load(String fxmlPath) throws IOException {
+    public FxmlLoaderContext load(String fxmlPath) throws IOException {
 
         URL resource = getClass().getResource(fxmlPath);
         if (resource == null) {
@@ -28,6 +29,7 @@ public class FxmlLoader {
 
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setControllerFactory(applicationContext::getBean);
-        return loader.load();
+
+         return new FxmlLoaderContext( loader.load(),loader.getController());
     }
 }
