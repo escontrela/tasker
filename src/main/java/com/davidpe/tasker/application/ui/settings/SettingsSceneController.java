@@ -6,10 +6,10 @@ import java.util.ResourceBundle;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import com.davidpe.tasker.application.ui.common.Screen;
 import com.davidpe.tasker.application.ui.common.ScreenController;
-import com.davidpe.tasker.application.ui.common.newer.Screen;
-import com.davidpe.tasker.application.ui.common.newer.ScreenFactory;
-import com.davidpe.tasker.application.ui.common.newer.ScreenId;
+import com.davidpe.tasker.application.ui.common.ScreenFactory;
+import com.davidpe.tasker.application.ui.common.ScreenId;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -76,8 +76,6 @@ public class SettingsSceneController  extends ScreenController {
 
     if (isButtonLeftClicked(event)) {
 
-      System.out.println("Left button clicked"); 
-
       Screen newTaskModalScreen = screenFactory.create(ScreenId.NEW_TASK_DIALOG);
       newTaskModalScreen.reset();
       newTaskModalScreen.show();
@@ -88,8 +86,6 @@ public class SettingsSceneController  extends ScreenController {
 
   @FXML
   void handleButtonClick(MouseEvent event) {
-
-     
 
   }
 

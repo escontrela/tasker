@@ -1,7 +1,5 @@
-package com.davidpe.tasker.application.ui.common.newer;
+package com.davidpe.tasker.application.ui.common;
  
-import com.davidpe.tasker.application.ui.common.ScreenController;
-
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 

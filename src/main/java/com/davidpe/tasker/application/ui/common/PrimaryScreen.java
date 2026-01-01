@@ -1,11 +1,9 @@
-package com.davidpe.tasker.application.ui.common.newer;
+package com.davidpe.tasker.application.ui.common;
 
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.util.function.Supplier;
-
-import com.davidpe.tasker.application.ui.common.ScreenController;
 
 /**
  * This class represents the primary screen in the application using

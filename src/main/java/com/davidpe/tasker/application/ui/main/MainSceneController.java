@@ -6,10 +6,10 @@ import java.util.ResourceBundle;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import com.davidpe.tasker.application.ui.common.Screen;
 import com.davidpe.tasker.application.ui.common.ScreenController;
-import com.davidpe.tasker.application.ui.common.newer.Screen;
-import com.davidpe.tasker.application.ui.common.newer.ScreenFactory;
-import com.davidpe.tasker.application.ui.common.newer.ScreenId;
+import com.davidpe.tasker.application.ui.common.ScreenFactory;
+import com.davidpe.tasker.application.ui.common.ScreenId;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML; 

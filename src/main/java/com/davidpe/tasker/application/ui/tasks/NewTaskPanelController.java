@@ -8,9 +8,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.davidpe.tasker.application.ui.common.FxmlView;
 import com.davidpe.tasker.application.ui.common.ScreenController;
-import com.davidpe.tasker.application.ui.common.StageManager;
+import com.davidpe.tasker.application.ui.common.ScreenFactory;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -49,30 +48,31 @@ public class NewTaskPanelController  extends ScreenController{
     @FXML
     private Label lblMessage1;
 
-    private final StageManager stageManager;
+    private ScreenFactory screenFactory;
 
     @Lazy
-    public NewTaskPanelController(StageManager stageManager) {
+    public NewTaskPanelController(ScreenFactory screenFactory) {
 
-        this.stageManager = stageManager;
+            this.screenFactory = screenFactory;
     }
 
   
     @FXML
     void buttonAction(ActionEvent event) {
 
-          System.out.println("Button clicked");
+
          if (isButtonCancelClicked(event)) {
 
             if (mainPane.getScene() == null) return; // aún no está en una Scene
 
             Window window = mainPane.getScene().getWindow();
+
             if (window instanceof Stage) {
+
                 Stage stage = (Stage) window;
                 stage.hide();
             }
 
-            System.out.println("Cancel button clicked, switching to main scene");
             return;
          }
 
@@ -87,7 +87,6 @@ public class NewTaskPanelController  extends ScreenController{
     public void initialize(URL location, ResourceBundle resources) {
 
         lblMessage1.setText("The newest task.");
-        System.out.println("Instance class:" + this);
     }
 
 
@@ -96,5 +95,4 @@ public class NewTaskPanelController  extends ScreenController{
 
        lblMessage1.setText(Thread.currentThread().getName() + ": Reset data called in NewTaskPanelController instance " + this);
     } 
-
 }

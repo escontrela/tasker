@@ -1,4 +1,4 @@
-package com.davidpe.tasker.application.ui.common.newer;
+package com.davidpe.tasker.application.ui.common;
 
 /**
  * Enum representing the different screen IDs in the application.

@@ -4,8 +4,6 @@ import javafx.fxml.FXMLLoader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.davidpe.tasker.application.ui.common.newer.FxmlLoaderContext;
-
 import java.io.IOException;
 import java.net.URL;
 

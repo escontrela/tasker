@@ -1,6 +1,4 @@
-package com.davidpe.tasker.application.ui.common.newer;
-
-import com.davidpe.tasker.application.ui.common.ScreenController;
+package com.davidpe.tasker.application.ui.common;
 
 import javafx.scene.Parent;
 /**

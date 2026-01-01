@@ -1,4 +1,4 @@
-package com.davidpe.tasker.application.ui.common.newer;
+package com.davidpe.tasker.application.ui.common;
 
 import java.io.IOException; 
 import javafx.scene.Scene;
@@ -8,7 +8,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
 import org.springframework.stereotype.Component;
-import com.davidpe.tasker.application.ui.common.FxmlLoader;
+
 import com.davidpe.tasker.application.ui.main.MainSceneController;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneController;
 import com.davidpe.tasker.application.ui.tasks.NewTaskPanelController;
@@ -92,4 +92,8 @@ public class ScreenFactory {
         }
     } 
 
+    public void close() {
+
+        primaryStage.close();
+    }
 }

@@ -1,4 +1,4 @@
-package com.davidpe.tasker.application.ui.common.newer;
+package com.davidpe.tasker.application.ui.common;
 
 
 import javafx.scene.Scene;
@@ -6,8 +6,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import com.davidpe.tasker.application.ui.common.ScreenController;
 
 /**
  * This class represents a modal screen in the application using javafx
