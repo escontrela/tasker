@@ -65,8 +65,6 @@ public class SettingsSceneController  extends ScreenController {
 
     if (isButtonCloseClicked(event)) {
 
-
-      System.out.println("Close button clicked and set text = bye!");
       lblPractice.setText("Bye.");
 
       Screen returnToMainScreen = screenFactory.create(ScreenId.MAIN);

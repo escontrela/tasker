@@ -7,6 +7,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URL;
 
+/** 
+ * This class is responsible for loading FXML files and their associated controllers.
+ * It uses by Spring's ApplicationContext to get the controllers.
+ */
 @Component
 public class FxmlLoader {
 

@@ -7,9 +7,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<Pane fx:id="mainPane" prefHeight="830.0" prefWidth="1290.0" styleClass="root-gemini-style" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.settings.SettingsSceneController">
+<Pane fx:id="mainPane" prefHeight="830.0" prefWidth="1290.0" styleClass="root-gemini-style" stylesheets="@styles.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.settings.SettingsSceneController">
    <children>
-      <Pane fx:id="pnlMessage11" layoutX="194.0" layoutY="55.0" prefHeight="760.0" prefWidth="1065.0" styleClass="panel-black" stylesheets="@../../../../../../../../chess-journey/src/main/resources/com/davidp/chessjourney/custom-styles.css" visible="false" />
+      <Pane fx:id="pnlMessage11" layoutX="194.0" layoutY="55.0" prefHeight="760.0" prefWidth="1065.0" styleClass="panel-black" stylesheets="@styles.css" visible="false" />
       <Text fx:id="lblChessboard" fill="#e55c45" layoutX="339.0" layoutY="287.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-blue-gradient-big" text="Settings" wrappingWidth="740.072021484375">
          <font>
             <Font name="Alatsi Regular" size="42.0" />
@@ -20,7 +20,7 @@
             <Font name="Alatsi Regular" size="35.0" />
          </font>
       </Text>
-      <Button fx:id="btClose" alignment="BASELINE_CENTER" layoutX="1242.0" layoutY="14.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-simple" stylesheets="@../../../../../../../../chess-journey/src/main/resources/com/davidp/chessjourney/custom-styles.css" textFill="WHITE">
+      <Button fx:id="btClose" alignment="BASELINE_CENTER" layoutX="1242.0" layoutY="14.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-simple" stylesheets="@styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>
@@ -32,7 +32,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="btRight" alignment="BASELINE_CENTER" layoutX="1036.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../../../../../../../../chess-journey/src/main/resources/com/davidp/chessjourney/custom-styles.css" textFill="WHITE">
+      <Button fx:id="btRight" alignment="BASELINE_CENTER" layoutX="1036.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>
@@ -44,7 +44,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="btLeft" alignment="BASELINE_CENTER" layoutX="1080.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../../../../../../../../chess-journey/src/main/resources/com/davidp/chessjourney/custom-styles.css" textFill="WHITE">
+      <Button fx:id="btLeft" alignment="BASELINE_CENTER" layoutX="1080.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>
