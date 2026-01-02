@@ -4,6 +4,8 @@ package com.davidpe.tasker.application.ui.common;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -55,6 +57,7 @@ public final class ModalScreen implements Screen {
      if (Objects.isNull(cachedStage)){
 
         cachedStage = new Stage();
+        cachedStage.initStyle(StageStyle.TRANSPARENT);
         
         //This is important because it makes the stage modal only the first time it is shown
         cachedStage.initModality(Modality.WINDOW_MODAL);
