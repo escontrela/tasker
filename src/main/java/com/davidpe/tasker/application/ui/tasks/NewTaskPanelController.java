@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.davidpe.tasker.application.ui.common.ControllerDataAware;
 import com.davidpe.tasker.application.ui.common.ScreenController;
 import com.davidpe.tasker.application.ui.common.ScreenFactory;
 
@@ -22,7 +23,7 @@ import javafx.stage.Window;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class NewTaskPanelController  extends ScreenController{
+public class NewTaskPanelController  extends ScreenController implements ControllerDataAware<NewTaskPanelData>{
 
     @FXML
     private Pane mainPane;
@@ -94,5 +95,19 @@ public class NewTaskPanelController  extends ScreenController{
     public void resetData() {
 
        lblMessage1.setText(Thread.currentThread().getName() + ": Reset data called in NewTaskPanelController instance " + this);
-    } 
+    }
+
+
+    @Override
+    public void setData(NewTaskPanelData data) {
+        
+        lblMessage.setText(data.message());
+    }
+
+
+    @Override
+    public NewTaskPanelData getData() {
+        
+        return new NewTaskPanelData(lblMessage.getText());
+    }
 }

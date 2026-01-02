@@ -10,7 +10,9 @@ import com.davidpe.tasker.application.ui.common.Screen;
 import com.davidpe.tasker.application.ui.common.ScreenController;
 import com.davidpe.tasker.application.ui.common.ScreenFactory;
 import com.davidpe.tasker.application.ui.common.ScreenId;
-
+import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
+import com.davidpe.tasker.application.ui.tasks.NewTaskPanelData;
+import javafx.scene.Node;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML; 
 import javafx.scene.control.Button;
@@ -27,6 +29,8 @@ import javafx.stage.Window;
 @Component
 public class MainSceneController extends ScreenController {
     
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     @FXML
     private Button btClose;
@@ -118,6 +122,7 @@ public class MainSceneController extends ScreenController {
 
             Screen settings = screenFactory.create(ScreenId.SETTINGS);
             settings.reset();
+            settings.setData(new SettingsSceneData(Boolean.TRUE));
             settings.show();
             return;
          }
@@ -128,7 +133,9 @@ public class MainSceneController extends ScreenController {
 
         if (isButtonNewOpClicked(event)){
 
-            screenFactory.create(ScreenId.NEW_TASK_DIALOG).show();
+            Screen newTaskDialog = screenFactory.create(ScreenId.NEW_TASK_DIALOG);
+            newTaskDialog.setData(new NewTaskPanelData("Creating a new operation?"));
+            newTaskDialog.show();
             return;
         }
     }
@@ -149,8 +156,9 @@ public class MainSceneController extends ScreenController {
     }
 
     @Override
-     public void initialize(URL location, ResourceBundle resources) {
-
+    public void initialize(URL location, ResourceBundle resources) {
+        
+        moveMainWindowsSetUp();
     }
 
     @Override
@@ -158,4 +166,22 @@ public class MainSceneController extends ScreenController {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'resetData'");
     } 
+
+     private void moveMainWindowsSetUp() {
+         
+        mainPane.setOnMousePressed(
+                event -> {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                });
+
+        
+        mainPane.setOnMouseDragged(
+                event -> {
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+                stage.setX(event.getScreenX() - xOffset);
+                stage.setY(event.getScreenY() - yOffset);
+                });
+  }
 }

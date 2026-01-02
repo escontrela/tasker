@@ -2,6 +2,8 @@ package com.davidpe.tasker.bootstrap;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -40,6 +42,11 @@ public class TaskerApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+
+        String appTitle = applicationContext.getBean("applicationTitle", String.class);
+        primaryStage.setTitle(appTitle);
 
 
         screenFactory = applicationContext.getBean(ScreenFactory.class,primaryStage);      

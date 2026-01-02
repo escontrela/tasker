@@ -17,4 +17,13 @@ public sealed interface Screen permits PrimaryScreen, ModalScreen{
   void reset();           // volver a estado inicial (o recargar)
   boolean isShowing();
   ScreenController controller();
+  default <T> void setData(T data) {
+    
+    if (controller() instanceof ControllerDataAware<?> dataAware) {
+      @SuppressWarnings("unchecked")
+      ControllerDataAware<T> typedController = (ControllerDataAware<T>) dataAware;
+      typedController.setData(data);      
+    }    
+  }
+
 }

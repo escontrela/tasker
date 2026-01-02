@@ -29,4 +29,10 @@ public class ApplicationConfig {
 
         return new ScreenFactory(stage, fxmlLoader);
     }
+
+    @Bean
+    public String applicationTitle() {
+
+        return this.applicationTitle;
+    }
 }

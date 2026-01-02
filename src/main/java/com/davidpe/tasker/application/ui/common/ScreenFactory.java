@@ -2,6 +2,7 @@ package com.davidpe.tasker.application.ui.common;
 
 import java.io.IOException; 
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.EnumMap;
@@ -80,6 +81,7 @@ public class ScreenFactory {
             FxmlLoaderContext root = fxmlLoader.load(fxml);
             Supplier<Scene> supplier = () -> {
                 Scene scene = new Scene(root.root());
+                scene.setFill(Color.TRANSPARENT);
                 primaryStage.setTitle(title);
                 return scene;
             };

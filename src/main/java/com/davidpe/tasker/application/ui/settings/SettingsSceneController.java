@@ -2,14 +2,16 @@ package com.davidpe.tasker.application.ui.settings;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
+ 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import com.davidpe.tasker.application.ui.common.ControllerDataAware;
 import com.davidpe.tasker.application.ui.common.Screen;
 import com.davidpe.tasker.application.ui.common.ScreenController;
 import com.davidpe.tasker.application.ui.common.ScreenFactory;
 import com.davidpe.tasker.application.ui.common.ScreenId;
+import com.davidpe.tasker.application.ui.tasks.NewTaskPanelData;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,7 +22,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 @Component
-public class SettingsSceneController  extends ScreenController {
+public class SettingsSceneController  extends ScreenController implements ControllerDataAware<SettingsSceneData>{
 
   @FXML
   private Button btClose;
@@ -76,6 +78,7 @@ public class SettingsSceneController  extends ScreenController {
 
       Screen newTaskModalScreen = screenFactory.create(ScreenId.NEW_TASK_DIALOG);
       newTaskModalScreen.reset();
+      newTaskModalScreen.setData(new NewTaskPanelData("Creating a new operation (from settings)?"));            
       newTaskModalScreen.show();
       return;
     }
@@ -105,6 +108,18 @@ public class SettingsSceneController  extends ScreenController {
   public void resetData() {
 
     lblPractice.setText("reseted to init state!");
+  }
+
+  @Override
+  public void setData(SettingsSceneData data) {
+        // setea campos en la UI antes de show()
+        lblPractice.setText(data.ninghtModeEnabled().toString());
+  }
+
+  @Override
+  public SettingsSceneData getData() {
+    
+    return new SettingsSceneData(Boolean.TRUE);
   }
 
 }
