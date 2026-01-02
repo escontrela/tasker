@@ -3,20 +3,23 @@ package com.davidpe.tasker.application.ui.main;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
-import com.davidpe.tasker.application.ui.common.Screen;
-import com.davidpe.tasker.application.ui.common.ScreenController;
-import com.davidpe.tasker.application.ui.common.ScreenFactory;
-import com.davidpe.tasker.application.ui.common.ScreenId;
+import com.davidpe.tasker.application.ui.common.UiScreen;
+import com.davidpe.tasker.application.ui.common.UiScreenController;
+import com.davidpe.tasker.application.ui.common.UiScreenFactory;
+import com.davidpe.tasker.application.ui.common.UiScreenId;
+import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
+import com.davidpe.tasker.application.ui.events.WindowOpenedEvent;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
 import com.davidpe.tasker.application.ui.tasks.NewTaskPanelData;
 import javafx.scene.Node;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML; 
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.Label; 
+import java.awt.Point;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -24,10 +27,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 @Component
-public class MainSceneController extends ScreenController {
+public class MainSceneController extends UiScreenController {
     
     private double xOffset = 0;
     private double yOffset = 0;
@@ -92,12 +94,15 @@ public class MainSceneController extends ScreenController {
     @FXML
     private Label lblNewOp;
 
-    private final ScreenFactory screenFactory;
+    private final UiScreenFactory screenFactory;
+
+    private ApplicationEventPublisher eventPublisher;
 
     @Lazy
-    public MainSceneController(ScreenFactory screenFactory) {
+    public MainSceneController(UiScreenFactory screenFactory, ApplicationEventPublisher eventPublisher) {
 
         this.screenFactory = screenFactory;
+        this.eventPublisher = eventPublisher;
     }
 
     @FXML
@@ -105,22 +110,15 @@ public class MainSceneController extends ScreenController {
 
          if (isButtonCloseClicked(event)) {
 
-            if (mainPane.getScene() == null) return; 
-            Window window = mainPane.getScene().getWindow();
-            if (window instanceof Stage) {
-                Stage stage = (Stage) window;
-                // usar stage...
-                stage.setTitle("Nuevo título");
-                stage.hide();
-            }
-           
+            hideStage();
+             
             //TODO Send event to close;
             return;
          }
 
         if (isButtonSettingsClicked(event)) {
 
-            Screen settings = screenFactory.create(ScreenId.SETTINGS);
+            UiScreen settings = screenFactory.create(UiScreenId.SETTINGS);
             settings.reset();
             settings.setData(new SettingsSceneData(Boolean.TRUE));
             settings.show();
@@ -133,10 +131,8 @@ public class MainSceneController extends ScreenController {
 
         if (isButtonNewOpClicked(event)){
 
-            Screen newTaskDialog = screenFactory.create(ScreenId.NEW_TASK_DIALOG);
-            newTaskDialog.setData(new NewTaskPanelData("Creating a new operation?"));
-            newTaskDialog.show();
-            return;
+            eventPublisher.publishEvent(new WindowOpenedEvent(UiScreenId.NEW_TASK_DIALOG));
+
         }
     }
 

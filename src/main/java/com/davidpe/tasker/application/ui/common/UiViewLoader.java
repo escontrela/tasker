@@ -12,16 +12,16 @@ import java.net.URL;
  * It uses by Spring's ApplicationContext to get the controllers.
  */
 @Component
-public class FxmlLoader {
+public class UiViewLoader {
 
     private final ApplicationContext applicationContext;
 
-    public FxmlLoader(ApplicationContext applicationContext) {
+    public UiViewLoader(ApplicationContext applicationContext) {
  
         this.applicationContext = applicationContext;
     }
 
-    public FxmlLoaderContext load(String fxmlPath) throws IOException {
+    public UiViewContext load(String fxmlPath) throws IOException {
 
         URL resource = getClass().getResource(fxmlPath);
         if (resource == null) {
@@ -32,6 +32,6 @@ public class FxmlLoader {
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setControllerFactory(applicationContext::getBean);
 
-         return new FxmlLoaderContext( loader.load(),loader.getController());
+        return new UiViewContext(loader.load(),loader.getController());
     }
 }

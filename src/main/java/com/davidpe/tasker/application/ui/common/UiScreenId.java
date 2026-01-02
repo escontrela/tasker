@@ -3,7 +3,7 @@ package com.davidpe.tasker.application.ui.common;
 /**
  * Enum representing the different screen IDs in the application.
  */
-public enum ScreenId {
+public enum UiScreenId {
 
     MAIN("/com/davidpe/tasker/ui/main.fxml"),
     SETTINGS("/com/davidpe/tasker/ui/settings.fxml"),
@@ -11,7 +11,7 @@ public enum ScreenId {
 
     private String resourcePath;
 
-    ScreenId(String resourcePath) {
+    UiScreenId(String resourcePath) {
     
         this.resourcePath = resourcePath;
     }

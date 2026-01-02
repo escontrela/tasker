@@ -2,15 +2,18 @@ package com.davidpe.tasker.application.ui.settings;
 
 import java.net.URL;
 import java.util.ResourceBundle;
- 
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.davidpe.tasker.application.ui.common.ControllerDataAware;
-import com.davidpe.tasker.application.ui.common.Screen;
-import com.davidpe.tasker.application.ui.common.ScreenController;
-import com.davidpe.tasker.application.ui.common.ScreenFactory;
-import com.davidpe.tasker.application.ui.common.ScreenId;
+import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
+import com.davidpe.tasker.application.ui.common.UiScreen;
+import com.davidpe.tasker.application.ui.common.UiScreenController;
+import com.davidpe.tasker.application.ui.common.UiScreenFactory;
+import com.davidpe.tasker.application.ui.common.UiScreenId;
+import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
 import com.davidpe.tasker.application.ui.tasks.NewTaskPanelData;
 
 import javafx.event.ActionEvent;
@@ -22,7 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 @Component
-public class SettingsSceneController  extends ScreenController implements ControllerDataAware<SettingsSceneData>{
+public class SettingsSceneController  extends UiScreenController implements UiControllerDataAware<SettingsSceneData>{
 
   @FXML
   private Button btClose;
@@ -54,12 +57,15 @@ public class SettingsSceneController  extends ScreenController implements Contro
   @FXML
   private Pane mainPane;
 
-  private final ScreenFactory screenFactory;
+  private final UiScreenFactory screenFactory;
+
+  private ApplicationEventPublisher eventPublisher;
 
   @Lazy
-  public SettingsSceneController(ScreenFactory screenFactory) {
+  public SettingsSceneController(UiScreenFactory screenFactory,ApplicationEventPublisher eventPublisher) {
 
-    this.screenFactory = screenFactory;
+      this.eventPublisher = eventPublisher;
+      this.screenFactory = screenFactory;
   }
 
   @FXML
@@ -68,15 +74,16 @@ public class SettingsSceneController  extends ScreenController implements Contro
     if (isButtonCloseClicked(event)) {
 
       lblPractice.setText("Bye.");
+      eventPublisher.publishEvent(new WindowClosedEvent(UiScreenId.SETTINGS));
 
-      Screen returnToMainScreen = screenFactory.create(ScreenId.MAIN);
-      returnToMainScreen.show();
+      //UiScreen returnToMainScreen = screenFactory.create(UiScreenId.MAIN);
+      //returnToMainScreen.show();
       return;
     }
 
     if (isButtonLeftClicked(event)) {
 
-      Screen newTaskModalScreen = screenFactory.create(ScreenId.NEW_TASK_DIALOG);
+      UiScreen newTaskModalScreen = screenFactory.create(UiScreenId.NEW_TASK_DIALOG);
       newTaskModalScreen.reset();
       newTaskModalScreen.setData(new NewTaskPanelData("Creating a new operation (from settings)?"));            
       newTaskModalScreen.show();

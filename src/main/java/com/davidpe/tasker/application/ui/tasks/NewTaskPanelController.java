@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.davidpe.tasker.application.ui.common.ControllerDataAware;
-import com.davidpe.tasker.application.ui.common.ScreenController;
-import com.davidpe.tasker.application.ui.common.ScreenFactory;
+import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
+import com.davidpe.tasker.application.ui.common.UiScreenController;
+import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,12 +18,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import javafx.stage.Window; 
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class NewTaskPanelController  extends ScreenController implements ControllerDataAware<NewTaskPanelData>{
+public class NewTaskPanelController  extends UiScreenController implements UiControllerDataAware<NewTaskPanelData>{
 
     @FXML
     private Pane mainPane;
@@ -49,10 +47,10 @@ public class NewTaskPanelController  extends ScreenController implements Control
     @FXML
     private Label lblMessage1;
 
-    private ScreenFactory screenFactory;
+    private UiScreenFactory screenFactory;
 
     @Lazy
-    public NewTaskPanelController(ScreenFactory screenFactory) {
+    public NewTaskPanelController(UiScreenFactory screenFactory) {
 
             this.screenFactory = screenFactory;
     }
@@ -64,16 +62,7 @@ public class NewTaskPanelController  extends ScreenController implements Control
 
          if (isButtonCancelClicked(event)) {
 
-            if (mainPane.getScene() == null) return; // aún no está en una Scene
-
-            Window window = mainPane.getScene().getWindow();
-
-            if (window instanceof Stage) {
-
-                Stage stage = (Stage) window;
-                stage.hide();
-            }
-
+            hideStage();
             return;
          }
 

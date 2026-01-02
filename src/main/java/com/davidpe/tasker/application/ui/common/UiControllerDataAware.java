@@ -5,7 +5,7 @@ package com.davidpe.tasker.application.ui.common;
  * Its used in various parts of the application to manage data flow between components.
  * Its the way to set or get the data to the screen controllers.
  */
-public interface ControllerDataAware<T>{
+public interface UiControllerDataAware<T>{
 
     void setData(T data);
     T getData();

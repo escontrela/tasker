@@ -8,11 +8,10 @@ import javafx.stage.Stage;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.springframework.stereotype.Component;
 
 import com.davidpe.tasker.application.ui.main.MainSceneController;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneController;
-import com.davidpe.tasker.application.ui.tasks.NewTaskPanelController;
+import com.davidpe.tasker.application.ui.tasks.NewTaskPanelController; 
 
 import java.util.function.BiFunction;
 
@@ -21,51 +20,50 @@ import java.util.function.BiFunction;
  * using the JavaFX framework. 
  * Its purpose is to encapsulate the creation logic for different types of screens.
  */
-@Component
-public class ScreenFactory {
+public class UiScreenFactory {
 
 
-    private final FxmlLoader fxmlLoader;
+    private final UiViewLoader fxmlLoader;
     private final Stage primaryStage;
-    private final Map<ScreenId,Screen> cache = new EnumMap<>(ScreenId.class);
+    private final Map<UiScreenId,UiScreen> cache = new EnumMap<>(UiScreenId.class);
 
 
-    public ScreenFactory(Stage primaryStage, FxmlLoader fxmlLoader) {
+    public UiScreenFactory(Stage primaryStage, UiViewLoader fxmlLoader) {
 
         this.primaryStage = primaryStage;
         this.fxmlLoader = fxmlLoader;
     } 
 
-    public Screen create(ScreenId id) {
+    public UiScreen create(UiScreenId id) {
         
         return switch (id) {
 
             case MAIN ->  cache.computeIfAbsent(id,  _ ->
                 createScreen(
-                    ScreenId.MAIN,
-                    ScreenId.MAIN.getResourcePath(),
+                    UiScreenId.MAIN,
+                    UiScreenId.MAIN.getResourcePath(),
                     "Main",
-                    (supplier, controller) -> new PrimaryScreen(id, primaryStage, supplier,
+                    (supplier, controller) -> new UiPrimaryScreen(id, primaryStage, supplier,
                          (MainSceneController) controller)
                 )
             );
             
             case SETTINGS -> cache.computeIfAbsent(id, _ ->  
                 createScreen(
-                    ScreenId.SETTINGS,
-                    ScreenId.SETTINGS.getResourcePath(),
+                    UiScreenId.SETTINGS,
+                    UiScreenId.SETTINGS.getResourcePath(),
                     "Settings",
-                    (supplier, controller) -> new PrimaryScreen(id, primaryStage, supplier, 
+                    (supplier, controller) -> new UiPrimaryScreen(id, primaryStage, supplier, 
                         (SettingsSceneController) controller)
                 )
             );
             
             case NEW_TASK_DIALOG -> cache.computeIfAbsent(id, _ ->  
                 createScreen(
-                    ScreenId.NEW_TASK_DIALOG,
-                    ScreenId.NEW_TASK_DIALOG.getResourcePath(),
+                    UiScreenId.NEW_TASK_DIALOG,
+                    UiScreenId.NEW_TASK_DIALOG.getResourcePath(),
                     "New task",
-                    (supplier, controller) -> new ModalScreen(id, primaryStage, supplier,
+                    (supplier, controller) -> new UiModalScreen(id, primaryStage, supplier,
                          (NewTaskPanelController) controller)
                 )
             );
@@ -74,15 +72,15 @@ public class ScreenFactory {
         };
     }
 
-    private Screen createScreen(ScreenId id, String fxml, String title,
-                                BiFunction<Supplier<Scene>, Object, Screen> builder) {
+    private UiScreen createScreen(UiScreenId id, String fxml, String title,
+                                BiFunction<Supplier<Scene>, Object, UiScreen> builder) {
         try {
 
-            FxmlLoaderContext root = fxmlLoader.load(fxml);
+            UiViewContext root=  fxmlLoader.load(fxml); 
             Supplier<Scene> supplier = () -> {
+
                 Scene scene = new Scene(root.root());
                 scene.setFill(Color.TRANSPARENT);
-                primaryStage.setTitle(title);
                 return scene;
             };
 

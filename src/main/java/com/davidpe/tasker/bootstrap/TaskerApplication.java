@@ -8,14 +8,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.davidpe.tasker.application.ui.common.ScreenFactory;
-import com.davidpe.tasker.application.ui.common.ScreenId;
+import com.davidpe.tasker.application.ui.common.UiScreenFactory;
+import com.davidpe.tasker.application.ui.common.UiScreenId;
 
 @SpringBootApplication(scanBasePackages = "com.davidpe.tasker")
 public class TaskerApplication extends Application {
 
     private ConfigurableApplicationContext applicationContext;
-    private ScreenFactory screenFactory;
+    private UiScreenFactory screenFactory;
 
     public static void main(String[] args) {
         
@@ -25,8 +25,8 @@ public class TaskerApplication extends Application {
     @Override
     public void init() {
 
-        SpringApplicationBuilder builder = new SpringApplicationBuilder(TaskerApplication.class);
-        applicationContext = builder.headless(false).run();
+      SpringApplicationBuilder builder = new SpringApplicationBuilder(TaskerApplication.class);
+      applicationContext = builder.headless(false).run();
     }
 
     @Override
@@ -48,8 +48,11 @@ public class TaskerApplication extends Application {
         String appTitle = applicationContext.getBean("applicationTitle", String.class);
         primaryStage.setTitle(appTitle);
 
-
-        screenFactory = applicationContext.getBean(ScreenFactory.class,primaryStage);      
-        screenFactory.create(ScreenId.MAIN).show();
+        applicationContext.getBeanFactory().registerSingleton("primaryStage", primaryStage);
+    
+        screenFactory = applicationContext.getBean(UiScreenFactory.class);        
+        //screenFactory = applicationContext.getBean(UiScreenFactory.class,primaryStage);      
+        
+        screenFactory.create(UiScreenId.MAIN).show();
     }
 }

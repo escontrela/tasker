@@ -1,34 +1,37 @@
 package com.davidpe.tasker.application.ui.common;
 
-
-import javafx.scene.Scene;
+ 
+import javafx.scene.Scene;  
 import javafx.stage.Stage;
+
+import java.awt.Point;
 import java.util.function.Supplier;
 
 /**
  * This class represents the primary screen in the application using
  * javafx framework to create the main user interface.
  */
-public final class PrimaryScreen implements Screen {
+public final class UiPrimaryScreen implements UiScreen {
 
-    private final ScreenId id;
+    private final UiScreenId id;
     private final Stage primaryStage;
     private final Supplier<Scene> sceneSupplier;
     private Scene cachedScene;
-    private ScreenController controller;    
+    private UiScreenController controller;    
 
-    public PrimaryScreen(ScreenId id,
+    public UiPrimaryScreen(UiScreenId id,
                          Stage primaryStage,
                          Supplier<Scene> sceneSupplier,
-                         ScreenController controller) {
+                         UiScreenController controller) {
         this.id = id;
         this.primaryStage = primaryStage;
         this.sceneSupplier = sceneSupplier;
         this.controller = controller;
+        this.controller.setRootStage(primaryStage);
     }
 
     @Override
-    public ScreenId id() {
+    public UiScreenId id() {
 
         return id;
     }
@@ -71,12 +74,17 @@ public final class PrimaryScreen implements Screen {
     @Override
     public Stage stage() {
 
-        return stage(); 
+        return primaryStage; 
     }
 
     @Override
-    public ScreenController controller() {
+    public UiScreenController controller() {
 
         return controller;
+    }
+
+    @Override
+    public void showAtPosition(Point menuPosition) {
+        show();
     }
 }
