@@ -11,9 +11,7 @@ import java.util.function.Supplier;
 
 import com.davidpe.tasker.application.ui.main.MainSceneController;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneController;
-import com.davidpe.tasker.application.ui.tasks.NewTaskPanelController; 
-
-import java.util.function.BiFunction;
+import com.davidpe.tasker.application.ui.tasks.NewTaskPanelController;
 
 /**
  * Factory class for creating screens in the application
@@ -22,61 +20,68 @@ import java.util.function.BiFunction;
  */
 public class UiScreenFactory {
 
+    @FunctionalInterface
+    private interface ScreenBuilder<T extends UiScreenController> {
+        UiScreen build(Stage primaryStage, Supplier<Scene> supplier, T controller);
+    }
+
+    private record UiScreenDescriptor<T extends UiScreenController>(
+            String fxml,
+            ScreenBuilder<T> builder,
+            Class<T> controllerType) {
+    }
+
+    private static final Map<UiScreenId, UiScreenDescriptor<? extends UiScreenController>> SCREEN_DEFINITIONS =
+            Map.of(
+                    UiScreenId.MAIN,
+                    new UiScreenDescriptor<>(
+                            UiScreenId.MAIN.getResourcePath(),
+                            (stage, supplier, controller) -> new UiPrimaryScreen(UiScreenId.MAIN, stage,
+                                    supplier, controller),
+                            MainSceneController.class
+                    ),
+                    UiScreenId.SETTINGS,
+                    new UiScreenDescriptor<>(
+                            UiScreenId.SETTINGS.getResourcePath(),
+                            (stage, supplier, controller) -> new UiPrimaryScreen(UiScreenId.SETTINGS, stage,
+                                    supplier, controller),
+                            SettingsSceneController.class
+                    ),
+                    UiScreenId.NEW_TASK_DIALOG,
+                    new UiScreenDescriptor<>(
+                            UiScreenId.NEW_TASK_DIALOG.getResourcePath(),
+                            (stage, supplier, controller) -> new UiModalScreen(UiScreenId.NEW_TASK_DIALOG, stage,
+                                    supplier, controller),
+                            NewTaskPanelController.class
+                    )
+            );
 
     private final UiViewLoader fxmlLoader;
     private final Stage primaryStage;
-    private final Map<UiScreenId,UiScreen> cache = new EnumMap<>(UiScreenId.class);
+    private final Map<UiScreenId, UiScreen> cache = new EnumMap<>(UiScreenId.class);
 
 
     public UiScreenFactory(Stage primaryStage, UiViewLoader fxmlLoader) {
 
         this.primaryStage = primaryStage;
         this.fxmlLoader = fxmlLoader;
-    } 
-
-    public UiScreen create(UiScreenId id) {
-        
-        return switch (id) {
-
-            case MAIN ->  cache.computeIfAbsent(id,  _ ->
-                createScreen(
-                    UiScreenId.MAIN,
-                    UiScreenId.MAIN.getResourcePath(),
-                    "Main",
-                    (supplier, controller) -> new UiPrimaryScreen(id, primaryStage, supplier,
-                         (MainSceneController) controller)
-                )
-            );
-            
-            case SETTINGS -> cache.computeIfAbsent(id, _ ->  
-                createScreen(
-                    UiScreenId.SETTINGS,
-                    UiScreenId.SETTINGS.getResourcePath(),
-                    "Settings",
-                    (supplier, controller) -> new UiPrimaryScreen(id, primaryStage, supplier, 
-                        (SettingsSceneController) controller)
-                )
-            );
-            
-            case NEW_TASK_DIALOG -> cache.computeIfAbsent(id, _ ->  
-                createScreen(
-                    UiScreenId.NEW_TASK_DIALOG,
-                    UiScreenId.NEW_TASK_DIALOG.getResourcePath(),
-                    "New task",
-                    (supplier, controller) -> new UiModalScreen(id, primaryStage, supplier,
-                         (NewTaskPanelController) controller)
-                )
-            );
-
-            default -> throw new IllegalArgumentException(id.toString());
-        };
     }
 
-    private UiScreen createScreen(UiScreenId id, String fxml, String title,
-                                BiFunction<Supplier<Scene>, Object, UiScreen> builder) {
+    public UiScreen create(UiScreenId id) {
+
+        UiScreenDescriptor<? extends UiScreenController> descriptor = SCREEN_DEFINITIONS.get(id);
+        if (descriptor == null) {
+
+            throw new IllegalArgumentException(id.toString());
+        }
+
+        return cache.computeIfAbsent(id, ignored -> buildScreen(descriptor));
+    }
+
+    private <T extends UiScreenController> UiScreen buildScreen(UiScreenDescriptor<T> descriptor) {
         try {
 
-            UiViewContext root=  fxmlLoader.load(fxml); 
+            UiViewContext root = fxmlLoader.load(descriptor.fxml());
             Supplier<Scene> supplier = () -> {
 
                 Scene scene = new Scene(root.root());
@@ -84,13 +89,14 @@ public class UiScreenFactory {
                 return scene;
             };
 
-            return builder.apply(supplier, root.controller());
+            T controller = descriptor.controllerType().cast(root.controller());
+            return descriptor.builder().build(primaryStage, supplier, controller);
 
         } catch (IOException e) {
-            
-            throw new RuntimeException("Failed to load " + fxml, e);
+
+            throw new RuntimeException("Failed to load " + descriptor.fxml(), e);
         }
-    } 
+    }
 
     public void close() {
 

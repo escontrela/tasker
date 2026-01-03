@@ -7,7 +7,7 @@ import javafx.stage.Stage;
  * This class represents a screen in the application.
  * It provides methods to control the screen's visibility and state.
  */
-public sealed interface UiScreen permits UiPrimaryScreen, UiModalScreen{
+public sealed interface UiScreen permits AbstractUiScreen {
 
   UiScreenId id();
   Stage stage();          // para casos avanzados

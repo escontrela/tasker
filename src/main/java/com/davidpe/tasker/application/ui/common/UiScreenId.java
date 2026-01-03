@@ -9,7 +9,7 @@ public enum UiScreenId {
     SETTINGS("/com/davidpe/tasker/ui/settings.fxml"),
     NEW_TASK_DIALOG("/com/davidpe/tasker/ui/new-task.fxml");
 
-    private String resourcePath;
+    private final String resourcePath;
 
     UiScreenId(String resourcePath) {
     
