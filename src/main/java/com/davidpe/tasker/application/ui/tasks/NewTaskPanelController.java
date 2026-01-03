@@ -15,7 +15,11 @@ import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
@@ -23,29 +27,50 @@ import javafx.scene.layout.Pane;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NewTaskPanelController  extends UiScreenController implements UiControllerDataAware<NewTaskPanelData>{
 
-    @FXML
-    private Pane mainPane;
-    
-    @FXML
-    private Button btCancel;
+     @FXML
+    private Button btnCancel;
 
     @FXML
-    private Button btOk;
+    private Button btnFilter;
 
     @FXML
-    private ImageView imgIcon;
+    private Button btnOk;
+
+    @FXML
+    private ComboBox<?> cbxPriority;
+
+    @FXML
+    private ComboBox<?> cbxTag;
+
+    @FXML
+    private DatePicker dpStartDate;
 
     @FXML
     private ImageView imgCancel;
 
     @FXML
-    private ImageView imgOK;
+    private ImageView imgIcon;
+
+    @FXML
+    private ImageView imgOk;
 
     @FXML
     private Label lblMessage;
 
     @FXML
-    private Label lblMessage1;
+    private Label lblTitle;
+
+    @FXML
+    private Pane paneMain;
+
+    @FXML
+    private TextArea taDescription;
+
+    @FXML
+    private TextField txtExtCode;
+
+    @FXML
+    private TextField txtTitle;
 
     private UiScreenFactory screenFactory;
 
@@ -70,20 +95,20 @@ public class NewTaskPanelController  extends UiScreenController implements UiCon
  
     private boolean isButtonCancelClicked(ActionEvent event) {
 
-      return event.getSource() == btCancel || event.getSource() == imgCancel;
+      return event.getSource() == btnCancel || event.getSource() == imgCancel;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        lblMessage1.setText("The newest task.");
+        lblMessage.setText("The newest task.");
     }
 
 
     @Override
     public void resetData() {
 
-       lblMessage1.setText(Thread.currentThread().getName() + ": Reset data called in NewTaskPanelController instance " + this);
+       lblMessage.setText(Thread.currentThread().getName() + ": Reset data called in NewTaskPanelController instance " + this);
     }
 
 

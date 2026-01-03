@@ -247,6 +247,49 @@ Design decision:
 
 This preserves a clean DDD architecture while leveraging Spring’s mature eventing system.
 
+---
+
+UI fx:id naming conventions
+
+To keep FXML ids consistent and easy to use from controllers, follow a small set of rules based on Java naming conventions (lowerCamelCase):
+
+- Use lowerCamelCase for all `fx:id` values.
+- Prefix by a short type indicator followed by a semantic subject: `prefix + Subject`.
+- Keep names English (recommended) and avoid spaces, accents or special characters.
+- Use verbs for buttons (e.g. `btnSave`, `btnCancel`) and nouns for labels/fields (e.g. `lblEmail`, `txtPassword`).
+
+Recommended prefixes (examples):
+
+- Button: `btn` (btnSave)
+- Label: `lbl` (lblTitle)
+- TextField / simple input: `txt` (txtName)
+- TextArea: `ta` (taDescription)
+- ComboBox: `cbx` or `cmb` (cbxCategory)
+- CheckBox: `chk` (chkRememberMe)
+- RadioButton: `rbtn` or `rb` (rbOptionA)
+- ImageView: `img` (imgIcon)
+- Pane / AnchorPane / VBox / HBox: `pane` / `vbox` (paneMain, vboxSide)
+- Scene / Root: `root` (rootScene)
+- Stage / Dialog: `dlg` or `stage` (dlgNewTask, stagePrimary)
+- TableView: `tbl` (tblUsers)
+- TableColumn: `col` (colEmail)
+- ListView: `lst` (lstItems)
+- DatePicker: `dp` (dpStartDate)
+- Spinner: `spn` (spnQuantity)
+- ToggleButton: `tgl` (tglMute)
+- Menu: `menu` / MenuItem: `mi` (menuFile / miExit)
+- ProgressBar / Indicator: `prg` (prgLoading)
+- Slider: `sld` (sldVolume)
+
+Naming pattern examples:
+
+- `prefix + Subject [+ Qualifier]` → `btnSave`, `lblUserName`, `txtUserEmail`, `cbxCountryIso`
+- Groups: `grpFilters`
+- Icons: `imgClose`, `imgLogo`
+- Controller handlers: `handleBtnSave` or `onBtnSaveAction` (methods)
+
+Apply the convention consistently and document it in repository docs (for example `ARCHITECTURE.md` or `docs/naming.md`) so all contributors follow the same style.
+
 ⸻
 
 Project Structure
