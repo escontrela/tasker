@@ -290,6 +290,10 @@ src/main/resources
 
 The structure makes the domain and use cases obvious at first glance.
 
+	---
+
+	- UI wrapper documentation: `docs/ui-wrapper.md` — describes UiScreen/UiScreenFactory/UiFlowManager patterns and flows (MAIN, SETTINGS, NEW_TASK)
+
 ⸻
 
 Recommendations & Technical Notes
