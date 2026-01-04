@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS projects (
     user_id INTEGER NOT NULL,
     name TEXT NOT NULL,
     created_at INTEGER NOT NULL,
+    UNIQUE (user_id, name),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -43,7 +44,7 @@ ON CONFLICT(email) DO NOTHING;
 
 INSERT INTO projects (user_id, name, created_at)
 VALUES ((SELECT id FROM users WHERE email = 'default@tasker.local'), 'Default project', strftime('%s','now') * 1000)
-ON CONFLICT(name) DO NOTHING;
+ON CONFLICT(user_id, name) DO NOTHING;
 
 INSERT INTO priorities (code, description) VALUES
     ('HIGH', 'High priority'),
