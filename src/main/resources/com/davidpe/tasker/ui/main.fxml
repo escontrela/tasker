@@ -10,13 +10,16 @@
 <BorderPane xmlns="http://javafx.com/javafx/21.0.3" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.davidpe.tasker.application.ui.main.MainSceneController">
     <top>
-        <HBox spacing="12" alignment="CENTER_LEFT" padding="10">
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10" />
+            </padding>
             <Label fx:id="lblTitle" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Tasker" />
             <Button fx:id="btnNewTask" mnemonicParsing="false" onAction="#buttonAction" text="Nueva tarea" />
         </HBox>
     </top>
     <center>
-        <VBox fx:id="tasksContainer" spacing="8" padding="10">
+        <VBox fx:id="tasksContainer" spacing="8">
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10" />
             </padding>
