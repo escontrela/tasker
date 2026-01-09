@@ -114,9 +114,6 @@ public class MainSceneController extends UiScreenController {
     private Label lblNewOp;
 
     @FXML
-    private VBox tasksContainer;
-
-    @FXML
     private TableView<Task> tableTasks;
 
     @FXML
