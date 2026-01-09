@@ -9,6 +9,21 @@ import com.davidpe.tasker.domain.task.TagRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+ 
+/**
+ * Presenter for the "New Task" UI dialog.
+ *
+ * <p>
+ * Coordinates between the view and application/domain layers to:
+ * <ul>
+ *   <li>Load and present lookup data (projects, priorities, tags) to the view.</li>
+ *   <li>React to project selection changes by filtering and presenting project-specific tags.</li>
+ *   <li>Collect user input, build an AddTaskCommand and delegate task creation to the AddTaskUseCase.</li>
+ *   <li>Publish a TaskCreatedEvent when a task is successfully created and instruct the view to close.</li>
+ *   <li>Surface creation errors to the view.</li>
+ * </ul>
+ * </p>
+ */
 @Component
 public class NewTaskPresenter {
 
@@ -36,15 +51,18 @@ public class NewTaskPresenter {
     }
 
     public void loadInitialData() {
+
         view.showProjects(projectRepository.findAll());
         view.showPriorities(priorityRepository.findAll());
         Long projectId = view.selectedProjectId();
         if (projectId != null) {
+
             view.showTags(tagRepository.findByProjectId(projectId));
         }
     }
 
     public void onProjectChanged(Long projectId) {
+
         if (projectId == null) {
             return;
         }
@@ -52,6 +70,7 @@ public class NewTaskPresenter {
     }
 
     public void onSaveRequested() {
+
         try {
             view.showError("");
             AddTaskCommand command = new AddTaskCommand(

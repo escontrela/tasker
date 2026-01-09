@@ -11,6 +11,10 @@ import java.time.ZoneId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * This use case is responsible for adding a new task to the database.
+ * Decouple the task creation from the database interaction.
+ */
 @Service
 public class AddTaskUseCase {
 
@@ -31,6 +35,7 @@ public class AddTaskUseCase {
 
     @Transactional
     public Task addTask(AddTaskCommand command) {
+
         validateDependencies(command);
         Instant startAt = toInstant(command.startDate());
         Instant endAt = toInstant(command.endDate());
@@ -43,10 +48,12 @@ public class AddTaskUseCase {
                 command.description(),
                 startAt,
                 endAt);
+                
         return taskRepository.save(task);
     }
 
     private void validateDependencies(AddTaskCommand command) {
+
         if (command.projectId() == null) {
             throw new IllegalArgumentException("Project is required");
         }
@@ -70,6 +77,7 @@ public class AddTaskUseCase {
     }
 
     private Instant toInstant(LocalDate date) {
+
         if (date == null) {
             return null;
         }

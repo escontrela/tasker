@@ -69,11 +69,13 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
     @Lazy
     public NewTaskPanelController(NewTaskPresenter presenter) {
+
         this.presenter = presenter;
     }
 
     @FXML
     void buttonAction(ActionEvent event) {
+
         if (isButtonCancelClicked(event)) {
             hideStage();
             return;
@@ -85,19 +87,23 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
     @FXML
     void onProjectChanged(ActionEvent event) {
+
         presenter.onProjectChanged(selectedProjectId());
     }
 
     private boolean isButtonCancelClicked(ActionEvent event) {
+
         return event.getSource() == btnCancel;
     }
 
     private boolean isButtonOkClicked(ActionEvent event) {
+
         return event.getSource() == btnOk;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         presenter.attach(this);
         resetData();
         presenter.loadInitialData();
@@ -105,6 +111,7 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
     @Override
     public void resetData() {
+
         lblMessage.setText("The newest task.");
         lblError.setText("");
         txtTitle.clear();
@@ -116,16 +123,19 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
     @Override
     public void setData(NewTaskPanelData data) {
+
         lblMessage.setText(data.message());
     }
 
     @Override
     public NewTaskPanelData getData() {
+
         return new NewTaskPanelData(lblMessage.getText());
     }
 
     @Override
     public void showProjects(List<Project> projects) {
+
         cbxProject.getItems().setAll(projects);
         if (!projects.isEmpty()) {
             cbxProject.getSelectionModel().selectFirst();
@@ -142,6 +152,7 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
     @Override
     public void showTags(List<Tag> tags) {
+
         cbxTag.getItems().setAll(tags);
         if (!tags.isEmpty()) {
             cbxTag.getSelectionModel().selectFirst();
@@ -152,18 +163,21 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
     @Override
     public Long selectedProjectId() {
+
         Project project = cbxProject.getSelectionModel().getSelectedItem();
         return project != null ? project.getId() : null;
     }
 
     @Override
     public Long selectedPriorityId() {
+
         Priority priority = cbxPriority.getSelectionModel().getSelectedItem();
         return priority != null ? priority.getId() : null;
     }
 
     @Override
     public Long selectedTagId() {
+
         Tag tag = cbxTag.getSelectionModel().getSelectedItem();
         return tag != null ? tag.getId() : null;
     }
@@ -200,6 +214,7 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
     @Override
     public void close() {
+        
         hideStage();
     }
 }
