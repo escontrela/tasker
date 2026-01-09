@@ -2,9 +2,7 @@ package com.davidpe.tasker.application.ui.main;
  
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
@@ -16,10 +14,8 @@ import com.davidpe.tasker.application.ui.common.UiScreen;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
-import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
 import com.davidpe.tasker.application.ui.events.WindowOpenedEvent;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
-import com.davidpe.tasker.application.ui.tasks.NewTaskPanelData;
 import com.davidpe.tasker.domain.task.Priority;
 import com.davidpe.tasker.domain.task.PriorityRepository;
 import com.davidpe.tasker.domain.task.Tag;
@@ -33,7 +29,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML; 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label; 
-import java.awt.Point;
+
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -44,6 +40,12 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+
+import javafx.beans.property.SimpleStringProperty;
+import java.time.ZoneId;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 
 @Component
 public class MainSceneController extends UiScreenController {
@@ -114,27 +116,26 @@ public class MainSceneController extends UiScreenController {
     @FXML
     private VBox tasksContainer;
 
+    @FXML
+    private TableView<Task> tableTasks;
 
     @FXML
-    private TableView<?> tableTasks;
+    private TableColumn<Task, String> tcolFin;
 
     @FXML
-    private TableColumn<?, ?> tcolFin;
+    private TableColumn<Task, String> tcolInicio;
 
     @FXML
-    private TableColumn<?, ?> tcolInicio;
+    private TableColumn<Task, String> tcolPriority;
 
     @FXML
-    private TableColumn<?, ?> tcolPriority;
+    private TableColumn<Task, String> tcolTaskName;
 
     @FXML
-    private TableColumn<?, ?> tcolTaskName;
+    private TableColumn<Task, String> tcolTaskStatus;
 
     @FXML
-    private TableColumn<?, ?> tcolTaskStatus;
-
-    @FXML
-    private TableColumn<?, ?> tcolTaskTags;
+    private TableColumn<Task, String> tcolTaskTags;
 
     private final UiScreenFactory screenFactory;
  
@@ -206,8 +207,62 @@ public class MainSceneController extends UiScreenController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        
         moveMainWindowsSetUp();
+
+        // Configure table columns
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        tcolTaskName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTitle()));
+
+        tcolPriority.setCellValueFactory(cell -> {
+            Long pid = cell.getValue().getPriorityId();
+            String txt = "";
+            if (pid != null) {
+                // lookup priority
+                Priority p = priorityRepository.findAll()
+                        .stream()
+                        .filter(pr -> pr.getId().equals(pid))
+                        .findFirst()
+                        .orElse(null);
+                txt = p != null ? p.getDescription() : "";
+            }
+            return new SimpleStringProperty(txt);
+        });
+
+        tcolInicio.setCellValueFactory(cell -> {
+            if (cell.getValue().getStartAt() == null) return new SimpleStringProperty("");
+            LocalDateTime ldt = LocalDateTime.ofInstant(cell.getValue().getStartAt(), ZoneId.systemDefault());
+            return new SimpleStringProperty(dtf.format(ldt));
+        });
+
+        tcolFin.setCellValueFactory(cell -> {
+            if (cell.getValue().getEndAt() == null) return new SimpleStringProperty("");
+            LocalDateTime ldt = LocalDateTime.ofInstant(cell.getValue().getEndAt(), ZoneId.systemDefault());
+            return new SimpleStringProperty(dtf.format(ldt));
+        });
+
+        tcolTaskStatus.setCellValueFactory(cell -> {
+            Instant now = Instant.now();
+            String status = "";
+            if (cell.getValue().getEndAt() != null && cell.getValue().getEndAt().isBefore(now)) {
+                status = "Done";
+            } else {
+                status = "Open";
+            }
+            return new SimpleStringProperty(status);
+        });
+
+        tcolTaskTags.setCellValueFactory(cell -> {
+            Long tagId = cell.getValue().getTagId();
+            String tagText = "";
+            if (tagId != null) {
+                tagText = tagRepository.findById(tagId).map(Tag::getName).orElse("");
+            }
+            return new SimpleStringProperty(tagText);
+        });
+
+        // load tasks initially so the window shows data on first presentation
+        Platform.runLater(this::loadTasks);
     }
 
     @Override
@@ -240,36 +295,13 @@ public class MainSceneController extends UiScreenController {
         Platform.runLater(this::loadTasks);
     }
 
-      private void loadTasks() {
- 
-        tasksContainer.getChildren().clear();
-        List<Task> tasks = taskRepository.findAll();
-        Map<Long, Priority> priorities = priorityRepository.findAll()
-                .stream()
-                .collect(Collectors.toMap(Priority::getId, p -> p));
+            private void loadTasks() {
 
-        for (Task task : tasks) {
-            Priority priority = priorities.get(task.getPriorityId());
-            String priorityText = priority != null ? priority.getDescription() : "";
-            Tag tag = task.getTagId() != null ? tagRepository.findById(task.getTagId()).orElse(null) : null;
-            String tagText = tag != null ? tag.getName() : "";
-            Label label = new Label(formatTaskLabel(task, priorityText, tagText));
-            label.getStyleClass().add("task-label");
-            tasksContainer.getChildren().add(label);
-        } 
-    }
+                // Populate the TableView with tasks instead of the old tasksContainer labels
+                List<Task> tasks = taskRepository.findAll();
+                tableTasks.setItems(javafx.collections.FXCollections.observableArrayList(tasks));
+        }
 
-     private String formatTaskLabel(Task task, String priorityText, String tagText) {
-     
-        StringBuilder builder = new StringBuilder(task.getTitle());
-        if (!priorityText.isBlank()) {
-            builder.append(" • ").append(priorityText);
-        }
-        if (!tagText.isBlank()) {
-            builder.append(" • ").append(tagText);
-        }
-        return builder.toString();
-       
-    }
+    
 
 }
