@@ -60,6 +60,7 @@ public class UiFlowManager {
         if (ev.screenId() == UiScreenId.NEW_TASK_DIALOG) {
 
             UiScreen newTaskDialog = screenFactory.create(UiScreenId.NEW_TASK_DIALOG);
+            newTaskDialog.reset();
             newTaskDialog.setData(new NewTaskPanelData("Creating a new operation?"));
             Point MENU_POSITION = new Point(120, 110);
             newTaskDialog.showAtPosition(MENU_POSITION);

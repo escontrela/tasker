@@ -1,32 +1,51 @@
 package com.davidpe.tasker.application.ui.main;
  
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
+import com.davidpe.tasker.application.task.TaskCreatedEvent;
 import com.davidpe.tasker.application.ui.common.UiScreen;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
-import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
 import com.davidpe.tasker.application.ui.events.WindowOpenedEvent;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
-import com.davidpe.tasker.application.ui.tasks.NewTaskPanelData;
+import com.davidpe.tasker.domain.task.Priority;
+import com.davidpe.tasker.domain.task.PriorityRepository;
+import com.davidpe.tasker.domain.task.Tag;
+import com.davidpe.tasker.domain.task.TagRepository;
+import com.davidpe.tasker.domain.task.Task;
+import com.davidpe.tasker.domain.task.TaskRepository;
+
 import javafx.scene.Node;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML; 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label; 
-import java.awt.Point;
+
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+
+import javafx.beans.property.SimpleStringProperty;
+import java.time.ZoneId;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 
 @Component
 public class MainSceneController extends UiScreenController {
@@ -94,15 +113,46 @@ public class MainSceneController extends UiScreenController {
     @FXML
     private Label lblNewOp;
 
-    private final UiScreenFactory screenFactory;
+    @FXML
+    private TableView<Task> tableTasks;
 
-    private ApplicationEventPublisher eventPublisher;
+    @FXML
+    private TableColumn<Task, String> tcolFin;
+
+    @FXML
+    private TableColumn<Task, String> tcolInicio;
+
+    @FXML
+    private TableColumn<Task, String> tcolPriority;
+
+    @FXML
+    private TableColumn<Task, String> tcolTaskName;
+
+    @FXML
+    private TableColumn<Task, String> tcolTaskStatus;
+
+    @FXML
+    private TableColumn<Task, String> tcolTaskTags;
+
+    private final UiScreenFactory screenFactory;
+ 
+    private final ApplicationEventPublisher eventPublisher;
+    private final TaskRepository taskRepository;
+    private final PriorityRepository priorityRepository;
+    private final TagRepository tagRepository;
 
     @Lazy
-    public MainSceneController(UiScreenFactory screenFactory, ApplicationEventPublisher eventPublisher) {
+    public MainSceneController(UiScreenFactory screenFactory,
+                               ApplicationEventPublisher eventPublisher,
+                               TaskRepository taskRepository,
+                               PriorityRepository priorityRepository,
+                               TagRepository tagRepository) {
 
         this.screenFactory = screenFactory;
         this.eventPublisher = eventPublisher;
+        this.taskRepository = taskRepository;
+        this.priorityRepository = priorityRepository;
+        this.tagRepository = tagRepository;
     }
 
     @FXML
@@ -134,6 +184,7 @@ public class MainSceneController extends UiScreenController {
             eventPublisher.publishEvent(new WindowOpenedEvent(UiScreenId.NEW_TASK_DIALOG));
 
         }
+        
     }
 
     private boolean isButtonSettingsClicked(ActionEvent event) {
@@ -153,8 +204,62 @@ public class MainSceneController extends UiScreenController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        
         moveMainWindowsSetUp();
+
+        // Configure table columns
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        tcolTaskName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTitle()));
+
+        tcolPriority.setCellValueFactory(cell -> {
+            Long pid = cell.getValue().getPriorityId();
+            String txt = "";
+            if (pid != null) {
+                // lookup priority
+                Priority p = priorityRepository.findAll()
+                        .stream()
+                        .filter(pr -> pr.getId().equals(pid))
+                        .findFirst()
+                        .orElse(null);
+                txt = p != null ? p.getDescription() : "";
+            }
+            return new SimpleStringProperty(txt);
+        });
+
+        tcolInicio.setCellValueFactory(cell -> {
+            if (cell.getValue().getStartAt() == null) return new SimpleStringProperty("");
+            LocalDateTime ldt = LocalDateTime.ofInstant(cell.getValue().getStartAt(), ZoneId.systemDefault());
+            return new SimpleStringProperty(dtf.format(ldt));
+        });
+
+        tcolFin.setCellValueFactory(cell -> {
+            if (cell.getValue().getEndAt() == null) return new SimpleStringProperty("");
+            LocalDateTime ldt = LocalDateTime.ofInstant(cell.getValue().getEndAt(), ZoneId.systemDefault());
+            return new SimpleStringProperty(dtf.format(ldt));
+        });
+
+        tcolTaskStatus.setCellValueFactory(cell -> {
+            Instant now = Instant.now();
+            String status = "";
+            if (cell.getValue().getEndAt() != null && cell.getValue().getEndAt().isBefore(now)) {
+                status = "Done";
+            } else {
+                status = "Open";
+            }
+            return new SimpleStringProperty(status);
+        });
+
+        tcolTaskTags.setCellValueFactory(cell -> {
+            Long tagId = cell.getValue().getTagId();
+            String tagText = "";
+            if (tagId != null) {
+                tagText = tagRepository.findById(tagId).map(Tag::getName).orElse("");
+            }
+            return new SimpleStringProperty(tagText);
+        });
+
+        // load tasks initially so the window shows data on first presentation
+        Platform.runLater(this::loadTasks);
     }
 
     @Override
@@ -180,4 +285,20 @@ public class MainSceneController extends UiScreenController {
                 stage.setY(event.getScreenY() - yOffset);
                 });
   }
+
+   @EventListener
+    public void onTaskCreated(TaskCreatedEvent event) {
+
+        Platform.runLater(this::loadTasks);
+    }
+
+            private void loadTasks() {
+
+                // Populate the TableView with tasks instead of the old tasksContainer labels
+                List<Task> tasks = taskRepository.findAll();
+                tableTasks.setItems(javafx.collections.FXCollections.observableArrayList(tasks));
+        }
+
+    
+
 }
