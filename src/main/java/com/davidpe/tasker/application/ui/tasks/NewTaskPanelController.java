@@ -66,6 +66,7 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
     private TextField txtTitle;
 
     private final NewTaskPresenter presenter;
+    private NewTaskPanelData panelData;
 
     @Lazy
     public NewTaskPanelController(NewTaskPresenter presenter) {
@@ -119,18 +120,39 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
         taDescription.clear();
         dpStartDate.setValue(null);
         dpEndDate.setValue(null);
+    panelData = null;
     }
 
     @Override
     public void setData(NewTaskPanelData data) {
-
-        lblMessage.setText(data.message());
+        this.panelData = data;
+        if (data != null && data.getOperationType() == NewTaskPanelData.OperationType.EDIT && data.getTask() != null) {
+            lblMessage.setText("Edit Task");
+            var t = data.getTask();
+            // populate text fields
+            txtTitle.setText(t.getTitle());
+            txtExtCode.setText(t.getExternalCode());
+            taDescription.setText(t.getDescription());
+            if (t.getStartAt() != null) {
+                dpStartDate.setValue(java.time.LocalDate.ofInstant(t.getStartAt(), java.time.ZoneId.systemDefault()));
+            } else {
+                dpStartDate.setValue(null);
+            }
+            if (t.getEndAt() != null) {
+                dpEndDate.setValue(java.time.LocalDate.ofInstant(t.getEndAt(), java.time.ZoneId.systemDefault()));
+            } else {
+                dpEndDate.setValue(null);
+            }
+            // combo box selections will be applied when items are loaded
+        } else {
+            lblMessage.setText("New Task");
+        }
     }
 
     @Override
     public NewTaskPanelData getData() {
-
-        return new NewTaskPanelData(lblMessage.getText());
+    if (panelData != null) return panelData;
+    return new NewTaskPanelData(NewTaskPanelData.OperationType.CREATE, null);
     }
 
     @Override
@@ -138,7 +160,12 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
         cbxProject.getItems().setAll(projects);
         if (!projects.isEmpty()) {
-            cbxProject.getSelectionModel().selectFirst();
+            if (panelData != null && panelData.getOperationType() == NewTaskPanelData.OperationType.EDIT && panelData.getTask() != null) {
+                Long pid = panelData.getTask().getProjectId();
+                projects.stream().filter(p -> p.getId().equals(pid)).findFirst().ifPresent(p -> cbxProject.getSelectionModel().select(p));
+            } else {
+                cbxProject.getSelectionModel().selectFirst();
+            }
         }
     }
 
@@ -146,7 +173,12 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
     public void showPriorities(List<Priority> priorities) {
         cbxPriority.getItems().setAll(priorities);
         if (!priorities.isEmpty()) {
-            cbxPriority.getSelectionModel().selectFirst();
+            if (panelData != null && panelData.getOperationType() == NewTaskPanelData.OperationType.EDIT && panelData.getTask() != null) {
+                Long prid = panelData.getTask().getPriorityId();
+                priorities.stream().filter(p -> p.getId().equals(prid)).findFirst().ifPresent(p -> cbxPriority.getSelectionModel().select(p));
+            } else {
+                cbxPriority.getSelectionModel().selectFirst();
+            }
         }
     }
 
@@ -155,7 +187,16 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
         cbxTag.getItems().setAll(tags);
         if (!tags.isEmpty()) {
-            cbxTag.getSelectionModel().selectFirst();
+            if (panelData != null && panelData.getOperationType() == NewTaskPanelData.OperationType.EDIT && panelData.getTask() != null) {
+                Long tagId = panelData.getTask().getTagId();
+                if (tagId != null) {
+                    tags.stream().filter(t -> t.getId().equals(tagId)).findFirst().ifPresent(t -> cbxTag.getSelectionModel().select(t));
+                } else {
+                    cbxTag.getSelectionModel().clearSelection();
+                }
+            } else {
+                cbxTag.getSelectionModel().selectFirst();
+            }
         } else {
             cbxTag.getSelectionModel().clearSelection();
         }

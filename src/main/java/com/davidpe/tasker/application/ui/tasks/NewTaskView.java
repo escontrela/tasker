@@ -1,12 +1,19 @@
 package com.davidpe.tasker.application.ui.tasks;
 
+import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
 import com.davidpe.tasker.domain.project.Project;
 import com.davidpe.tasker.domain.task.Priority;
 import com.davidpe.tasker.domain.task.Tag;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface NewTaskView {
+/**
+ * View contract for the New Task dialog.
+ *
+ * <p>Extends {@link UiControllerDataAware} so presenters can inspect the incoming
+ * {@link NewTaskPanelData} (CREATE or EDIT) when deciding how to save.</p>
+ */
+public interface NewTaskView extends UiControllerDataAware<NewTaskPanelData> {
 
     void showProjects(List<Project> projects);
 

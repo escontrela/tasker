@@ -84,7 +84,7 @@ public class SettingsSceneController  extends UiScreenController implements UiCo
 
       UiScreen newTaskModalScreen = screenFactory.create(UiScreenId.NEW_TASK_DIALOG);
       newTaskModalScreen.reset();
-      newTaskModalScreen.setData(new NewTaskPanelData("Creating a new operation (from settings)?"));            
+      newTaskModalScreen.setData(new NewTaskPanelData(NewTaskPanelData.OperationType.CREATE, null));
       newTaskModalScreen.show();
       return;
     }

@@ -14,7 +14,8 @@ import com.davidpe.tasker.application.ui.common.UiScreen;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
-import com.davidpe.tasker.application.ui.events.WindowOpenedEvent;
+import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
+import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
 import com.davidpe.tasker.domain.task.Priority;
 import com.davidpe.tasker.domain.task.PriorityRepository;
@@ -35,11 +36,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+ 
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableRow;
 
 import javafx.beans.property.SimpleStringProperty;
 import java.time.ZoneId;
@@ -181,8 +183,7 @@ public class MainSceneController extends UiScreenController {
 
         if (isButtonNewOpClicked(event)){
 
-            eventPublisher.publishEvent(new WindowOpenedEvent(UiScreenId.NEW_TASK_DIALOG));
-
+            eventPublisher.publishEvent(new WindowNewTaskOpenedEvent());
         }
         
     }
@@ -258,6 +259,18 @@ public class MainSceneController extends UiScreenController {
             return new SimpleStringProperty(tagText);
         });
 
+        // Open edit dialog when a table row is clicked
+        tableTasks.setRowFactory(tv -> {
+            TableRow<Task> row = new TableRow<>();
+            row.setOnMouseClicked(evt -> {
+                if (!row.isEmpty()) {
+                    Task clickedTask = row.getItem();
+                    eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(clickedTask));
+                }
+            });
+            return row;
+        });
+
         // load tasks initially so the window shows data on first presentation
         Platform.runLater(this::loadTasks);
     }
@@ -286,7 +299,7 @@ public class MainSceneController extends UiScreenController {
                 });
   }
 
-   @EventListener
+    @EventListener
     public void onTaskCreated(TaskCreatedEvent event) {
 
         Platform.runLater(this::loadTasks);
