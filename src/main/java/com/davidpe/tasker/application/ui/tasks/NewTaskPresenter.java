@@ -2,7 +2,11 @@ package com.davidpe.tasker.application.ui.tasks;
 
 import com.davidpe.tasker.application.task.AddTaskCommand;
 import com.davidpe.tasker.application.task.AddTaskUseCase;
+import com.davidpe.tasker.application.task.GetTaskCommand;
+import com.davidpe.tasker.application.task.GetTaskUseCase;
 import com.davidpe.tasker.application.task.TaskCreatedEvent;
+import com.davidpe.tasker.domain.task.Task;
+import com.davidpe.tasker.domain.task.TaskRepository;
 import com.davidpe.tasker.domain.project.ProjectRepository;
 import com.davidpe.tasker.domain.task.PriorityRepository;
 import com.davidpe.tasker.domain.task.TagRepository;
@@ -28,21 +32,28 @@ import org.springframework.stereotype.Component;
 public class NewTaskPresenter {
 
     private final AddTaskUseCase addTaskUseCase;
+    private final GetTaskUseCase getTaskUseCase;
     private final ProjectRepository projectRepository;
     private final PriorityRepository priorityRepository;
     private final TagRepository tagRepository;
+    private final TaskRepository taskRepository;
     private final ApplicationEventPublisher eventPublisher;
     private NewTaskView view;
+    private Task originalTask = null;
 
     public NewTaskPresenter(AddTaskUseCase addTaskUseCase,
+                            GetTaskUseCase getTaskUseCase,
                             ProjectRepository projectRepository,
                             PriorityRepository priorityRepository,
                             TagRepository tagRepository,
+                            TaskRepository taskRepository,
                             ApplicationEventPublisher eventPublisher) {
         this.addTaskUseCase = addTaskUseCase;
+        this.getTaskUseCase = getTaskUseCase;
         this.projectRepository = projectRepository;
         this.priorityRepository = priorityRepository;
         this.tagRepository = tagRepository;
+        this.taskRepository = taskRepository;
         this.eventPublisher = eventPublisher;
     }
 
@@ -69,6 +80,15 @@ public class NewTaskPresenter {
         view.showTags(tagRepository.findByProjectId(projectId));
     }
 
+    private boolean isEditing() {
+
+        if (view.getData() == null || view.getData().getOperationType() != NewTaskPanelData.OperationType.EDIT) {
+            return false;
+        }
+
+        return true;    
+    }
+
     public void onSaveRequested() {
 
         try {
@@ -82,11 +102,74 @@ public class NewTaskPresenter {
                     view.descriptionInput(),
                     view.startDate(),
                     view.endDate());
-            var task = addTaskUseCase.addTask(command);
-            eventPublisher.publishEvent(new TaskCreatedEvent(task));
-            view.close();
+
+            if (isEditing()) {
+                
+                // Editing existing task: build updated Task object preserving id and createdAt
+                var originalId = originalTask.getId();
+                if (originalId == null) {
+                    throw new IllegalStateException("No original task provided for edit operation");
+                }
+                java.time.Instant startAt = toInstant(command.startDate());
+                java.time.Instant endAt = toInstant(command.endDate());
+                java.time.Instant now = java.time.Instant.now();
+
+                Task updated = new Task(
+                        originalId,
+                        command.projectId(),
+                        command.priorityId(),
+                        command.tagId(),
+                        command.externalCode(),
+                        command.title(),
+                        command.description(),
+                        startAt,
+                        endAt,
+                        originalTask.getCreatedAt(),
+                        now
+                );
+
+                var saved = taskRepository.save(updated);
+                eventPublisher.publishEvent(new TaskCreatedEvent(saved));
+                view.close();
+                
+            } else {
+                var task = addTaskUseCase.addTask(command);
+                eventPublisher.publishEvent(new TaskCreatedEvent(task));
+                view.close();
+            }
         } catch (Exception ex) {
+
             view.showError(ex.getMessage());
         }
+    }
+
+    private java.time.Instant toInstant(java.time.LocalDate date) {
+
+        if (date == null) {
+
+            return null;
+        }
+        
+        return date.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant();
+    }
+
+    public void loadTaskData() {
+
+        Long taskId = view.getData().getTaskId();
+        if (taskId == null) {
+            throw new IllegalStateException("No task ID available for loading task data");
+        }
+
+        var task = getTaskUseCase.getTaskById(new GetTaskCommand(taskId));
+        if (task == null) {
+
+            throw new IllegalStateException("Task not found");
+        }
+
+       originalTask = task;
+       view.populateTaskData(task);
+       view.selectPriority(task.getPriorityId());
+       view.selectProject(task.getProjectId());
+       view.selectTag(task.getTagId());
     }
 }

@@ -6,12 +6,15 @@ import java.awt.Point;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
+import org.springframework.expression.Operation;
 import org.springframework.stereotype.Component;
 
 import com.davidpe.tasker.application.ui.common.UiScreen;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
+import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
+import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowOpenedEvent;
 import com.davidpe.tasker.application.ui.tasks.NewTaskPanelData;
 
@@ -57,13 +60,27 @@ public class UiFlowManager {
 
     private void handleOpened(WindowOpenedEvent ev) {
 
-        if (ev.screenId() == UiScreenId.NEW_TASK_DIALOG) {
+        
+    }
+
+     @EventListener
+     private void onNewTaskOpened(WindowNewTaskOpenedEvent ev) {
 
             UiScreen newTaskDialog = screenFactory.create(UiScreenId.NEW_TASK_DIALOG);
             newTaskDialog.reset();
-            newTaskDialog.setData(new NewTaskPanelData("Creating a new operation?"));
-            Point MENU_POSITION = new Point(120, 110);
-            newTaskDialog.showAtPosition(MENU_POSITION);
-        }
-    }
+            newTaskDialog.setData(new NewTaskPanelData(NewTaskPanelData.OperationType.CREATE, null));
+            //Point MENU_POSITION = new Point(120, 110);
+            //newTaskDialog.showAtPosition(MENU_POSITION);
+            newTaskDialog.show();
+       
+     }
+
+     @EventListener
+     private void onEditTaskOpened(WindowEditTaskOpenedEvent ev) {
+
+            UiScreen editTaskDialog = screenFactory.create(UiScreenId.NEW_TASK_DIALOG);
+            editTaskDialog.reset();
+            editTaskDialog.setData(new NewTaskPanelData(NewTaskPanelData.OperationType.EDIT, ev.getTaskId()));
+            editTaskDialog.show();
+     }
 }
