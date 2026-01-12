@@ -1,6 +1,5 @@
 package com.davidpe.tasker.application.ui.tasks;
 
-import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.domain.project.Project;
 import com.davidpe.tasker.domain.task.Priority;
