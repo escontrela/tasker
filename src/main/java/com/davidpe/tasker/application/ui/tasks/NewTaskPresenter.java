@@ -5,11 +5,10 @@ import com.davidpe.tasker.application.task.AddTaskUseCase;
 import com.davidpe.tasker.application.task.GetTaskCommand;
 import com.davidpe.tasker.application.task.GetTaskUseCase;
 import com.davidpe.tasker.application.task.TaskCreatedEvent;
+import com.davidpe.tasker.application.task.UpdateTaskCommand;
+import com.davidpe.tasker.application.task.UpdateTaskUseCase;
+import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.domain.task.Task;
-import com.davidpe.tasker.domain.task.TaskRepository;
-import com.davidpe.tasker.domain.project.ProjectRepository;
-import com.davidpe.tasker.domain.task.PriorityRepository;
-import com.davidpe.tasker.domain.task.TagRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -33,27 +32,21 @@ public class NewTaskPresenter {
 
     private final AddTaskUseCase addTaskUseCase;
     private final GetTaskUseCase getTaskUseCase;
-    private final ProjectRepository projectRepository;
-    private final PriorityRepository priorityRepository;
-    private final TagRepository tagRepository;
-    private final TaskRepository taskRepository;
+    private final UpdateTaskUseCase updateTaskUseCase;
+    private final TaskService taskService;
     private final ApplicationEventPublisher eventPublisher;
     private NewTaskView view;
     private Task originalTask = null;
 
     public NewTaskPresenter(AddTaskUseCase addTaskUseCase,
                             GetTaskUseCase getTaskUseCase,
-                            ProjectRepository projectRepository,
-                            PriorityRepository priorityRepository,
-                            TagRepository tagRepository,
-                            TaskRepository taskRepository,
+                            UpdateTaskUseCase updateTaskUseCase,
+                            TaskService taskService,
                             ApplicationEventPublisher eventPublisher) {
         this.addTaskUseCase = addTaskUseCase;
         this.getTaskUseCase = getTaskUseCase;
-        this.projectRepository = projectRepository;
-        this.priorityRepository = priorityRepository;
-        this.tagRepository = tagRepository;
-        this.taskRepository = taskRepository;
+        this.updateTaskUseCase = updateTaskUseCase;
+        this.taskService = taskService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -63,12 +56,12 @@ public class NewTaskPresenter {
 
     public void loadInitialData() {
 
-        view.showProjects(projectRepository.findAll());
-        view.showPriorities(priorityRepository.findAll());
+        view.showProjects(taskService.getProjects());
+        view.showPriorities(taskService.getPriorities());
         Long projectId = view.selectedProjectId();
         if (projectId != null) {
 
-            view.showTags(tagRepository.findByProjectId(projectId));
+            view.showTags(taskService.getTagsForProject(projectId));
         }
     }
 
@@ -77,7 +70,7 @@ public class NewTaskPresenter {
         if (projectId == null) {
             return;
         }
-        view.showTags(tagRepository.findByProjectId(projectId));
+        view.showTags(taskService.getTagsForProject(projectId));
     }
 
     private boolean isEditing() {
@@ -105,16 +98,12 @@ public class NewTaskPresenter {
 
             if (isEditing()) {
                 
-                // Editing existing task: build updated Task object preserving id and createdAt
-                var originalId = originalTask.getId();
+                var originalId = originalTask != null ? originalTask.getId() : null;
                 if (originalId == null) {
                     throw new IllegalStateException("No original task provided for edit operation");
                 }
-                java.time.Instant startAt = toInstant(command.startDate());
-                java.time.Instant endAt = toInstant(command.endDate());
-                java.time.Instant now = java.time.Instant.now();
 
-                Task updated = new Task(
+                UpdateTaskCommand updateCommand = new UpdateTaskCommand(
                         originalId,
                         command.projectId(),
                         command.priorityId(),
@@ -122,13 +111,9 @@ public class NewTaskPresenter {
                         command.externalCode(),
                         command.title(),
                         command.description(),
-                        startAt,
-                        endAt,
-                        originalTask.getCreatedAt(),
-                        now
-                );
-
-                var saved = taskRepository.save(updated);
+                        command.startDate(),
+                        command.endDate());
+                var saved = updateTaskUseCase.updateTask(updateCommand);
                 eventPublisher.publishEvent(new TaskCreatedEvent(saved));
                 view.close();
                 
@@ -141,16 +126,6 @@ public class NewTaskPresenter {
 
             view.showError(ex.getMessage());
         }
-    }
-
-    private java.time.Instant toInstant(java.time.LocalDate date) {
-
-        if (date == null) {
-
-            return null;
-        }
-        
-        return date.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant();
     }
 
     public void loadTaskData() {
