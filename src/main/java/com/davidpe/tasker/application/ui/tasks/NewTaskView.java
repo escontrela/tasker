@@ -4,6 +4,8 @@ import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
 import com.davidpe.tasker.domain.project.Project;
 import com.davidpe.tasker.domain.task.Priority;
 import com.davidpe.tasker.domain.task.Tag;
+import com.davidpe.tasker.domain.task.Task;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -40,4 +42,12 @@ public interface NewTaskView extends UiControllerDataAware<NewTaskPanelData> {
     void showError(String message);
 
     void close();
+
+    void populateTaskData(Task task);
+
+    void selectTag(Long tagId);
+
+    void selectPriority(Long priorityId);
+
+    void selectProject(Long projectId);
 }

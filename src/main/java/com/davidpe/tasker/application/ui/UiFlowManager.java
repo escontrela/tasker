@@ -80,7 +80,7 @@ public class UiFlowManager {
 
             UiScreen editTaskDialog = screenFactory.create(UiScreenId.NEW_TASK_DIALOG);
             editTaskDialog.reset();
-            editTaskDialog.setData(new NewTaskPanelData(NewTaskPanelData.OperationType.EDIT, ev.getTask()));
+            editTaskDialog.setData(new NewTaskPanelData(NewTaskPanelData.OperationType.EDIT, ev.getTaskId()));
             editTaskDialog.show();
      }
 }

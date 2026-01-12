@@ -5,6 +5,8 @@ import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.domain.project.Project;
 import com.davidpe.tasker.domain.task.Priority;
 import com.davidpe.tasker.domain.task.Tag;
+import com.davidpe.tasker.domain.task.Task;
+
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class NewTaskPanelController extends UiScreenController implements UiControllerDataAware<NewTaskPanelData>, NewTaskView {
+public class NewTaskPanelController extends UiScreenController implements NewTaskView {
 
     @FXML
     private Button btnCancel;
@@ -66,7 +68,8 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
     private TextField txtTitle;
 
     private final NewTaskPresenter presenter;
-    private NewTaskPanelData panelData;
+    
+    private NewTaskPanelData taskData;
 
     @Lazy
     public NewTaskPanelController(NewTaskPresenter presenter) {
@@ -120,39 +123,36 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
         taDescription.clear();
         dpStartDate.setValue(null);
         dpEndDate.setValue(null);
-    panelData = null;
+        taskData = null;
+    }
+
+    private boolean isEditing(){
+
+        return  (taskData != null && taskData.getOperationType() == NewTaskPanelData.OperationType.EDIT 
+                       && taskData.getTaskId() != null);
     }
 
     @Override
     public void setData(NewTaskPanelData data) {
-        this.panelData = data;
-        if (data != null && data.getOperationType() == NewTaskPanelData.OperationType.EDIT && data.getTask() != null) {
+
+        this.taskData = data;
+        
+        if (isEditing()) {
+        
             lblMessage.setText("Edit Task");
-            var t = data.getTask();
-            // populate text fields
-            txtTitle.setText(t.getTitle());
-            txtExtCode.setText(t.getExternalCode());
-            taDescription.setText(t.getDescription());
-            if (t.getStartAt() != null) {
-                dpStartDate.setValue(java.time.LocalDate.ofInstant(t.getStartAt(), java.time.ZoneId.systemDefault()));
-            } else {
-                dpStartDate.setValue(null);
-            }
-            if (t.getEndAt() != null) {
-                dpEndDate.setValue(java.time.LocalDate.ofInstant(t.getEndAt(), java.time.ZoneId.systemDefault()));
-            } else {
-                dpEndDate.setValue(null);
-            }
-            // combo box selections will be applied when items are loaded
+            presenter.loadTaskData();
+            
         } else {
+
             lblMessage.setText("New Task");
         }
     }
 
     @Override
     public NewTaskPanelData getData() {
-    if (panelData != null) return panelData;
-    return new NewTaskPanelData(NewTaskPanelData.OperationType.CREATE, null);
+        
+        if (taskData != null) return taskData;
+        return new NewTaskPanelData(NewTaskPanelData.OperationType.CREATE, null);
     }
 
     @Override
@@ -160,26 +160,46 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
         cbxProject.getItems().setAll(projects);
         if (!projects.isEmpty()) {
-            if (panelData != null && panelData.getOperationType() == NewTaskPanelData.OperationType.EDIT && panelData.getTask() != null) {
-                Long pid = panelData.getTask().getProjectId();
-                projects.stream().filter(p -> p.getId().equals(pid)).findFirst().ifPresent(p -> cbxProject.getSelectionModel().select(p));
-            } else {
+           
                 cbxProject.getSelectionModel().selectFirst();
-            }
+            
         }
+    }
+    
+    @Override
+    public void selectProject(Long projectId) {
+
+        if (projectId == null) return;
+
+        cbxProject.getItems().stream()
+                .filter(p -> p.getId().equals(projectId))
+                .findFirst()
+                .ifPresent(p -> cbxProject.getSelectionModel().select(p));
     }
 
     @Override
     public void showPriorities(List<Priority> priorities) {
+        
         cbxPriority.getItems().setAll(priorities);
         if (!priorities.isEmpty()) {
-            if (panelData != null && panelData.getOperationType() == NewTaskPanelData.OperationType.EDIT && panelData.getTask() != null) {
-                Long prid = panelData.getTask().getPriorityId();
-                priorities.stream().filter(p -> p.getId().equals(prid)).findFirst().ifPresent(p -> cbxPriority.getSelectionModel().select(p));
-            } else {
+        
+             
+        
                 cbxPriority.getSelectionModel().selectFirst();
-            }
+            
         }
+    }
+
+    
+    @Override
+    public void selectPriority(Long priorityId) {
+
+        if (priorityId == null) return;
+
+        cbxPriority.getItems().stream()
+                .filter(p -> p.getId().equals(priorityId))
+                .findFirst()
+                .ifPresent(p -> cbxPriority.getSelectionModel().select(p));
     }
 
     @Override
@@ -187,19 +207,23 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
 
         cbxTag.getItems().setAll(tags);
         if (!tags.isEmpty()) {
-            if (panelData != null && panelData.getOperationType() == NewTaskPanelData.OperationType.EDIT && panelData.getTask() != null) {
-                Long tagId = panelData.getTask().getTagId();
-                if (tagId != null) {
-                    tags.stream().filter(t -> t.getId().equals(tagId)).findFirst().ifPresent(t -> cbxTag.getSelectionModel().select(t));
-                } else {
-                    cbxTag.getSelectionModel().clearSelection();
-                }
-            } else {
+                 
                 cbxTag.getSelectionModel().selectFirst();
-            }
+          
         } else {
             cbxTag.getSelectionModel().clearSelection();
         }
+    }
+ 
+   @Override
+    public void selectTag(Long tagId) {
+
+        if (tagId == null) return;
+
+        cbxTag.getItems().stream()
+                .filter(t -> t.getId().equals(tagId))
+                .findFirst()
+                .ifPresent(t -> cbxTag.getSelectionModel().select(t));
     }
 
     @Override
@@ -257,5 +281,27 @@ public class NewTaskPanelController extends UiScreenController implements UiCont
     public void close() {
         
         hideStage();
+    }
+
+    @Override
+    public void populateTaskData(Task t) {
+ 
+            txtTitle.setText(t.getTitle());
+            txtExtCode.setText(t.getExternalCode());
+            taDescription.setText(t.getDescription());
+            if (t.getStartAt() != null) {
+
+                dpStartDate.setValue(java.time.LocalDate.ofInstant(t.getStartAt(), java.time.ZoneId.systemDefault()));
+            } else {
+
+                dpStartDate.setValue(null);
+            }
+            if (t.getEndAt() != null) {
+
+                dpEndDate.setValue(java.time.LocalDate.ofInstant(t.getEndAt(), java.time.ZoneId.systemDefault()));
+            } else {
+
+                dpEndDate.setValue(null);
+            }
     }
 }

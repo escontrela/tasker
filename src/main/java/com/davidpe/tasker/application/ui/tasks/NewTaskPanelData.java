@@ -1,6 +1,5 @@
 package com.davidpe.tasker.application.ui.tasks;
-
-import com.davidpe.tasker.domain.task.Task;
+ 
 
 public class NewTaskPanelData {
 
@@ -10,12 +9,12 @@ public class NewTaskPanelData {
     }
 
     private OperationType operationType;
-    private Task task;
+    private Long taskId;
 
-    public NewTaskPanelData(OperationType operationType, Task task) {
+    public NewTaskPanelData(OperationType operationType, Long taskId) {
 
         this.operationType = operationType;
-        this.task = task;
+        this.taskId = taskId;
     }
 
 
@@ -24,8 +23,8 @@ public class NewTaskPanelData {
         return operationType;
     }
 
-    public Task getTask() {
+    public Long getTaskId() {
 
-        return task;
+        return taskId;
     }
 }

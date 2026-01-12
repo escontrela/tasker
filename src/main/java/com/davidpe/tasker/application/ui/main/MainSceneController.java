@@ -265,7 +265,7 @@ public class MainSceneController extends UiScreenController {
             row.setOnMouseClicked(evt -> {
                 if (!row.isEmpty()) {
                     Task clickedTask = row.getItem();
-                    eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(clickedTask));
+                    eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(clickedTask.getId()));
                 }
             });
             return row;

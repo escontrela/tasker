@@ -1,21 +1,20 @@
 package com.davidpe.tasker.application.ui.events;
  
-import com.davidpe.tasker.application.ui.common.UiScreenId;
-import com.davidpe.tasker.domain.task.Task;
+import com.davidpe.tasker.application.ui.common.UiScreenId; 
 
 public final class WindowEditTaskOpenedEvent extends WindowEvent {
      
-    private Task task;
+    private Long taskId;
 
-    public WindowEditTaskOpenedEvent(Task task) {
+    public WindowEditTaskOpenedEvent(Long taskId) {
         
         super(UiScreenId.NEW_TASK_DIALOG);         
-        this.task = task;
+        this.taskId = taskId;
     }   
 
-    public Task getTask() {
+    public Long getTaskId() {
 
-        return task;
+        return taskId;
     }
 
 }

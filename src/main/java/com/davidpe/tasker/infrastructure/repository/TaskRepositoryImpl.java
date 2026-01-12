@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -109,5 +111,17 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     private static java.time.Instant toInstant(Timestamp timestamp) {
         return timestamp != null ? timestamp.toInstant() : null;
+    }
+
+    @Override
+    public Optional<Task> findById(Long taskId) { 
+
+        String sql = "SELECT id, project_id, priority_id, tag_id, external_code, title, description, start_at, end_at, created_at, updated_at FROM tasks WHERE id = ?";
+        List<Task> tasks = jdbcTemplate.query(sql, mapper, taskId);
+        if (tasks.isEmpty()) {
+
+            return Optional.empty();
+        }
+        return Optional.of(tasks.getFirst());
     }
 }
