@@ -10,4 +10,6 @@ public interface TaskRepository {
     List<Task> findAll();
 
     Optional<Task> findById(Long taskId);
+
+    void deleteById(Long taskId);
 }

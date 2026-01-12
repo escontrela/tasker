@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import com.davidpe.tasker.application.task.DeleteTaskUseCase;
 import com.davidpe.tasker.application.task.TaskCreatedEvent;
+import com.davidpe.tasker.application.task.DeleteTaskCommand;
 import com.davidpe.tasker.application.ui.common.UiScreen;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
@@ -33,6 +35,7 @@ import javafx.scene.control.Label;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -142,19 +145,22 @@ public class MainSceneController extends UiScreenController {
     private final TaskRepository taskRepository;
     private final PriorityRepository priorityRepository;
     private final TagRepository tagRepository;
+    private final DeleteTaskUseCase deleteTaskUseCase;
 
     @Lazy
     public MainSceneController(UiScreenFactory screenFactory,
                                ApplicationEventPublisher eventPublisher,
                                TaskRepository taskRepository,
                                PriorityRepository priorityRepository,
-                               TagRepository tagRepository) {
+                               TagRepository tagRepository,
+                               DeleteTaskUseCase deleteTaskUseCase) {
 
         this.screenFactory = screenFactory;
         this.eventPublisher = eventPublisher;
         this.taskRepository = taskRepository;
         this.priorityRepository = priorityRepository;
         this.tagRepository = tagRepository;
+        this.deleteTaskUseCase = deleteTaskUseCase; 
     }
 
     @FXML
@@ -259,16 +265,35 @@ public class MainSceneController extends UiScreenController {
             return new SimpleStringProperty(tagText);
         });
 
-        // Open edit dialog when a table row is clicked
+        // Open edit dialog when a table row is double-clicked
         tableTasks.setRowFactory(tv -> {
             TableRow<Task> row = new TableRow<>();
             row.setOnMouseClicked(evt -> {
-                if (!row.isEmpty()) {
+                if (!row.isEmpty() && evt.getClickCount() == 2) {
                     Task clickedTask = row.getItem();
                     eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(clickedTask.getId()));
                 }
             });
             return row;
+        });
+
+        // Delete selected task when the Delete (Supr) key is pressed
+        tableTasks.setOnKeyPressed(evt -> {            
+            if (evt.getCode() == KeyCode.DELETE) {
+                Task selected = tableTasks.getSelectionModel().getSelectedItem();
+                System.out.println("Key pressed: " + evt.getCode() + " selected: " + selected);
+
+                if (selected != null) {
+                    try {
+                        System.out.println("Deleting task: " + selected);
+                        deleteTaskUseCase.deleteTask(new DeleteTaskCommand(selected.getId()));
+                        // refresh UI
+                        Platform.runLater(this::loadTasks);
+                    } catch (Exception ex) {
+                        System.err.println("Error deleting task: " + ex.getMessage());
+                    }
+                }
+            }
         });
 
         // load tasks initially so the window shows data on first presentation

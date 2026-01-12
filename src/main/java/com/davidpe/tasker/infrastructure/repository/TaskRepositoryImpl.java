@@ -124,4 +124,11 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
         return Optional.of(tasks.getFirst());
     }
+
+    @Override
+    public void deleteById(Long taskId) {
+        
+        String sql = "DELETE FROM tasks WHERE id = ?";
+        jdbcTemplate.update(sql, taskId);
+    }
 }
