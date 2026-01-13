@@ -1,6 +1,8 @@
 spring:
   application:
     name: tasker
+  autoconfigure:
+    exclude: org.springframework.modulith.events.jdbc.JdbcEventPublicationAutoConfiguration
   datasource:
     url: jdbc:sqlite:tasker.db
     driver-class-name: org.sqlite.JDBC
