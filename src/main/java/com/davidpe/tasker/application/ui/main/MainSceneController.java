@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.davidpe.tasker.application.task.DeleteTaskUseCase;
 import com.davidpe.tasker.application.task.TaskCreatedEvent;
 import com.davidpe.tasker.application.task.DeleteTaskCommand;
+import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.application.ui.common.UiScreen;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
@@ -20,12 +21,8 @@ import com.davidpe.tasker.application.ui.controls.MessagePanelController;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
-import com.davidpe.tasker.domain.task.Priority;
-import com.davidpe.tasker.domain.task.PriorityRepository;
 import com.davidpe.tasker.domain.task.Tag;
-import com.davidpe.tasker.domain.task.TagRepository;
 import com.davidpe.tasker.domain.task.Task;
-import com.davidpe.tasker.domain.task.TaskRepository;
 
 import javafx.scene.Node;
 import javafx.application.Platform;
@@ -146,9 +143,7 @@ public class MainSceneController extends UiScreenController {
     private final UiScreenFactory screenFactory;
  
     private final ApplicationEventPublisher eventPublisher;
-    private final TaskRepository taskRepository;
-    private final PriorityRepository priorityRepository;
-    private final TagRepository tagRepository;
+    private final TaskService taskService;
     private final DeleteTaskUseCase deleteTaskUseCase;
 
     
@@ -156,16 +151,12 @@ public class MainSceneController extends UiScreenController {
     @Lazy
     public MainSceneController(UiScreenFactory screenFactory,
                                ApplicationEventPublisher eventPublisher,
-                               TaskRepository taskRepository,
-                               PriorityRepository priorityRepository,
-                               TagRepository tagRepository,
+                               TaskService taskService,
                                DeleteTaskUseCase deleteTaskUseCase) {
 
         this.screenFactory = screenFactory;
         this.eventPublisher = eventPublisher;
-        this.taskRepository = taskRepository;
-        this.priorityRepository = priorityRepository;
-        this.tagRepository = tagRepository;
+        this.taskService = taskService;
         this.deleteTaskUseCase = deleteTaskUseCase; 
     }
 
@@ -237,12 +228,9 @@ public class MainSceneController extends UiScreenController {
             String txt = "";
             if (pid != null) {
                 // lookup priority
-                Priority p = priorityRepository.findAll()
-                        .stream()
-                        .filter(pr -> pr.getId().equals(pid))
-                        .findFirst()
-                        .orElse(null);
-                txt = p != null ? p.getDescription() : "";
+                txt = taskService.getPriorityById(pid)
+                        .map(priority -> priority.getDescription())
+                        .orElse("");
             }
             return new SimpleStringProperty(txt);
         });
@@ -274,7 +262,7 @@ public class MainSceneController extends UiScreenController {
             Long tagId = cell.getValue().getTagId();
             String tagText = "";
             if (tagId != null) {
-                tagText = tagRepository.findById(tagId).map(Tag::getName).orElse("");
+                tagText = taskService.getTagById(tagId).map(Tag::getName).orElse("");
             }
             return new SimpleStringProperty(tagText);
         });
@@ -372,7 +360,7 @@ public class MainSceneController extends UiScreenController {
             private void loadTasks() {
 
                 // Populate the TableView with tasks instead of the old tasksContainer labels
-                List<Task> tasks = taskRepository.findAll();
+                List<Task> tasks = taskService.getTasks();
                 tableTasks.setItems(javafx.collections.FXCollections.observableArrayList(tasks));
         }
 
