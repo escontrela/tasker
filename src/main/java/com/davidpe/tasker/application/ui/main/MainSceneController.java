@@ -1,5 +1,7 @@
 package com.davidpe.tasker.application.ui.main;
  
+import static javafx.collections.FXCollections.observableArrayList;
+
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -306,13 +308,12 @@ public class MainSceneController extends UiScreenController {
             @Override
             public void onOkButtonClicked() {
 
-                    Task selected = tableTasks.getSelectionModel().getSelectedItem();
-                    System.out.println("Deleting task: " + selected);
+                    Task selected = tableTasks.getSelectionModel().getSelectedItem(); 
                         deleteTaskUseCase.deleteTask(new DeleteTaskCommand(selected.getId()));
                         // refresh UI
-                         Platform.runLater(MainSceneController.this::loadTasks);
-                // Handle OK button click - hide the panel
-                pnlMessage.setVisible(false);
+                        pnlMessage.setVisible(false);
+                        Platform.runLater(MainSceneController.this::loadTasks); 
+                        
             }
 
             @Override
@@ -361,9 +362,6 @@ public class MainSceneController extends UiScreenController {
 
                 // Populate the TableView with tasks instead of the old tasksContainer labels
                 List<Task> tasks = taskService.getTasks();
-                tableTasks.setItems(javafx.collections.FXCollections.observableArrayList(tasks));
+                tableTasks.setItems(observableArrayList(tasks));
         }
-
-    
-
 }
