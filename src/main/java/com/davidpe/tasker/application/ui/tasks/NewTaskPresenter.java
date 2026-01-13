@@ -4,11 +4,12 @@ import com.davidpe.tasker.application.task.AddTaskCommand;
 import com.davidpe.tasker.application.task.AddTaskUseCase;
 import com.davidpe.tasker.application.task.GetTaskCommand;
 import com.davidpe.tasker.application.task.GetTaskUseCase;
-import com.davidpe.tasker.application.task.TaskCreatedEvent;
 import com.davidpe.tasker.application.task.UpdateTaskCommand;
 import com.davidpe.tasker.application.task.UpdateTaskUseCase;
 import com.davidpe.tasker.application.service.task.TaskService;
+import com.davidpe.tasker.domain.task.TaskCreatedEvent;
 import com.davidpe.tasker.domain.task.Task;
+import com.davidpe.tasker.domain.task.TaskUpdatedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Component;
  *   <li>Load and present lookup data (projects, priorities, tags) to the view.</li>
  *   <li>React to project selection changes by filtering and presenting project-specific tags.</li>
  *   <li>Collect user input, build an AddTaskCommand and delegate task creation to the AddTaskUseCase.</li>
- *   <li>Publish a TaskCreatedEvent when a task is successfully created and instruct the view to close.</li>
+ *   <li>Publish a TaskCreatedEvent or TaskUpdatedEvent when a task is successfully saved and close the view.</li>
  *   <li>Surface creation errors to the view.</li>
  * </ul>
  * </p>
@@ -114,7 +115,7 @@ public class NewTaskPresenter {
                         command.startDate(),
                         command.endDate());
                 var saved = updateTaskUseCase.updateTask(updateCommand);
-                eventPublisher.publishEvent(new TaskCreatedEvent(saved));
+                eventPublisher.publishEvent(new TaskUpdatedEvent(saved));
                 view.close();
                 
             } else {

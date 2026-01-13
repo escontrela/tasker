@@ -12,7 +12,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import com.davidpe.tasker.application.task.DeleteTaskUseCase;
-import com.davidpe.tasker.application.task.TaskCreatedEvent;
 import com.davidpe.tasker.application.task.DeleteTaskCommand;
 import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.application.ui.common.UiScreen;
@@ -25,6 +24,9 @@ import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
 import com.davidpe.tasker.domain.task.Tag;
 import com.davidpe.tasker.domain.task.Task;
+import com.davidpe.tasker.domain.task.TaskCreatedEvent;
+import com.davidpe.tasker.domain.task.TaskDeletedEvent;
+import com.davidpe.tasker.domain.task.TaskUpdatedEvent;
 
 import javafx.scene.Node;
 import javafx.application.Platform;
@@ -309,7 +311,12 @@ public class MainSceneController extends UiScreenController {
             public void onOkButtonClicked() {
 
                     Task selected = tableTasks.getSelectionModel().getSelectedItem(); 
-                        deleteTaskUseCase.deleteTask(new DeleteTaskCommand(selected.getId()));
+                    if (selected == null) {
+                        pnlMessage.setVisible(false);
+                        return;
+                    }
+                    deleteTaskUseCase.deleteTask(new DeleteTaskCommand(selected.getId()));
+                    eventPublisher.publishEvent(new TaskDeletedEvent(selected));
                         // refresh UI
                         pnlMessage.setVisible(false);
                         Platform.runLater(MainSceneController.this::loadTasks); 
@@ -354,6 +361,18 @@ public class MainSceneController extends UiScreenController {
 
     @EventListener
     public void onTaskCreated(TaskCreatedEvent event) {
+
+        Platform.runLater(this::loadTasks);
+    }
+
+    @EventListener
+    public void onTaskUpdated(TaskUpdatedEvent event) {
+
+        Platform.runLater(this::loadTasks);
+    }
+
+    @EventListener
+    public void onTaskDeleted(TaskDeletedEvent event) {
 
         Platform.runLater(this::loadTasks);
     }
