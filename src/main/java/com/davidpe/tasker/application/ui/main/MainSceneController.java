@@ -16,6 +16,7 @@ import com.davidpe.tasker.application.ui.common.UiScreen;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
+import com.davidpe.tasker.application.ui.controls.MessagePanelController;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
@@ -139,6 +140,9 @@ public class MainSceneController extends UiScreenController {
     @FXML
     private TableColumn<Task, String> tcolTaskTags;
 
+    @FXML
+    private MessagePanelController pnlMessage;
+
     private final UiScreenFactory screenFactory;
  
     private final ApplicationEventPublisher eventPublisher;
@@ -146,6 +150,8 @@ public class MainSceneController extends UiScreenController {
     private final PriorityRepository priorityRepository;
     private final TagRepository tagRepository;
     private final DeleteTaskUseCase deleteTaskUseCase;
+
+    
 
     @Lazy
     public MainSceneController(UiScreenFactory screenFactory,
@@ -209,8 +215,16 @@ public class MainSceneController extends UiScreenController {
         return event.getSource() == btClose || event.getSource() == imgClose;
     }
 
+    private void showDeletePanel(Pane panel) {
+
+        panel.setVisible(!panel.isVisible());
+
+        
+  }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+       
         moveMainWindowsSetUp();
 
         // Configure table columns
@@ -278,23 +292,48 @@ public class MainSceneController extends UiScreenController {
         });
 
         // Delete selected task when the Delete (Supr) key is pressed
-        tableTasks.setOnKeyPressed(evt -> {            
-            if (evt.getCode() == KeyCode.DELETE) {
+        tableTasks.setOnKeyPressed(evt -> {  
+               
+            if (evt.getCode() == KeyCode.DELETE || evt.getCode() == KeyCode.S ) {
+
                 Task selected = tableTasks.getSelectionModel().getSelectedItem();
                 System.out.println("Key pressed: " + evt.getCode() + " selected: " + selected);
 
                 if (selected != null) {
                     try {
-                        System.out.println("Deleting task: " + selected);
-                        deleteTaskUseCase.deleteTask(new DeleteTaskCommand(selected.getId()));
-                        // refresh UI
-                        Platform.runLater(this::loadTasks);
+
+                        showDeletePanel(pnlMessage);       
+
                     } catch (Exception ex) {
+                
                         System.err.println("Error deleting task: " + ex.getMessage());
                     }
                 }
             }
         });
+
+        pnlMessage.setMessage("Do you really want to delete this task?");
+        pnlMessage.setMessagePanelActionListener(
+            new MessagePanelController.MessagePanelActionListener() {
+            @Override
+            public void onOkButtonClicked() {
+
+                    Task selected = tableTasks.getSelectionModel().getSelectedItem();
+                    System.out.println("Deleting task: " + selected);
+                        deleteTaskUseCase.deleteTask(new DeleteTaskCommand(selected.getId()));
+                        // refresh UI
+                         Platform.runLater(MainSceneController.this::loadTasks);
+                // Handle OK button click - hide the panel
+                pnlMessage.setVisible(false);
+            }
+
+            @Override
+            public void onCancelButtonClicked() {
+                
+                pnlMessage.setVisible(false);
+            }
+            });
+
 
         // load tasks initially so the window shows data on first presentation
         Platform.runLater(this::loadTasks);
