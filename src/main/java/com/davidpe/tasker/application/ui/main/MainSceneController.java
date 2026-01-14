@@ -231,7 +231,7 @@ public class MainSceneController extends UiScreenController {
     // Mostrar la fecha de hoy en formato largo en lblHello
     DateTimeFormatter longDateFmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
     lblHello.setText(LocalDate.now().format(longDateFmt));
-    lblPractice.setText("— tu gestor de tareas (D: marcar done)");
+    lblPractice.setText("— (S: borrar tarea) (D: marcar done)");
 
     // Load filter icons (fallback quietly if missing)
     try {
