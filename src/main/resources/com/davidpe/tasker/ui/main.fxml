@@ -39,9 +39,9 @@
             </StackPane>
          </children>
       </HBox>
-      <Text fx:id="lblChessboard" fill="#e55c45" layoutX="79.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-blue-gradient-big" text="Tasker" wrappingWidth="740.072021484375">
+      <Text fx:id="lblHello" fill="#e55c45" layoutX="97.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-blue-gradient-big" text="Tasker" wrappingWidth="740.072021484375">
          <font>
-            <Font name="Alatsi Regular" size="42.0" />
+            <Font name="Alatsi Regular" size="27.0" />
          </font>
       </Text>
       <StackPane fx:id="pnlMenu" layoutX="1192.0" layoutY="51.0" onMouseClicked="#handleButtonClick" prefHeight="37.0" prefWidth="39.0" styleClass="avatar-frame" stylesheets="@styles.css">
@@ -81,7 +81,19 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="btRight" alignment="BASELINE_CENTER" layoutX="1036.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
+      <Button fx:id="btFilter" alignment="BASELINE_CENTER" layoutX="1086.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
+         <font>
+            <Font name="Alatsi Regular" size="18.0" />
+         </font>
+         <graphic>
+            <ImageView fx:id="imgFilter" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
+               <image>
+                  <Image url="@images/filter_alt_18dp_white.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="btRight" alignment="BASELINE_CENTER" layoutX="1000.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>
@@ -93,7 +105,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="btLeft" alignment="BASELINE_CENTER" layoutX="1080.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
+      <Button fx:id="btLeft" alignment="BASELINE_CENTER" layoutX="1044.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>

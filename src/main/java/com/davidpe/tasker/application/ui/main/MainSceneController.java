@@ -20,9 +20,11 @@ import com.davidpe.tasker.domain.task.TaskDeletedEvent;
 import com.davidpe.tasker.domain.task.TaskUpdatedEvent;
 import java.net.URL;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -35,6 +37,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
@@ -72,7 +75,7 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Label lbUserInitials;
 
-  @FXML private Text lblChessboard;
+  @FXML private Text lblHello;
 
   @FXML private Text lblPractice;
 
@@ -109,6 +112,15 @@ public class MainSceneController extends UiScreenController {
   @FXML private TableColumn<Task, String> tcolTaskTags;
 
   @FXML private MessagePanelController pnlMessage;
+
+  @FXML private Button btFilter;
+
+  @FXML private ImageView imgFilter;
+
+  // Images for filter button (on / off)
+  private Image imgFilterImageOn;
+  private Image imgFilterImageOff;
+  private boolean filterOn = true;
 
   // Reusable notification panel (separate from pnlMessage which is used for delete confirmation)
   private MessagePanelController pnlNotification;
@@ -151,6 +163,25 @@ public class MainSceneController extends UiScreenController {
       settings.show();
       return;
     }
+
+    if (isButtonFilterClicked(event)) {
+      // Toggle filter icon between on/off
+      try {
+        if (imgFilter != null) {
+          if (filterOn) {
+            if (imgFilterImageOff != null) imgFilter.setImage(imgFilterImageOff);
+            filterOn = false;
+          } else {
+            if (imgFilterImageOn != null) imgFilter.setImage(imgFilterImageOn);
+            filterOn = true;
+          }
+        }
+      } catch (Exception ex) {
+        // ignore
+      }
+
+      return;
+    }
   }
 
   @FXML
@@ -177,6 +208,11 @@ public class MainSceneController extends UiScreenController {
     return event.getSource() == btClose || event.getSource() == imgClose;
   }
 
+  private boolean isButtonFilterClicked(ActionEvent event) {
+
+    return event.getSource() == btFilter || event.getSource() == imgFilter;
+  }
+
   private void showDeletePanel(Pane panel) {
 
     panel.setVisible(!panel.isVisible());
@@ -186,6 +222,25 @@ public class MainSceneController extends UiScreenController {
   public void initialize(URL location, ResourceBundle resources) {
 
     moveMainWindowsSetUp();
+
+    // Mostrar la fecha de hoy en formato largo en lblHello
+    DateTimeFormatter longDateFmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
+    lblHello.setText(LocalDate.now().format(longDateFmt));
+
+    // Load filter icons (fallback quietly if missing)
+    try {
+      var onUrl = getClass().getResource("/com/davidpe/tasker/ui/images/filter_alt_18dp_white.png");
+      var offUrl =
+          getClass().getResource("/com/davidpe/tasker/ui/images/filter_alt_off_18dp_white.png");
+      if (onUrl != null) imgFilterImageOn = new Image(onUrl.toExternalForm());
+      if (offUrl != null) imgFilterImageOff = new Image(offUrl.toExternalForm());
+      if (imgFilter != null && imgFilterImageOn != null) {
+        imgFilter.setImage(imgFilterImageOn);
+        filterOn = true;
+      }
+    } catch (Exception e) {
+      // ignore image loading errors
+    }
 
     // Configure table columns
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
