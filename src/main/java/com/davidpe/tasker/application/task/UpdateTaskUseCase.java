@@ -54,6 +54,7 @@ public class UpdateTaskUseCase {
             command.description(),
             startAt,
             endAt,
+            existing.getSequence(),
             existing.getDone(),
             existing.getCreatedAt(),
             now);

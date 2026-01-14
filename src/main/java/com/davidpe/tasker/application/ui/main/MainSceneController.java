@@ -7,6 +7,9 @@ import com.davidpe.tasker.application.task.DeleteTaskCommand;
 import com.davidpe.tasker.application.task.DeleteTaskUseCase;
 import com.davidpe.tasker.application.task.SetDoneTaskCommand;
 import com.davidpe.tasker.application.task.SetDoneTaskUseCase;
+import com.davidpe.tasker.application.task.TaskSequenceDirection;
+import com.davidpe.tasker.application.task.UpdateTaskSequenceCommand;
+import com.davidpe.tasker.application.task.UpdateTaskSequenceUseCase;
 import com.davidpe.tasker.application.ui.common.UiScreen;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
@@ -20,6 +23,7 @@ import com.davidpe.tasker.domain.task.Task;
 import com.davidpe.tasker.domain.task.TaskCreatedEvent;
 import com.davidpe.tasker.domain.task.TaskDeletedEvent;
 import com.davidpe.tasker.domain.task.TaskDoneUpdatedEvent;
+import com.davidpe.tasker.domain.task.TaskSequenceUpdatedEvent;
 import com.davidpe.tasker.domain.task.TaskUpdatedEvent;
 import java.net.URL;
 import java.time.LocalDate;
@@ -27,6 +31,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -133,6 +139,7 @@ public class MainSceneController extends UiScreenController {
   private final TaskService taskService;
   private final DeleteTaskUseCase deleteTaskUseCase;
   private final SetDoneTaskUseCase setDoneTaskUseCase;
+  private final UpdateTaskSequenceUseCase updateTaskSequenceUseCase;
 
   @Lazy
   public MainSceneController(
@@ -140,13 +147,15 @@ public class MainSceneController extends UiScreenController {
       ApplicationEventPublisher eventPublisher,
       TaskService taskService,
       DeleteTaskUseCase deleteTaskUseCase,
-      SetDoneTaskUseCase setDoneTaskUseCase) {
+      SetDoneTaskUseCase setDoneTaskUseCase,
+      UpdateTaskSequenceUseCase updateTaskSequenceUseCase) {
 
     this.screenFactory = screenFactory;
     this.eventPublisher = eventPublisher;
     this.taskService = taskService;
     this.deleteTaskUseCase = deleteTaskUseCase;
     this.setDoneTaskUseCase = setDoneTaskUseCase;
+    this.updateTaskSequenceUseCase = updateTaskSequenceUseCase;
   }
 
   @FXML
@@ -231,7 +240,7 @@ public class MainSceneController extends UiScreenController {
     // Mostrar la fecha de hoy en formato largo en lblHello
     DateTimeFormatter longDateFmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
     lblHello.setText(LocalDate.now().format(longDateFmt));
-    lblPractice.setText("— (S: borrar tarea) (D: marcar done)");
+    lblPractice.setText("— (S: borrar tarea) (D: marcar done) (Q/A: mover prioridad)");
 
     // Load filter icons (fallback quietly if missing)
     try {
@@ -342,6 +351,21 @@ public class MainSceneController extends UiScreenController {
               }
             }
           }
+          if (evt.getCode() == KeyCode.Q || evt.getCode() == KeyCode.A) {
+            Task selected = tableTasks.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+              try {
+                TaskSequenceDirection direction =
+                    evt.getCode() == KeyCode.Q
+                        ? TaskSequenceDirection.UP
+                        : TaskSequenceDirection.DOWN;
+                updateTaskSequenceUseCase.updateSequence(
+                    new UpdateTaskSequenceCommand(selected.getId(), direction));
+              } catch (Exception ex) {
+                System.err.println("Error updating task sequence: " + ex.getMessage());
+              }
+            }
+          }
         });
 
     pnlMessage.setMessage("Do you really want to delete this task?");
@@ -429,6 +453,17 @@ public class MainSceneController extends UiScreenController {
         });
   }
 
+  @EventListener
+  public void onTaskSequenceUpdated(TaskSequenceUpdatedEvent event) {
+    Platform.runLater(
+        () -> {
+          loadTasks();
+          if (event.entity() != null) {
+            System.out.println("Task sequence updated for task #" + event.entity().getId());
+          }
+        });
+  }
+
   private void showTaskNotification(Task task, String prefix) {
 
     if (task == null) return;
@@ -475,6 +510,10 @@ public class MainSceneController extends UiScreenController {
 
     // Populate the TableView with tasks instead of the old tasksContainer labels
     List<Task> tasks = filterOn ? taskService.getTasksNotDone() : taskService.getTasks();
-    tableTasks.setItems(observableArrayList(tasks));
+    List<Task> orderedTasks = new ArrayList<>(tasks);
+    orderedTasks.sort(
+        Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
+            .thenComparing(Task::getCreatedAt, Comparator.reverseOrder()));
+    tableTasks.setItems(observableArrayList(orderedTasks));
   }
 }
