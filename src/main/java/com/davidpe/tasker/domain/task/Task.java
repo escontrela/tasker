@@ -14,6 +14,7 @@ public class Task {
     private final String description;
     private final Instant startAt;
     private final Instant endAt;
+    private final Boolean done;
     private final Instant createdAt;
     private final Instant updatedAt;
 
@@ -26,6 +27,7 @@ public class Task {
                 String description,
                 Instant startAt,
                 Instant endAt,
+                Boolean done,
                 Instant createdAt,
                 Instant updatedAt) {
         this.id = id;
@@ -37,6 +39,7 @@ public class Task {
         this.description = Objects.requireNonNull(description, "description");
         this.startAt = startAt;
         this.endAt = endAt;
+        this.done = done;
         this.createdAt = Objects.requireNonNull(createdAt, "createdAt");
         this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt");
     }
@@ -50,7 +53,19 @@ public class Task {
                                Instant startAt,
                                Instant endAt) {
         Instant now = Instant.now();
-        return new Task(null, projectId, priorityId, tagId, externalCode, title, description, startAt, endAt, now, now);
+        return new Task(
+            null,
+            projectId,
+            priorityId,
+            tagId,
+            externalCode,
+            title,
+            description,
+            startAt,
+            endAt,
+            null,
+            now,
+            now);
     }
 
     public Long getId() {
@@ -87,6 +102,10 @@ public class Task {
 
     public Instant getEndAt() {
         return endAt;
+    }
+
+    public Boolean getDone() {
+        return done;
     }
 
     public Instant getCreatedAt() {
