@@ -44,6 +44,7 @@ public class SetDoneTaskUseCase {
             existing.getDescription(),
             existing.getStartAt(),
             existing.getEndAt(),
+            existing.getSequence(),
             nextDone,
             existing.getCreatedAt(),
             now);
