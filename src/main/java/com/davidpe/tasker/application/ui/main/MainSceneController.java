@@ -5,6 +5,8 @@ import static javafx.collections.FXCollections.observableArrayList;
 import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.application.task.DeleteTaskCommand;
 import com.davidpe.tasker.application.task.DeleteTaskUseCase;
+import com.davidpe.tasker.application.task.SetDoneTaskCommand;
+import com.davidpe.tasker.application.task.SetDoneTaskUseCase;
 import com.davidpe.tasker.application.ui.common.UiScreen;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
@@ -17,9 +19,9 @@ import com.davidpe.tasker.domain.task.Tag;
 import com.davidpe.tasker.domain.task.Task;
 import com.davidpe.tasker.domain.task.TaskCreatedEvent;
 import com.davidpe.tasker.domain.task.TaskDeletedEvent;
+import com.davidpe.tasker.domain.task.TaskDoneUpdatedEvent;
 import com.davidpe.tasker.domain.task.TaskUpdatedEvent;
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -130,18 +132,21 @@ public class MainSceneController extends UiScreenController {
   private final ApplicationEventPublisher eventPublisher;
   private final TaskService taskService;
   private final DeleteTaskUseCase deleteTaskUseCase;
+  private final SetDoneTaskUseCase setDoneTaskUseCase;
 
   @Lazy
   public MainSceneController(
       UiScreenFactory screenFactory,
       ApplicationEventPublisher eventPublisher,
       TaskService taskService,
-      DeleteTaskUseCase deleteTaskUseCase) {
+      DeleteTaskUseCase deleteTaskUseCase,
+      SetDoneTaskUseCase setDoneTaskUseCase) {
 
     this.screenFactory = screenFactory;
     this.eventPublisher = eventPublisher;
     this.taskService = taskService;
     this.deleteTaskUseCase = deleteTaskUseCase;
+    this.setDoneTaskUseCase = setDoneTaskUseCase;
   }
 
   @FXML
@@ -167,19 +172,19 @@ public class MainSceneController extends UiScreenController {
     if (isButtonFilterClicked(event)) {
       // Toggle filter icon between on/off
       try {
+        filterOn = !filterOn;
         if (imgFilter != null) {
-          if (filterOn) {
-            if (imgFilterImageOff != null) imgFilter.setImage(imgFilterImageOff);
-            filterOn = false;
-          } else {
-            if (imgFilterImageOn != null) imgFilter.setImage(imgFilterImageOn);
-            filterOn = true;
+          if (filterOn && imgFilterImageOn != null) {
+            imgFilter.setImage(imgFilterImageOn);
+          } else if (!filterOn && imgFilterImageOff != null) {
+            imgFilter.setImage(imgFilterImageOff);
           }
         }
       } catch (Exception ex) {
         // ignore
       }
 
+      loadTasks();
       return;
     }
   }
@@ -226,6 +231,7 @@ public class MainSceneController extends UiScreenController {
     // Mostrar la fecha de hoy en formato largo en lblHello
     DateTimeFormatter longDateFmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
     lblHello.setText(LocalDate.now().format(longDateFmt));
+    lblPractice.setText("— (S: borrar tarea) (D: marcar done)");
 
     // Load filter icons (fallback quietly if missing)
     try {
@@ -280,13 +286,7 @@ public class MainSceneController extends UiScreenController {
 
     tcolTaskStatus.setCellValueFactory(
         cell -> {
-          Instant now = Instant.now();
-          String status = "";
-          if (cell.getValue().getEndAt() != null && cell.getValue().getEndAt().isBefore(now)) {
-            status = "Done";
-          } else {
-            status = "Open";
-          }
+          String status = Boolean.TRUE.equals(cell.getValue().getDone()) ? "Done" : "Open";
           return new SimpleStringProperty(status);
         });
 
@@ -329,6 +329,16 @@ public class MainSceneController extends UiScreenController {
               } catch (Exception ex) {
 
                 System.err.println("Error deleting task: " + ex.getMessage());
+              }
+            }
+          }
+          if (evt.getCode() == KeyCode.D) {
+            Task selected = tableTasks.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+              try {
+                setDoneTaskUseCase.toggleDone(new SetDoneTaskCommand(selected.getId()));
+              } catch (Exception ex) {
+                System.err.println("Error updating task done status: " + ex.getMessage());
               }
             }
           }
@@ -406,6 +416,19 @@ public class MainSceneController extends UiScreenController {
         });
   }
 
+  @EventListener
+  public void onTaskDoneUpdated(TaskDoneUpdatedEvent event) {
+    Platform.runLater(
+        () -> {
+          loadTasks();
+          String prefix =
+              Boolean.TRUE.equals(event.entity().getDone())
+                  ? "Se ha marcado como done la tarea #"
+                  : "Se ha marcado como pendiente la tarea #";
+          showTaskNotification(event.entity(), prefix);
+        });
+  }
+
   private void showTaskNotification(Task task, String prefix) {
 
     if (task == null) return;
@@ -451,7 +474,7 @@ public class MainSceneController extends UiScreenController {
   private void loadTasks() {
 
     // Populate the TableView with tasks instead of the old tasksContainer labels
-    List<Task> tasks = taskService.getTasks();
+    List<Task> tasks = filterOn ? taskService.getTasksNotDone() : taskService.getTasks();
     tableTasks.setItems(observableArrayList(tasks));
   }
 }

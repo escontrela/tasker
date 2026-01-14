@@ -46,6 +46,10 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
+    public List<Task> getTasksNotDone() {
+        return taskRepository.findAllNotDone();
+    }
+
     public Optional<Priority> getPriorityById(Long priorityId) {
         return priorityRepository.findById(priorityId);
     }

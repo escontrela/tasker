@@ -54,6 +54,7 @@ public class UpdateTaskUseCase {
             command.description(),
             startAt,
             endAt,
+            existing.getDone(),
             existing.getCreatedAt(),
             now);
     Task toReturn = taskRepository.save(updated);
