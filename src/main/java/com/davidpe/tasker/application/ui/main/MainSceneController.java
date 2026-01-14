@@ -240,7 +240,7 @@ public class MainSceneController extends UiScreenController {
     // Mostrar la fecha de hoy en formato largo en lblHello
     DateTimeFormatter longDateFmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
     lblHello.setText(LocalDate.now().format(longDateFmt));
-    lblPractice.setText("— (S: borrar tarea) (D: marcar done) (↑/↓: mover prioridad)");
+    lblPractice.setText("— (S: borrar tarea) (D: marcar done) (Q/A: mover prioridad)");
 
     // Load filter icons (fallback quietly if missing)
     try {
@@ -351,12 +351,12 @@ public class MainSceneController extends UiScreenController {
               }
             }
           }
-          if (evt.getCode() == KeyCode.UP || evt.getCode() == KeyCode.DOWN) {
+          if (evt.getCode() == KeyCode.Q || evt.getCode() == KeyCode.A) {
             Task selected = tableTasks.getSelectionModel().getSelectedItem();
             if (selected != null) {
               try {
                 TaskSequenceDirection direction =
-                    evt.getCode() == KeyCode.UP
+                    evt.getCode() == KeyCode.Q
                         ? TaskSequenceDirection.UP
                         : TaskSequenceDirection.DOWN;
                 updateTaskSequenceUseCase.updateSequence(
@@ -459,8 +459,7 @@ public class MainSceneController extends UiScreenController {
         () -> {
           loadTasks();
           if (event.entity() != null) {
-            System.out.println(
-                "Task sequence updated for task #" + event.entity().getId());
+            System.out.println("Task sequence updated for task #" + event.entity().getId());
           }
         });
   }
@@ -513,8 +512,7 @@ public class MainSceneController extends UiScreenController {
     List<Task> tasks = filterOn ? taskService.getTasksNotDone() : taskService.getTasks();
     List<Task> orderedTasks = new ArrayList<>(tasks);
     orderedTasks.sort(
-        Comparator.comparing(
-                Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
+        Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
             .thenComparing(Task::getCreatedAt, Comparator.reverseOrder()));
     tableTasks.setItems(observableArrayList(orderedTasks));
   }

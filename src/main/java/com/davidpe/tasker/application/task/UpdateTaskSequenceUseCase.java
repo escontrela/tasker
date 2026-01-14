@@ -30,6 +30,7 @@ public class UpdateTaskSequenceUseCase {
 
   @Transactional
   public Task updateSequence(UpdateTaskSequenceCommand command) {
+
     if (command.taskId() == null) {
       throw new IllegalArgumentException("Task ID is required");
     }
@@ -58,7 +59,8 @@ public class UpdateTaskSequenceUseCase {
             : calculateSequenceForDown(tasks, index);
 
     if (newSequence == null && existing.getSequence() == null) {
-      return existing;
+
+      newSequence = BigDecimal.ZERO;
     }
     if (newSequence != null
         && existing.getSequence() != null
@@ -87,8 +89,7 @@ public class UpdateTaskSequenceUseCase {
   }
 
   private static Comparator<Task> sequenceComparator() {
-    return Comparator.comparing(
-            Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
+    return Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
         .thenComparing(Task::getCreatedAt, Comparator.reverseOrder());
   }
 
