@@ -69,9 +69,9 @@ public class TaskerTablePanelController extends Pane {
   // layout constants
   private static final double ROW_HEIGHT = 37.0;
   private static final double ROW_SPACING = 5.0;
-  private static final double TOP_MARGIN = 10.0;
-  private static final double ROW_OFFSET_X = -10.0;
-  private static final int MAX_ROWS = 12;
+  private static final double TOP_MARGIN = 20.0;
+  private static final double ROW_OFFSET_X = 30.0;
+  private static final int MAX_ROWS = 10;
 
   @FXML
   private void initializeInternal() {}
