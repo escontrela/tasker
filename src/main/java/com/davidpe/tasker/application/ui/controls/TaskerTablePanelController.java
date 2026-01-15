@@ -64,11 +64,14 @@ public class TaskerTablePanelController extends Pane {
 
   // Keep track of added rows
   private final List<TaskerRowPanelController> rows = new ArrayList<>();
+  private int currentPage = 0;
 
   // layout constants
   private static final double ROW_HEIGHT = 37.0;
   private static final double ROW_SPACING = 5.0;
   private static final double TOP_MARGIN = 10.0;
+  private static final double ROW_OFFSET_X = -10.0;
+  private static final int MAX_ROWS = 12;
 
   @FXML
   private void initializeInternal() {}
@@ -83,13 +86,8 @@ public class TaskerTablePanelController extends Pane {
     TaskerRowPanelController row = new TaskerRowPanelController();
     row.setTask(task);
     attachRowListener(row);
-    // compute position for the new row
-    int index = rows.size();
-    double y = TOP_MARGIN + index * (ROW_HEIGHT + ROW_SPACING);
-    row.setLayoutX(0);
-    row.setLayoutY(y);
     rows.add(row);
-    paneTableTask.getChildren().add(row);
+    renderPage();
     return row;
   }
 
@@ -112,19 +110,26 @@ public class TaskerTablePanelController extends Pane {
    */
   public void setTasks(List<Task> tasks) {
     clearRows();
-    addRows(tasks);
+    if (tasks == null || tasks.isEmpty()) {
+      renderPage();
+      return;
+    }
+    for (Task t : tasks) {
+      TaskerRowPanelController row = new TaskerRowPanelController();
+      row.setTask(t);
+      attachRowListener(row);
+      rows.add(row);
+    }
+    currentPage = 0;
+    renderPage();
   }
 
   /** Add an already created row control. */
   public void addRow(TaskerRowPanelController row) {
     if (row == null) return;
     attachRowListener(row);
-    int index = rows.size();
-    double y = TOP_MARGIN + index * (ROW_HEIGHT + ROW_SPACING);
-    row.setLayoutX(0);
-    row.setLayoutY(y);
     rows.add(row);
-    paneTableTask.getChildren().add(row);
+    renderPage();
   }
 
   private void attachRowListener(TaskerRowPanelController row) {
@@ -167,15 +172,40 @@ public class TaskerTablePanelController extends Pane {
   public void clearRows() {
     rows.clear();
     paneTableTask.getChildren().clear();
-    reflowRows();
+    currentPage = 0;
+    updateNavigationVisibility();
   }
 
-  /** Recompute layoutY for all rows based on their index. */
-  private void reflowRows() {
-    for (int i = 0; i < rows.size(); i++) {
+  private void renderPage() {
+    paneTableTask.getChildren().clear();
+    int start = currentPage * MAX_ROWS;
+    int end = Math.min(start + MAX_ROWS, rows.size());
+    int visibleIndex = 0;
+    for (int i = start; i < end; i++) {
       TaskerRowPanelController r = rows.get(i);
-      double y = TOP_MARGIN + i * (ROW_HEIGHT + ROW_SPACING);
+      double y = TOP_MARGIN + visibleIndex * (ROW_HEIGHT + ROW_SPACING);
+      r.setLayoutX(ROW_OFFSET_X);
       r.setLayoutY(y);
+      paneTableTask.getChildren().add(r);
+      visibleIndex++;
+    }
+    updateNavigationVisibility();
+  }
+
+  private void updateNavigationVisibility() {
+    int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
+    boolean hasMultiplePages = totalPages > 1;
+    imgMoveLeft.setVisible(hasMultiplePages && currentPage > 0);
+    imgMoveRight.setVisible(hasMultiplePages && currentPage < totalPages - 1);
+  }
+
+  private void movePage(int delta) {
+    int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
+    if (totalPages <= 1) return;
+    int nextPage = Math.max(0, Math.min(currentPage + delta, totalPages - 1));
+    if (nextPage != currentPage) {
+      currentPage = nextPage;
+      renderPage();
     }
   }
 
@@ -190,8 +220,10 @@ public class TaskerTablePanelController extends Pane {
   @FXML
   void onMouseClicked(MouseEvent event) {
     if (isImageMoveLeftClicked(event)) {
+      movePage(-1);
       if (tableActionListener != null) tableActionListener.onMoveLeftClicked(this);
     } else if (isImageMoveRightClicked(event)) {
+      movePage(1);
       if (tableActionListener != null) tableActionListener.onMoveRightClicked(this);
     } else if (event.getSource() == paneTableTask) {
       if (tableActionListener != null) tableActionListener.onRowClicked(this);

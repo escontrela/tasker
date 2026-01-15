@@ -93,7 +93,7 @@ public class TaskerRowPanelController extends Pane {
     if (task == null) return;
     setTaskId(task.getId());
     lblName.setText(task.getTitle());
-    lblPriority.setText(String.valueOf(task.getPriorityId()));
+    setPriority(String.valueOf(task.getPriorityId()));
     lblTags1.setText("");
     lblTags2.setText("");
     if (task.getStartAt() != null) {
@@ -129,11 +129,27 @@ public class TaskerRowPanelController extends Pane {
 
   public void setPriority(String priorityText) {
     lblPriority.setText(priorityText);
+    applyPriorityStyle(priorityText);
   }
 
   public void setTags(String tag1, String tag2) {
     lblTags1.setText(tag1);
     lblTags2.setText(tag2);
+  }
+
+  private void applyPriorityStyle(String priorityText) {
+    if (priorityText == null) return;
+    String normalized = priorityText.toLowerCase();
+    lblPriority
+        .getStyleClass()
+        .removeAll("task-priority-high", "task-priority-medium", "task-priority-low");
+    if (normalized.contains("high")) {
+      lblPriority.getStyleClass().add("task-priority-high");
+    } else if (normalized.contains("medium")) {
+      lblPriority.getStyleClass().add("task-priority-medium");
+    } else if (normalized.contains("low")) {
+      lblPriority.getStyleClass().add("task-priority-low");
+    }
   }
 
   private boolean isImageDownClicked(MouseEvent event) {
