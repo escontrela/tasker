@@ -1,12 +1,8 @@
 package com.davidpe.tasker.application.ui.main;
 
-import static javafx.collections.FXCollections.observableArrayList;
-
 import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.application.task.DeleteTaskCommand;
 import com.davidpe.tasker.application.task.DeleteTaskUseCase;
-import com.davidpe.tasker.application.task.SetDoneTaskCommand;
-import com.davidpe.tasker.application.task.SetDoneTaskUseCase;
 import com.davidpe.tasker.application.task.TaskSequenceDirection;
 import com.davidpe.tasker.application.task.UpdateTaskSequenceCommand;
 import com.davidpe.tasker.application.task.UpdateTaskSequenceUseCase;
@@ -38,18 +34,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -107,20 +98,6 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Label lblNewOp;
 
-  @FXML private TableView<Task> tableTasks;
-
-  @FXML private TableColumn<Task, String> tcolFin;
-
-  @FXML private TableColumn<Task, String> tcolInicio;
-
-  @FXML private TableColumn<Task, String> tcolPriority;
-
-  @FXML private TableColumn<Task, String> tcolTaskName;
-
-  @FXML private TableColumn<Task, String> tcolTaskStatus;
-
-  @FXML private TableColumn<Task, String> tcolTaskTags;
-
   @FXML private MessagePanelController pnlMessage;
 
   @FXML private TaskerTablePanelController pnlTaskerTable;
@@ -142,7 +119,6 @@ public class MainSceneController extends UiScreenController {
   private final ApplicationEventPublisher eventPublisher;
   private final TaskService taskService;
   private final DeleteTaskUseCase deleteTaskUseCase;
-  private final SetDoneTaskUseCase setDoneTaskUseCase;
   private final UpdateTaskSequenceUseCase updateTaskSequenceUseCase;
 
   private Long pendingDeleteTaskId;
@@ -153,14 +129,12 @@ public class MainSceneController extends UiScreenController {
       ApplicationEventPublisher eventPublisher,
       TaskService taskService,
       DeleteTaskUseCase deleteTaskUseCase,
-      SetDoneTaskUseCase setDoneTaskUseCase,
       UpdateTaskSequenceUseCase updateTaskSequenceUseCase) {
 
     this.screenFactory = screenFactory;
     this.eventPublisher = eventPublisher;
     this.taskService = taskService;
     this.deleteTaskUseCase = deleteTaskUseCase;
-    this.setDoneTaskUseCase = setDoneTaskUseCase;
     this.updateTaskSequenceUseCase = updateTaskSequenceUseCase;
   }
 
@@ -246,7 +220,7 @@ public class MainSceneController extends UiScreenController {
     // Mostrar la fecha de hoy en formato largo en lblHello
     DateTimeFormatter longDateFmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
     lblHello.setText(LocalDate.now().format(longDateFmt));
-    lblPractice.setText("— (S: borrar tarea) (D: marcar done) (Q/A: mover prioridad)");
+    lblPractice.setText("—");
 
     // Load filter icons (fallback quietly if missing)
     try {
@@ -263,130 +237,14 @@ public class MainSceneController extends UiScreenController {
       // ignore image loading errors
     }
 
-    // Configure table columns
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-    tcolTaskName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTitle()));
-
-    tcolPriority.setCellValueFactory(
-        cell -> {
-          Long pid = cell.getValue().getPriorityId();
-          String txt = "";
-          if (pid != null) {
-            // lookup priority
-            txt =
-                taskService
-                    .getPriorityById(pid)
-                    .map(priority -> priority.getDescription())
-                    .orElse("");
-          }
-          return new SimpleStringProperty(txt);
-        });
-
-    tcolInicio.setCellValueFactory(
-        cell -> {
-          if (cell.getValue().getStartAt() == null) return new SimpleStringProperty("");
-          LocalDateTime ldt =
-              LocalDateTime.ofInstant(cell.getValue().getStartAt(), ZoneId.systemDefault());
-          return new SimpleStringProperty(dtf.format(ldt));
-        });
-
-    tcolFin.setCellValueFactory(
-        cell -> {
-          if (cell.getValue().getEndAt() == null) return new SimpleStringProperty("");
-          LocalDateTime ldt =
-              LocalDateTime.ofInstant(cell.getValue().getEndAt(), ZoneId.systemDefault());
-          return new SimpleStringProperty(dtf.format(ldt));
-        });
-
-    tcolTaskStatus.setCellValueFactory(
-        cell -> {
-          String status = Boolean.TRUE.equals(cell.getValue().getDone()) ? "Done" : "Open";
-          return new SimpleStringProperty(status);
-        });
-
-    tcolTaskTags.setCellValueFactory(
-        cell -> {
-          Long tagId = cell.getValue().getTagId();
-          String tagText = "";
-          if (tagId != null) {
-            tagText = taskService.getTagById(tagId).map(Tag::getName).orElse("");
-          }
-          return new SimpleStringProperty(tagText);
-        });
-
-    // Open edit dialog when a table row is double-clicked
-    tableTasks.setRowFactory(
-        tv -> {
-          TableRow<Task> row = new TableRow<>();
-          row.setOnMouseClicked(
-              evt -> {
-                if (!row.isEmpty() && evt.getClickCount() == 2) {
-                  Task clickedTask = row.getItem();
-                  eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(clickedTask.getId()));
-                }
-              });
-          return row;
-        });
-
-    // Delete selected task when the Delete (Supr) key is pressed
-    tableTasks.setOnKeyPressed(
-        evt -> {
-          if (evt.getCode() == KeyCode.DELETE || evt.getCode() == KeyCode.S) {
-
-            Task selected = tableTasks.getSelectionModel().getSelectedItem();
-
-            if (selected != null) {
-              try {
-                pendingDeleteTaskId = selected.getId();
-                showDeletePanel(pnlMessage);
-
-              } catch (Exception ex) {
-
-                System.err.println("Error deleting task: " + ex.getMessage());
-              }
-            }
-          }
-          if (evt.getCode() == KeyCode.D) {
-            Task selected = tableTasks.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-              try {
-                setDoneTaskUseCase.toggleDone(new SetDoneTaskCommand(selected.getId()));
-              } catch (Exception ex) {
-                System.err.println("Error updating task done status: " + ex.getMessage());
-              }
-            }
-          }
-          if (evt.getCode() == KeyCode.Q || evt.getCode() == KeyCode.A) {
-            Task selected = tableTasks.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-              try {
-                TaskSequenceDirection direction =
-                    evt.getCode() == KeyCode.Q
-                        ? TaskSequenceDirection.UP
-                        : TaskSequenceDirection.DOWN;
-                updateTaskSequenceUseCase.updateSequence(
-                    new UpdateTaskSequenceCommand(selected.getId(), direction));
-              } catch (Exception ex) {
-                System.err.println("Error updating task sequence: " + ex.getMessage());
-              }
-            }
-          }
-        });
-
     pnlMessage.setMessage("Do you really want to delete this task?");
     pnlMessage.setMessagePanelActionListener(
         new MessagePanelController.MessagePanelActionListener() {
           @Override
           public void onOkButtonClicked() {
 
-            Task selected = tableTasks.getSelectionModel().getSelectedItem();
-            Long taskId = pendingDeleteTaskId != null ? pendingDeleteTaskId : null;
-            if (taskId == null && selected != null) {
-              taskId = selected.getId();
-            }
-            if (taskId != null) {
-              deleteTaskUseCase.deleteTask(new DeleteTaskCommand(taskId));
+            if (pendingDeleteTaskId != null) {
+              deleteTaskUseCase.deleteTask(new DeleteTaskCommand(pendingDeleteTaskId));
             }
             pendingDeleteTaskId = null;
             pnlMessage.setVisible(false);
@@ -561,13 +419,12 @@ public class MainSceneController extends UiScreenController {
 
   private void loadTasks() {
 
-    // Populate the TableView with tasks instead of the old tasksContainer labels
+    // Populate the Tasker table panel with tasks.
     List<Task> tasks = filterOn ? taskService.getTasksNotDone() : taskService.getTasks();
     List<Task> orderedTasks = new ArrayList<>(tasks);
     orderedTasks.sort(
         Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
             .thenComparing(Task::getCreatedAt, Comparator.reverseOrder()));
-    tableTasks.setItems(observableArrayList(orderedTasks));
     populateTaskerPanel(orderedTasks);
   }
 
