@@ -15,6 +15,7 @@ import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
 import com.davidpe.tasker.application.ui.controls.MessagePanelController;
+import com.davidpe.tasker.application.ui.controls.TaskerRowPanelController;
 import com.davidpe.tasker.application.ui.controls.TaskerTablePanelController;
 import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
@@ -143,6 +144,8 @@ public class MainSceneController extends UiScreenController {
   private final DeleteTaskUseCase deleteTaskUseCase;
   private final SetDoneTaskUseCase setDoneTaskUseCase;
   private final UpdateTaskSequenceUseCase updateTaskSequenceUseCase;
+
+  private Long pendingDeleteTaskId;
 
   @Lazy
   public MainSceneController(
@@ -335,7 +338,7 @@ public class MainSceneController extends UiScreenController {
 
             if (selected != null) {
               try {
-
+                pendingDeleteTaskId = selected.getId();
                 showDeletePanel(pnlMessage);
 
               } catch (Exception ex) {
@@ -378,14 +381,61 @@ public class MainSceneController extends UiScreenController {
           public void onOkButtonClicked() {
 
             Task selected = tableTasks.getSelectionModel().getSelectedItem();
-            deleteTaskUseCase.deleteTask(new DeleteTaskCommand(selected.getId()));
+            Long taskId = pendingDeleteTaskId != null ? pendingDeleteTaskId : null;
+            if (taskId == null && selected != null) {
+              taskId = selected.getId();
+            }
+            if (taskId != null) {
+              deleteTaskUseCase.deleteTask(new DeleteTaskCommand(taskId));
+            }
+            pendingDeleteTaskId = null;
             pnlMessage.setVisible(false);
           }
 
           @Override
           public void onCancelButtonClicked() {
 
+            pendingDeleteTaskId = null;
             pnlMessage.setVisible(false);
+          }
+        });
+
+    pnlTaskerTable.setTableActionListener(
+        new TaskerTablePanelController.TableActionListener() {
+          @Override
+          public void onMoveLeftClicked(TaskerTablePanelController source) {}
+
+          @Override
+          public void onMoveRightClicked(TaskerTablePanelController source) {}
+
+          @Override
+          public void onRowClicked(TaskerTablePanelController source) {}
+
+          @Override
+          public void onRowDeleteClicked(TaskerRowPanelController row) {
+            if (row == null || row.getTaskId() == null) return;
+            pendingDeleteTaskId = row.getTaskId();
+            showDeletePanel(pnlMessage);
+          }
+
+          @Override
+          public void onRowEditClicked(TaskerRowPanelController row) {
+            if (row == null || row.getTaskId() == null) return;
+            eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(row.getTaskId()));
+          }
+
+          @Override
+          public void onRowMoveUpClicked(TaskerRowPanelController row) {
+            if (row == null || row.getTaskId() == null) return;
+            updateTaskSequenceUseCase.updateSequence(
+                new UpdateTaskSequenceCommand(row.getTaskId(), TaskSequenceDirection.UP));
+          }
+
+          @Override
+          public void onRowMoveDownClicked(TaskerRowPanelController row) {
+            if (row == null || row.getTaskId() == null) return;
+            updateTaskSequenceUseCase.updateSequence(
+                new UpdateTaskSequenceCommand(row.getTaskId(), TaskSequenceDirection.DOWN));
           }
         });
 
@@ -518,5 +568,43 @@ public class MainSceneController extends UiScreenController {
         Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
             .thenComparing(Task::getCreatedAt, Comparator.reverseOrder()));
     tableTasks.setItems(observableArrayList(orderedTasks));
+    populateTaskerPanel(orderedTasks);
+  }
+
+  private void populateTaskerPanel(List<Task> orderedTasks) {
+    if (pnlTaskerTable == null) return;
+
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    pnlTaskerTable.clearRows();
+    if (orderedTasks == null || orderedTasks.isEmpty()) return;
+
+    for (Task task : orderedTasks) {
+      TaskerRowPanelController row = new TaskerRowPanelController();
+      row.setTaskId(task.getId());
+      row.setName(task.getTitle() != null ? task.getTitle() : "");
+      String priorityText =
+          task.getPriorityId() != null
+              ? taskService
+                  .getPriorityById(task.getPriorityId())
+                  .map(priority -> priority.getDescription())
+                  .orElse("")
+              : "";
+      row.setPriority(priorityText);
+      if (task.getStartAt() != null) {
+        LocalDateTime ldt = LocalDateTime.ofInstant(task.getStartAt(), ZoneId.systemDefault());
+        row.setDate(dtf.format(ldt));
+      } else {
+        row.setDate("");
+      }
+      String status = Boolean.TRUE.equals(task.getDone()) ? "Done" : "Open";
+      row.setOpen(status);
+      String tagText =
+          task.getTagId() != null
+              ? taskService.getTagById(task.getTagId()).map(Tag::getName).orElse("")
+              : "";
+      row.setTags(tagText, "");
+      pnlTaskerTable.addRow(row);
+    }
   }
 }
