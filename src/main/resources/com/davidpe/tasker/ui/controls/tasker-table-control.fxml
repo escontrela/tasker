@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+
+<fx:root fx:id="paneTableTask" prefHeight="533.0" prefWidth="1144.0" styleClass="note-panel" stylesheets="@../styles.css" type="Pane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+   <children>
+      <Separator fx:id="sepTasker" layoutX="15.0" layoutY="492.0" prefHeight="3.0" prefWidth="1064.0" />
+      <ImageView fx:id="imgMoveLeft" fitHeight="16.0" fitWidth="25.0" layoutX="31.0" layoutY="507.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
+         <image>
+            <Image url="@../images/chevron_left_18dp_white.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgMoveRight" fitHeight="16.0" fitWidth="25.0" layoutX="58.0" layoutY="507.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
+         <image>
+            <Image url="@../images/chevron_right_18dp_white.png" />
+         </image>
+      </ImageView>
+   </children>
+</fx:root>

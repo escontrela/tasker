@@ -15,6 +15,7 @@ import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
 import com.davidpe.tasker.application.ui.controls.MessagePanelController;
+import com.davidpe.tasker.application.ui.controls.TaskerTablePanelController;
 import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
@@ -120,6 +121,8 @@ public class MainSceneController extends UiScreenController {
   @FXML private TableColumn<Task, String> tcolTaskTags;
 
   @FXML private MessagePanelController pnlMessage;
+
+  @FXML private TaskerTablePanelController pnlTaskerTable;
 
   @FXML private Button btFilter;
 

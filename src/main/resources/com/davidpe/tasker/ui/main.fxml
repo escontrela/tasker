@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.davidpe.tasker.application.ui.controls.MessagePanelController?>
+<?import com.davidpe.tasker.application.ui.controls.TaskerTablePanelController?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
@@ -117,12 +118,12 @@
             </ImageView>
          </graphic>
       </Button>
-      <Text fx:id="lblPractice" fill="#686b75" layoutX="678.0" layoutY="688.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-gray-medium" text="— your task manager">
+      <Text fx:id="lblPractice" fill="#686b75" layoutX="578.0" layoutY="793.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-gray-medium" text="— your task manager">
          <font>
             <Font name="Alatsi Regular" size="35.0" />
          </font>
       </Text>
-      <TableView fx:id="tableTasks" layoutX="97.0" layoutY="207.0" prefHeight="417.0" prefWidth="1134.0" styleClass="table-view">
+      <TableView fx:id="tableTasks" layoutX="92.0" layoutY="733.0" prefHeight="94.0" prefWidth="1134.0" styleClass="table-view">
          <columns>
             <TableColumn fx:id="tcolPriority" prefWidth="100.0" text="Prioridad" />
             <TableColumn fx:id="tcolTaskName" prefWidth="413.0" text="Name" />
@@ -133,5 +134,6 @@
          </columns>
       </TableView>
        <MessagePanelController fx:id="pnlMessage" layoutX="700.0" layoutY="720.0" prefWidth="536.0" visible="false" />
+      <TaskerTablePanelController fx:id="pnlTaskerTable" layoutX="87.0" layoutY="193.0" />
    </children>
 </Pane>
