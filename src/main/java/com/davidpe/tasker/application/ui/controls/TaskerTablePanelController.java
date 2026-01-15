@@ -111,6 +111,7 @@ public class TaskerTablePanelController extends Pane {
   public void setTasks(List<Task> tasks) {
     clearRows();
     if (tasks == null || tasks.isEmpty()) {
+      currentPage = 0;
       renderPage();
       return;
     }
@@ -120,7 +121,10 @@ public class TaskerTablePanelController extends Pane {
       attachRowListener(row);
       rows.add(row);
     }
-    currentPage = 0;
+    int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
+    if (currentPage >= totalPages) {
+      currentPage = Math.max(0, totalPages - 1);
+    }
     renderPage();
   }
 
@@ -172,7 +176,6 @@ public class TaskerTablePanelController extends Pane {
   public void clearRows() {
     rows.clear();
     paneTableTask.getChildren().clear();
-    currentPage = 0;
     updateNavigationVisibility();
   }
 
