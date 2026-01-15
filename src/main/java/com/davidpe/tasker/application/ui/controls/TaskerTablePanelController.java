@@ -175,7 +175,7 @@ public class TaskerTablePanelController extends Pane {
   /** Remove all rows from the table. */
   public void clearRows() {
     rows.clear();
-    paneTableTask.getChildren().clear();
+    paneTableTask.getChildren().removeIf(node -> node instanceof TaskerRowPanelController);
     updateNavigationVisibility();
   }
 
@@ -184,7 +184,7 @@ public class TaskerTablePanelController extends Pane {
   }
 
   private void renderPage() {
-    paneTableTask.getChildren().clear();
+    paneTableTask.getChildren().removeIf(node -> node instanceof TaskerRowPanelController);
     int start = currentPage * MAX_ROWS;
     int end = Math.min(start + MAX_ROWS, rows.size());
     int visibleIndex = 0;
