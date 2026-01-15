@@ -56,6 +56,8 @@ public class TaskerTablePanelController extends Pane {
     void onRowMoveUpClicked(TaskerRowPanelController row);
 
     void onRowMoveDownClicked(TaskerRowPanelController row);
+
+    void onRowOpenClicked(TaskerRowPanelController row);
   }
 
   private TableActionListener tableActionListener;
@@ -152,6 +154,11 @@ public class TaskerTablePanelController extends Pane {
           public void onRowClicked(TaskerRowPanelController source) {
             if (tableActionListener != null)
               tableActionListener.onRowClicked(TaskerTablePanelController.this);
+          }
+
+          @Override
+          public void onOpenClicked(TaskerRowPanelController source) {
+            if (tableActionListener != null) tableActionListener.onRowOpenClicked(source);
           }
         });
   }

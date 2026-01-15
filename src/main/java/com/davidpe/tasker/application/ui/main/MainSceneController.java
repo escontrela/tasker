@@ -3,6 +3,8 @@ package com.davidpe.tasker.application.ui.main;
 import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.application.task.DeleteTaskCommand;
 import com.davidpe.tasker.application.task.DeleteTaskUseCase;
+import com.davidpe.tasker.application.task.SetDoneTaskCommand;
+import com.davidpe.tasker.application.task.SetDoneTaskUseCase;
 import com.davidpe.tasker.application.task.TaskSequenceDirection;
 import com.davidpe.tasker.application.task.UpdateTaskSequenceCommand;
 import com.davidpe.tasker.application.task.UpdateTaskSequenceUseCase;
@@ -119,9 +121,16 @@ public class MainSceneController extends UiScreenController {
   private final ApplicationEventPublisher eventPublisher;
   private final TaskService taskService;
   private final DeleteTaskUseCase deleteTaskUseCase;
+  private final SetDoneTaskUseCase setDoneTaskUseCase;
   private final UpdateTaskSequenceUseCase updateTaskSequenceUseCase;
 
-  private Long pendingDeleteTaskId;
+  private Long pendingTaskId;
+  private PendingTaskAction pendingTaskAction;
+
+  private enum PendingTaskAction {
+    DELETE,
+    CLOSE
+  }
 
   @Lazy
   public MainSceneController(
@@ -129,12 +138,14 @@ public class MainSceneController extends UiScreenController {
       ApplicationEventPublisher eventPublisher,
       TaskService taskService,
       DeleteTaskUseCase deleteTaskUseCase,
+      SetDoneTaskUseCase setDoneTaskUseCase,
       UpdateTaskSequenceUseCase updateTaskSequenceUseCase) {
 
     this.screenFactory = screenFactory;
     this.eventPublisher = eventPublisher;
     this.taskService = taskService;
     this.deleteTaskUseCase = deleteTaskUseCase;
+    this.setDoneTaskUseCase = setDoneTaskUseCase;
     this.updateTaskSequenceUseCase = updateTaskSequenceUseCase;
   }
 
@@ -237,23 +248,28 @@ public class MainSceneController extends UiScreenController {
       // ignore image loading errors
     }
 
-    pnlMessage.setMessage("Do you really want to delete this task?");
     pnlMessage.setMessagePanelActionListener(
         new MessagePanelController.MessagePanelActionListener() {
           @Override
           public void onOkButtonClicked() {
 
-            if (pendingDeleteTaskId != null) {
-              deleteTaskUseCase.deleteTask(new DeleteTaskCommand(pendingDeleteTaskId));
+            if (pendingTaskId != null && pendingTaskAction != null) {
+              if (pendingTaskAction == PendingTaskAction.DELETE) {
+                deleteTaskUseCase.deleteTask(new DeleteTaskCommand(pendingTaskId));
+              } else if (pendingTaskAction == PendingTaskAction.CLOSE) {
+                setDoneTaskUseCase.toggleDone(new SetDoneTaskCommand(pendingTaskId));
+              }
             }
-            pendingDeleteTaskId = null;
+            pendingTaskId = null;
+            pendingTaskAction = null;
             pnlMessage.setVisible(false);
           }
 
           @Override
           public void onCancelButtonClicked() {
 
-            pendingDeleteTaskId = null;
+            pendingTaskId = null;
+            pendingTaskAction = null;
             pnlMessage.setVisible(false);
           }
         });
@@ -272,7 +288,9 @@ public class MainSceneController extends UiScreenController {
           @Override
           public void onRowDeleteClicked(TaskerRowPanelController row) {
             if (row == null || row.getTaskId() == null) return;
-            pendingDeleteTaskId = row.getTaskId();
+            pendingTaskId = row.getTaskId();
+            pendingTaskAction = PendingTaskAction.DELETE;
+            pnlMessage.setMessage("Do you really want to delete this task?");
             showDeletePanel(pnlMessage);
           }
 
@@ -294,6 +312,15 @@ public class MainSceneController extends UiScreenController {
             if (row == null || row.getTaskId() == null) return;
             updateTaskSequenceUseCase.updateSequence(
                 new UpdateTaskSequenceCommand(row.getTaskId(), TaskSequenceDirection.DOWN));
+          }
+
+          @Override
+          public void onRowOpenClicked(TaskerRowPanelController row) {
+            if (row == null || row.getTaskId() == null || row.isDone()) return;
+            pendingTaskId = row.getTaskId();
+            pendingTaskAction = PendingTaskAction.CLOSE;
+            pnlMessage.setMessage("Do you really want to close this task?");
+            showDeletePanel(pnlMessage);
           }
         });
 
@@ -454,8 +481,7 @@ public class MainSceneController extends UiScreenController {
       } else {
         row.setDate("");
       }
-      String status = Boolean.TRUE.equals(task.getDone()) ? "Done" : "Open";
-      row.setOpen(status);
+      row.setDone(Boolean.TRUE.equals(task.getDone()));
       String tagText =
           task.getTagId() != null
               ? taskService.getTagById(task.getTagId()).map(Tag::getName).orElse("")

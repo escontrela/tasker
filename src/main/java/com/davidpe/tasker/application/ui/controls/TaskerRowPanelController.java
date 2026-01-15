@@ -38,6 +38,7 @@ public class TaskerRowPanelController extends Pane {
 
   // Optional attached task id to identify the row externally
   private Long taskId;
+  private boolean done;
 
   // Listener to handle row actions from outside
   public interface RowActionListener {
@@ -48,6 +49,8 @@ public class TaskerRowPanelController extends Pane {
     void onMoveUpClicked(TaskerRowPanelController source);
 
     void onMoveDownClicked(TaskerRowPanelController source);
+
+    void onOpenClicked(TaskerRowPanelController source);
 
     void onRowClicked(TaskerRowPanelController source);
   }
@@ -98,6 +101,7 @@ public class TaskerRowPanelController extends Pane {
       DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
       lblDate.setText(fmt.format(ldt));
     }
+    setDone(Boolean.TRUE.equals(task.getDone()));
   }
 
   // Individual setters for external controllers
@@ -111,6 +115,16 @@ public class TaskerRowPanelController extends Pane {
 
   public void setOpen(String openText) {
     lblOpen.setText(openText);
+    done = "Done".equalsIgnoreCase(openText);
+  }
+
+  public void setDone(boolean done) {
+    this.done = done;
+    lblOpen.setText(done ? "Done" : "Open");
+  }
+
+  public boolean isDone() {
+    return done;
   }
 
   public void setPriority(String priorityText) {
@@ -138,6 +152,10 @@ public class TaskerRowPanelController extends Pane {
     return event.getSource() == imgDelete;
   }
 
+  private boolean isLabelOpenClicked(MouseEvent event) {
+    return event.getSource() == lblOpen;
+  }
+
   @FXML
   void onMouseClicked(MouseEvent event) {
     if (isImageDeleteClicked(event)) {
@@ -148,6 +166,8 @@ public class TaskerRowPanelController extends Pane {
       if (rowActionListener != null) rowActionListener.onMoveUpClicked(this);
     } else if (isImageDownClicked(event)) {
       if (rowActionListener != null) rowActionListener.onMoveDownClicked(this);
+    } else if (isLabelOpenClicked(event)) {
+      if (rowActionListener != null) rowActionListener.onOpenClicked(this);
     } else if (event.getSource() == paneRow) {
       if (rowActionListener != null) rowActionListener.onRowClicked(this);
     }
