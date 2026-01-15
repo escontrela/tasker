@@ -14,6 +14,8 @@ import javafx.scene.layout.Pane;
 
 public class TaskerRowPanelController extends Pane {
 
+  private static final String SELECTED_STYLE_CLASS = "selected";
+
   @FXML private ImageView imgDelete;
 
   @FXML private ImageView imgDown;
@@ -39,6 +41,7 @@ public class TaskerRowPanelController extends Pane {
   // Optional attached task id to identify the row externally
   private Long taskId;
   private boolean done;
+  private boolean selected;
 
   // Listener to handle row actions from outside
   public interface RowActionListener {
@@ -53,6 +56,12 @@ public class TaskerRowPanelController extends Pane {
     void onOpenClicked(TaskerRowPanelController source);
 
     void onRowClicked(TaskerRowPanelController source);
+
+    void onRowHovered(TaskerRowPanelController source);
+
+    void onRowExited(TaskerRowPanelController source);
+
+    void onRowDoubleClicked(TaskerRowPanelController source);
   }
 
   private RowActionListener rowActionListener;
@@ -73,7 +82,16 @@ public class TaskerRowPanelController extends Pane {
   }
 
   @FXML
-  private void initialize() {}
+  private void initialize() {
+    if (paneRow != null) {
+      if (!paneRow.getStyleClass().contains("task-item")) {
+        paneRow.getStyleClass().add("task-item");
+      }
+      paneRow.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onRowMouseClicked);
+      paneRow.addEventHandler(MouseEvent.MOUSE_ENTERED, this::onRowMouseEntered);
+      paneRow.addEventHandler(MouseEvent.MOUSE_EXITED, this::onRowMouseExited);
+    }
+  }
 
   /** Set the listener that will be notified when images or the row are clicked. */
   public void setRowActionListener(RowActionListener listener) {
@@ -127,6 +145,21 @@ public class TaskerRowPanelController extends Pane {
     return done;
   }
 
+  public void setSelected(boolean selected) {
+    this.selected = selected;
+    if (selected) {
+      if (!paneRow.getStyleClass().contains(SELECTED_STYLE_CLASS)) {
+        paneRow.getStyleClass().add(SELECTED_STYLE_CLASS);
+      }
+    } else {
+      paneRow.getStyleClass().remove(SELECTED_STYLE_CLASS);
+    }
+  }
+
+  public boolean isSelected() {
+    return selected;
+  }
+
   public void setPriority(String priorityText) {
     lblPriority.setText(priorityText);
     applyPriorityStyle(priorityText);
@@ -170,6 +203,25 @@ public class TaskerRowPanelController extends Pane {
 
   private boolean isLabelOpenClicked(MouseEvent event) {
     return event.getSource() == lblOpen;
+  }
+
+  private void onRowMouseEntered(MouseEvent event) {
+    if (rowActionListener != null) rowActionListener.onRowHovered(this);
+  }
+
+  private void onRowMouseExited(MouseEvent event) {
+    if (rowActionListener != null) rowActionListener.onRowExited(this);
+  }
+
+  private void onRowMouseClicked(MouseEvent event) {
+    if (event.getTarget() instanceof ImageView || event.getTarget() == lblOpen) {
+      return;
+    }
+    if (event.getClickCount() == 2) {
+      if (rowActionListener != null) rowActionListener.onRowDoubleClicked(this);
+    } else {
+      if (rowActionListener != null) rowActionListener.onRowClicked(this);
+    }
   }
 
   @FXML

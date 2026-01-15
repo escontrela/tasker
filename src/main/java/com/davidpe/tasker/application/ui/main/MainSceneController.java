@@ -126,6 +126,7 @@ public class MainSceneController extends UiScreenController {
 
   private Long pendingTaskId;
   private PendingTaskAction pendingTaskAction;
+  private TaskerRowPanelController hoveredRow;
 
   private enum PendingTaskAction {
     DELETE,
@@ -284,6 +285,31 @@ public class MainSceneController extends UiScreenController {
 
           @Override
           public void onRowClicked(TaskerTablePanelController source) {}
+
+          @Override
+          public void onRowHovered(TaskerRowPanelController row) {
+            if (row == null) return;
+            if (hoveredRow != null && hoveredRow != row) {
+              hoveredRow.setSelected(false);
+            }
+            hoveredRow = row;
+            hoveredRow.setSelected(true);
+          }
+
+          @Override
+          public void onRowExited(TaskerRowPanelController row) {
+            if (row == null) return;
+            if (hoveredRow == row) {
+              hoveredRow.setSelected(false);
+              hoveredRow = null;
+            }
+          }
+
+          @Override
+          public void onRowDoubleClicked(TaskerRowPanelController row) {
+            if (row == null || row.getTaskId() == null || !row.isSelected()) return;
+            eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(row.getTaskId()));
+          }
 
           @Override
           public void onRowDeleteClicked(TaskerRowPanelController row) {
