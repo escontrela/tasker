@@ -460,11 +460,13 @@ public class MainSceneController extends UiScreenController {
 
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    pnlTaskerTable.clearRows();
+    pnlTaskerTable.setTasks(orderedTasks);
     if (orderedTasks == null || orderedTasks.isEmpty()) return;
 
-    for (Task task : orderedTasks) {
-      TaskerRowPanelController row = new TaskerRowPanelController();
+    List<TaskerRowPanelController> rows = pnlTaskerTable.getRows();
+    for (int i = 0; i < orderedTasks.size() && i < rows.size(); i++) {
+      Task task = orderedTasks.get(i);
+      TaskerRowPanelController row = rows.get(i);
       row.setTaskId(task.getId());
       row.setName(task.getTitle() != null ? task.getTitle() : "");
       String priorityText =
@@ -487,7 +489,6 @@ public class MainSceneController extends UiScreenController {
               ? taskService.getTagById(task.getTagId()).map(Tag::getName).orElse("")
               : "";
       row.setTags(tagText, "");
-      pnlTaskerTable.addRow(row);
     }
   }
 }

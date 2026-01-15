@@ -176,6 +176,10 @@ public class TaskerTablePanelController extends Pane {
     updateNavigationVisibility();
   }
 
+  public List<TaskerRowPanelController> getRows() {
+    return new ArrayList<>(rows);
+  }
+
   private void renderPage() {
     paneTableTask.getChildren().clear();
     int start = currentPage * MAX_ROWS;
