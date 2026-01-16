@@ -54,6 +54,10 @@ public class TaskerTablePanelController extends Pane {
 
     void onRowDoubleClicked(TaskerRowPanelController row);
 
+    void onRowSelected(TaskerRowPanelController row);
+
+    void onRowContextMenuRequested(TaskerRowPanelController row, double screenX, double screenY);
+
     // Row specific actions forwarded
     void onRowDeleteClicked(TaskerRowPanelController row);
 
@@ -167,8 +171,7 @@ public class TaskerTablePanelController extends Pane {
 
           @Override
           public void onRowClicked(TaskerRowPanelController source) {
-            if (tableActionListener != null)
-              tableActionListener.onRowClicked(TaskerTablePanelController.this);
+            if (tableActionListener != null) tableActionListener.onRowSelected(source);
           }
 
           @Override
@@ -189,6 +192,14 @@ public class TaskerTablePanelController extends Pane {
           @Override
           public void onOpenClicked(TaskerRowPanelController source) {
             if (tableActionListener != null) tableActionListener.onRowOpenClicked(source);
+          }
+
+          @Override
+          public void onRowContextMenuRequested(
+              TaskerRowPanelController source, double screenX, double screenY) {
+            if (tableActionListener != null) {
+              tableActionListener.onRowContextMenuRequested(source, screenX, screenY);
+            }
           }
         });
   }

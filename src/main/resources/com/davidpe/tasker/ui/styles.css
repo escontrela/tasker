@@ -323,6 +323,21 @@
     -fx-alignment: center-left;    /* Contenido alineado a la izquierda */
 }
 
+.menu-task-item {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+.menu-task-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.06);
+    -fx-border-color: #3a86ff;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
 /* Cabecera de popup */
 .menu-text-header {
     -fx-font-size: 22px;
