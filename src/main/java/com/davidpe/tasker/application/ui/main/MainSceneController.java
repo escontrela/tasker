@@ -16,6 +16,8 @@ import com.davidpe.tasker.application.ui.controls.MessagePanelController;
 import com.davidpe.tasker.application.ui.controls.TaskerRowPanelController;
 import com.davidpe.tasker.application.ui.controls.TaskerTablePanelController;
 import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
+import com.davidpe.tasker.application.ui.events.WindowMenuTaskOpenedEvent;
+import com.davidpe.tasker.application.ui.events.WindowMenuTaskSelectedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
 import com.davidpe.tasker.domain.task.Tag;
@@ -31,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -43,6 +46,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -127,6 +131,7 @@ public class MainSceneController extends UiScreenController {
   private Long pendingTaskId;
   private PendingTaskAction pendingTaskAction;
   private TaskerRowPanelController hoveredRow;
+  private TaskerRowPanelController selectedRow;
 
   private enum PendingTaskAction {
     DELETE,
@@ -289,18 +294,13 @@ public class MainSceneController extends UiScreenController {
           @Override
           public void onRowHovered(TaskerRowPanelController row) {
             if (row == null) return;
-            if (hoveredRow != null && hoveredRow != row) {
-              hoveredRow.setSelected(false);
-            }
             hoveredRow = row;
-            hoveredRow.setSelected(true);
           }
 
           @Override
           public void onRowExited(TaskerRowPanelController row) {
             if (row == null) return;
             if (hoveredRow == row) {
-              hoveredRow.setSelected(false);
               hoveredRow = null;
             }
           }
@@ -348,6 +348,34 @@ public class MainSceneController extends UiScreenController {
             pnlMessage.setMessage("Do you really want to close this task?");
             showDeletePanel(pnlMessage);
           }
+
+          @Override
+          public void onRowContextMenuRequested(
+              TaskerRowPanelController row, double screenX, double screenY) {
+            if (row == null || row.getTaskId() == null) return;
+            selectRow(row);
+            eventPublisher.publishEvent(
+                new WindowMenuTaskOpenedEvent(
+                    row.getTaskId(), new Point((int) screenX, (int) screenY)));
+          }
+
+          @Override
+          public void onRowSelected(TaskerRowPanelController row) {
+            if (row == null) return;
+            selectRow(row);
+          }
+        });
+
+    pnlTaskerTable.addEventFilter(
+        MouseEvent.MOUSE_CLICKED,
+        event -> {
+          if (event.getButton() != MouseButton.SECONDARY || event.isConsumed()) return;
+          if (selectedRow == null || selectedRow.getTaskId() == null) return;
+          eventPublisher.publishEvent(
+              new WindowMenuTaskOpenedEvent(
+                  selectedRow.getTaskId(),
+                  new Point((int) event.getScreenX(), (int) event.getScreenY())));
+          event.consume();
         });
 
     // load tasks initially so the window shows data on first presentation
@@ -358,6 +386,45 @@ public class MainSceneController extends UiScreenController {
   public void resetData() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'resetData'");
+  }
+
+  @EventListener
+  public void onMenuTaskSelected(WindowMenuTaskSelectedEvent event) {
+    if (event == null || event.getTaskId() == null || event.getAction() == null) return;
+    Platform.runLater(
+        () -> {
+          switch (event.getAction()) {
+            case EDIT -> eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(event.getTaskId()));
+            case DELETE -> {
+              pendingTaskId = event.getTaskId();
+              pendingTaskAction = PendingTaskAction.DELETE;
+              pnlMessage.setMessage("Do you really want to delete this task?");
+              showDeletePanel(pnlMessage);
+            }
+            case PRIORITY_UP ->
+                updateTaskSequenceUseCase.updateSequence(
+                    new UpdateTaskSequenceCommand(event.getTaskId(), TaskSequenceDirection.UP));
+            case PRIORITY_DOWN ->
+                updateTaskSequenceUseCase.updateSequence(
+                    new UpdateTaskSequenceCommand(event.getTaskId(), TaskSequenceDirection.DOWN));
+            case DONE -> {
+              pendingTaskId = event.getTaskId();
+              pendingTaskAction = PendingTaskAction.CLOSE;
+              pnlMessage.setMessage("Do you really want to close this task?");
+              showDeletePanel(pnlMessage);
+            }
+            default -> {}
+          }
+        });
+  }
+
+  private void selectRow(TaskerRowPanelController row) {
+    if (row == null) return;
+    if (selectedRow != null && selectedRow != row) {
+      selectedRow.setSelected(false);
+    }
+    selectedRow = row;
+    selectedRow.setSelected(true);
   }
 
   private void moveMainWindowsSetUp() {

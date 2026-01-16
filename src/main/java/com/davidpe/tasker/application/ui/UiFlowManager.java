@@ -2,20 +2,20 @@ package com.davidpe.tasker.application.ui;
  
 
 import javafx.application.Platform;
-import java.awt.Point;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
-import org.springframework.expression.Operation;
 import org.springframework.stereotype.Component;
 
 import com.davidpe.tasker.application.ui.common.UiScreen;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
+import com.davidpe.tasker.application.ui.events.WindowMenuTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
 import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowOpenedEvent;
+import com.davidpe.tasker.application.ui.menu.MenuTaskData;
 import com.davidpe.tasker.application.ui.tasks.NewTaskPanelData;
 
 /**
@@ -82,5 +82,14 @@ public class UiFlowManager {
             editTaskDialog.reset();
             editTaskDialog.setData(new NewTaskPanelData(NewTaskPanelData.OperationType.EDIT, ev.getTaskId()));
             editTaskDialog.show();
+     }
+
+     @EventListener
+     private void onMenuTaskOpened(WindowMenuTaskOpenedEvent ev) {
+
+            UiScreen menuTaskDialog = screenFactory.create(UiScreenId.MENU_TASK_DIALOG);
+            menuTaskDialog.reset();
+            menuTaskDialog.setData(new MenuTaskData(ev.getTaskId()));
+            menuTaskDialog.showAtPosition(ev.getMenuPosition());
      }
 }

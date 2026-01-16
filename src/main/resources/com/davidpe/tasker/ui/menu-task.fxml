@@ -9,7 +9,7 @@
 <Pane fx:id="paneMenuTask" prefHeight="253.0" prefWidth="172.0" styleClass="note-panel" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.menu.MenuTaskController">
               
        <children>
-      <Pane fx:id="paneEdit" layoutX="16.0" layoutY="27.0" onMouseClicked="#onMouseClicked" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="38.0" prefWidth="140.0">
+      <Pane fx:id="paneEdit" layoutX="16.0" layoutY="27.0" onMouseClicked="#onMouseClicked" prefHeight="38.0" prefWidth="140.0" styleClass="menu-task-item">
          <children>
             <Label fx:id="lblEdit" layoutX="50.0" layoutY="10.0" prefHeight="17.0" prefWidth="68.0" text="Edit Task" textFill="WHITE" />
                      <ImageView fx:id="imgEdit" fitHeight="16.0" fitWidth="25.0" layoutX="22.0" layoutY="11.0" preserveRatio="true">
@@ -19,7 +19,7 @@
                      </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="paneDelete" layoutX="16.0" layoutY="65.0" onMouseClicked="#onMouseClicked" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="38.0" prefWidth="140.0">
+      <Pane fx:id="paneDelete" layoutX="16.0" layoutY="65.0" onMouseClicked="#onMouseClicked" prefHeight="38.0" prefWidth="140.0" styleClass="menu-task-item">
          <children>
             <Label fx:id="lblDelete" layoutX="50.0" layoutY="10.0" prefHeight="17.0" prefWidth="68.0" text="Delete Task" textFill="WHITE" />
             <ImageView fx:id="imgDelete" fitHeight="16.0" fitWidth="25.0" layoutX="22.0" layoutY="11.0" preserveRatio="true">
@@ -29,7 +29,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="panePriorityUp" layoutX="17.0" layoutY="102.0" onMouseClicked="#onMouseClicked" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="38.0" prefWidth="140.0">
+      <Pane fx:id="panePriorityUp" layoutX="17.0" layoutY="102.0" onMouseClicked="#onMouseClicked" prefHeight="38.0" prefWidth="140.0" styleClass="menu-task-item">
          <children>
             <Label fx:id="lblPriorityUp" layoutX="50.0" layoutY="10.0" prefHeight="17.0" prefWidth="68.0" text="Up priority" textFill="WHITE" />
             <ImageView fx:id="imgPriorityUp" fitHeight="16.0" fitWidth="25.0" layoutX="22.0" layoutY="11.0" preserveRatio="true">
@@ -39,9 +39,9 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="panePriorityDown" layoutX="17.0" layoutY="140.0" prefHeight="38.0" prefWidth="140.0">
+      <Pane fx:id="panePriorityDown" layoutX="17.0" layoutY="140.0" onMouseClicked="#onMouseClicked" prefHeight="38.0" prefWidth="140.0" styleClass="menu-task-item">
          <children>
-            <Label fx:id="lblPriorityDown" layoutX="50.0" layoutY="10.0" onMouseClicked="#onMouseClicked" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="17.0" prefWidth="97.0" text="Down  priority" textFill="WHITE" />
+            <Label fx:id="lblPriorityDown" layoutX="50.0" layoutY="10.0" prefHeight="17.0" prefWidth="97.0" text="Down  priority" textFill="WHITE" />
             <ImageView fx:id="imgPriorityDown" fitHeight="16.0" fitWidth="25.0" layoutX="22.0" layoutY="11.0" preserveRatio="true">
                <image>
                   <Image url="@images/text_select_move_down_18dp_white.png" />
@@ -49,7 +49,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="paneDone" layoutX="17.0" layoutY="201.0" onMouseClicked="#onMouseClicked" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="38.0" prefWidth="140.0">
+      <Pane fx:id="paneDone" layoutX="17.0" layoutY="201.0" onMouseClicked="#onMouseClicked" prefHeight="38.0" prefWidth="140.0" styleClass="menu-task-item">
          <children>
             <Label fx:id="lblDone" layoutX="50.0" layoutY="10.0" prefHeight="17.0" prefWidth="68.0" text="Done task" textFill="WHITE" />
             <ImageView fx:id="imgDone" fitHeight="16.0" fitWidth="25.0" layoutX="22.0" layoutY="11.0" preserveRatio="true">
