@@ -1109,6 +1109,19 @@
     -fx-text-fill: #55c26b;
 }
 
+/* Date pane background colors according to priority */
+.date-priority-high {
+    -fx-background-color: #ff6b6b; /* red */
+}
+
+.date-priority-medium {
+    -fx-background-color: #ffd54f; /* yellow */
+}
+
+.date-priority-low {
+    -fx-background-color: transparent; /* keep default */
+}
+
 /* Pastillas de victorias */
 .score-pill {
     -fx-background-color: #4A5D23;
