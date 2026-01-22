@@ -7,32 +7,32 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<fx:root fx:id="paneRow" prefHeight="88.0" prefWidth="1098.0" styleClass="score-strip" stylesheets="@../styles.css" type="Pane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="paneRow" prefHeight="88.0" prefWidth="548.0" styleClass="score-strip" stylesheets="@../styles.css" type="Pane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
 
    <children>
-      <Label fx:id="lblName" layoutX="108.0" layoutY="17.0" prefHeight="17.0" prefWidth="269.0" text="Implement the new UI row style" textFill="WHITE">
+      <Label fx:id="lblName" layoutX="108.0" layoutY="17.0" prefHeight="22.0" prefWidth="294.0" text="Implement the new UI row style" textFill="WHITE">
          <font>
             <Font size="17.0" />
          </font></Label>
-      <Label fx:id="lblTags1" layoutX="108.0" layoutY="53.0" prefHeight="17.0" prefWidth="52.0" text="general" textAlignment="CENTER" textFill="#b231b0" />
-      <Label fx:id="lblTags2" layoutX="169.0" layoutY="53.0" prefHeight="17.0" prefWidth="81.0" text="integrations" textAlignment="CENTER" textFill="#225aae" />
-      <Label fx:id="lblOpen" layoutX="107.0" layoutY="36.0" onMouseClicked="#onMouseClicked" prefHeight="17.0" prefWidth="54.0" text="Open" textFill="#dee012" />
-      <ImageView fx:id="imgDelete" fitHeight="16.0" fitWidth="25.0" layoutX="1066.0" layoutY="11.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
+      <Label fx:id="lblTags1" layoutX="108.0" layoutY="65.0" prefHeight="17.0" prefWidth="52.0" text="general" textAlignment="CENTER" textFill="#b231b0" />
+      <Label fx:id="lblTags2" layoutX="169.0" layoutY="65.0" prefHeight="17.0" prefWidth="81.0" text="integrations" textAlignment="CENTER" textFill="#225aae" />
+      <Label fx:id="lblOpen" layoutX="447.0" layoutY="58.0" onMouseClicked="#onMouseClicked" prefHeight="17.0" prefWidth="52.0" text="Open" textAlignment="CENTER" textFill="#dee012" />
+      <ImageView fx:id="imgDelete" fitHeight="16.0" fitWidth="25.0" layoutX="518.0" layoutY="15.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
          <image>
             <Image url="@../images/delete_18dp_white.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="imgEdit" fitHeight="16.0" fitWidth="25.0" layoutX="1066.0" layoutY="28.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
+      <ImageView fx:id="imgEdit" fitHeight="16.0" fitWidth="25.0" layoutX="518.0" layoutY="32.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
          <image>
             <Image url="@../images/edit_square_18dp_white.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="imgUp" fitHeight="16.0" fitWidth="25.0" layoutX="1066.0" layoutY="44.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
+      <ImageView fx:id="imgUp" fitHeight="16.0" fitWidth="25.0" layoutX="518.0" layoutY="50.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
          <image>
             <Image url="@../images/text_select_move_up_18dp_white.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="imgDown" fitHeight="16.0" fitWidth="25.0" layoutX="1066.0" layoutY="60.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
+      <ImageView fx:id="imgDown" fitHeight="16.0" fitWidth="25.0" layoutX="518.0" layoutY="64.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
          <image>
             <Image url="@../images/text_select_move_down_18dp_white.png" />
          </image>
@@ -51,7 +51,7 @@
             </Label>
          </children>
       </Pane>
-      <Button fx:id="btDone" alignment="BASELINE_CENTER" layoutX="725.0" layoutY="10.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="37.0" prefWidth="71.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
+      <Button fx:id="btDone" alignment="BASELINE_CENTER" layoutX="428.0" layoutY="9.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="37.0" prefWidth="71.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>
