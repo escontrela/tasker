@@ -4,11 +4,15 @@ import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.events.WindowMenuTaskSelectedEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
@@ -51,6 +55,16 @@ public class MenuTaskController extends UiScreenController implements MenuTaskVi
 
   @FXML private Pane paneMenuTask;
 
+  private final EventHandler<MouseEvent> sceneClickHandler =
+      event -> {
+        // If no task data, already hidden by other logic; still allow close when clicking outside
+        Node target =
+            event.getPickResult() != null ? event.getPickResult().getIntersectedNode() : null;
+        if (target == null || !isDescendantOf(target, paneMenuTask)) {
+          hideStage();
+        }
+      };
+
   @FXML private Pane panePriorityDown;
 
   @FXML private Pane panePriorityUp;
@@ -90,6 +104,50 @@ public class MenuTaskController extends UiScreenController implements MenuTaskVi
     }
 
     hideStage();
+  }
+
+  @Override
+  public void setRootStage(Stage stage) {
+    // Attach/detach handler when scene changes
+    Stage previous = getRootStage();
+    super.setRootStage(stage);
+
+    if (previous != null) {
+      Scene oldScene = previous.getScene();
+      if (oldScene != null) {
+        oldScene.removeEventFilter(MouseEvent.MOUSE_PRESSED, sceneClickHandler);
+      }
+    }
+
+    if (stage != null) {
+      stage
+          .sceneProperty()
+          .addListener(
+              (obs, oldScene, newScene) -> {
+                if (oldScene != null) {
+                  oldScene.removeEventFilter(MouseEvent.MOUSE_PRESSED, sceneClickHandler);
+                }
+                if (newScene != null) {
+                  newScene.addEventFilter(MouseEvent.MOUSE_PRESSED, sceneClickHandler);
+                }
+              });
+
+      Scene s = stage.getScene();
+      if (s != null) {
+        s.addEventFilter(MouseEvent.MOUSE_PRESSED, sceneClickHandler);
+      }
+    }
+  }
+
+  private boolean isDescendantOf(Node node, Node ancestor) {
+    Node current = node;
+    while (current != null) {
+      if (current == ancestor) {
+        return true;
+      }
+      current = current.getParent();
+    }
+    return false;
   }
 
   @Override

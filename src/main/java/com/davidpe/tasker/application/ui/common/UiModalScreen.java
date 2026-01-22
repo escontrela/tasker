@@ -1,24 +1,26 @@
 package com.davidpe.tasker.application.ui.common;
 
-
+import java.util.Objects;
+import java.util.function.Supplier;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.util.Objects;
-import java.util.function.Supplier;
-
 /**
- * This class represents a modal screen in the application using javafx
- * framework to create a modal dialog.
+ * This class represents a modal screen in the application using javafx framework to create a modal
+ * dialog.
  */
 public final class UiModalScreen extends AbstractUiScreen {
 
   private final Stage primaryStage;
   private Stage cachedStage;
 
-  public UiModalScreen(UiScreenId id, Stage primaryStage, Supplier<Scene> stageSupplier, UiScreenController controller) {
+  public UiModalScreen(
+      UiScreenId id,
+      Stage primaryStage,
+      Supplier<Scene> stageSupplier,
+      UiScreenController controller) {
 
     super(id, stageSupplier, controller);
     this.primaryStage = primaryStage;
@@ -40,6 +42,15 @@ public final class UiModalScreen extends AbstractUiScreen {
   public void showAtPosition(java.awt.Point menuPosition) {
 
     Stage modalStage = ensureStage(menuPosition);
+
+    modalStage
+        .focusedProperty()
+        .addListener(
+            (obs, wasFocused, isNowFocused) -> {
+              if (!isNowFocused) {
+                modalStage.hide();
+              }
+            });
     modalStage.showAndWait();
   }
 
@@ -55,7 +66,7 @@ public final class UiModalScreen extends AbstractUiScreen {
   @Override
   public boolean isShowing() {
 
-     return Objects.nonNull(cachedStage) && cachedStage.isShowing();
+    return Objects.nonNull(cachedStage) && cachedStage.isShowing();
   }
 
   private Stage ensureStage(java.awt.Point menuPosition) {
@@ -65,7 +76,7 @@ public final class UiModalScreen extends AbstractUiScreen {
       cachedStage = new Stage();
       cachedStage.initStyle(StageStyle.TRANSPARENT);
 
-      //This is important because it makes the stage modal only the first time it is shown
+      // This is important because it makes the stage modal only the first time it is shown
       cachedStage.initModality(Modality.WINDOW_MODAL);
       cachedStage.initOwner(primaryStage);
 
@@ -83,5 +94,4 @@ public final class UiModalScreen extends AbstractUiScreen {
 
     return cachedStage;
   }
-
 }

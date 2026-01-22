@@ -4,8 +4,10 @@ import com.davidpe.tasker.domain.task.Task;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -20,6 +22,10 @@ public class TaskerTablePanelController extends Pane {
   @FXML private Pane paneTableTask;
 
   @FXML private Separator sepTasker;
+
+  @FXML private Button btLeft;
+
+  @FXML private Button btRight;
 
   public TaskerTablePanelController() {
     FXMLLoader fxmlLoader =
@@ -232,10 +238,11 @@ public class TaskerTablePanelController extends Pane {
   }
 
   private void updateNavigationVisibility() {
+
     int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
     boolean hasMultiplePages = totalPages > 1;
-    imgMoveLeft.setVisible(hasMultiplePages && currentPage > 0);
-    imgMoveRight.setVisible(hasMultiplePages && currentPage < totalPages - 1);
+    btLeft.setVisible(hasMultiplePages && currentPage > 0);
+    btRight.setVisible(hasMultiplePages && currentPage < totalPages - 1);
   }
 
   private void movePage(int delta) {
@@ -256,6 +263,14 @@ public class TaskerTablePanelController extends Pane {
     return event.getSource() == imgMoveRight;
   }
 
+  private boolean isBtnLeftClicked(ActionEvent event) {
+    return event.getSource() == btLeft;
+  }
+
+  private boolean isBtnRightClicked(ActionEvent event) {
+    return event.getSource() == btRight;
+  }
+
   @FXML
   void onMouseClicked(MouseEvent event) {
     if (isImageMoveLeftClicked(event)) {
@@ -266,6 +281,17 @@ public class TaskerTablePanelController extends Pane {
       if (tableActionListener != null) tableActionListener.onMoveRightClicked(this);
     } else if (event.getSource() == paneTableTask) {
       if (tableActionListener != null) tableActionListener.onRowClicked(this);
+    }
+  }
+
+  @FXML
+  void buttonAction(ActionEvent event) {
+    if (isBtnLeftClicked(event)) {
+      movePage(-1);
+      if (tableActionListener != null) tableActionListener.onMoveLeftClicked(this);
+    } else if (isBtnRightClicked(event)) {
+      movePage(1);
+      if (tableActionListener != null) tableActionListener.onMoveRightClicked(this);
     }
   }
 }
