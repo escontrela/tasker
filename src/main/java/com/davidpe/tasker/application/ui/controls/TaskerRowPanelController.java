@@ -5,8 +5,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.TextStyle;
+import java.util.Locale;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -25,13 +30,11 @@ public class TaskerRowPanelController extends Pane {
 
   @FXML private ImageView imgUp;
 
-  @FXML private Label lblDate;
-
   @FXML private Label lblName;
 
   @FXML private Label lblOpen;
 
-  @FXML private Label lblPriority;
+  // lblDate and lblPriority removed from UI; keep date parts and paneDate styling instead
 
   @FXML private Label lblTags1;
 
@@ -39,10 +42,22 @@ public class TaskerRowPanelController extends Pane {
 
   @FXML private Pane paneRow;
 
+  @FXML private Button btDone;
+
+  @FXML private Label lbDonebutton;
+
+  @FXML private Label lblDayNumber;
+
+  @FXML private Label lblMonthAbbrev;
+
+  @FXML private Pane paneDate;
+
   // Optional attached task id to identify the row externally
   private Long taskId;
   private boolean done;
   private boolean selected;
+  // whether we currently have a real date set
+  private boolean hasDate = false;
 
   // Listener to handle row actions from outside
   public interface RowActionListener {
@@ -114,20 +129,23 @@ public class TaskerRowPanelController extends Pane {
     if (task == null) return;
     setTaskId(task.getId());
     lblName.setText(task.getTitle());
-    setPriority(String.valueOf(task.getPriorityId()));
+    // apply priority styling based on priority id/description from caller
+    // callers (e.g. MainSceneController) should call setPriority(description) if available
     lblTags1.setText("");
     lblTags2.setText("");
     if (task.getStartAt() != null) {
       LocalDateTime ldt = LocalDateTime.ofInstant(task.getStartAt(), ZoneId.systemDefault());
       DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-      lblDate.setText(fmt.format(ldt));
+      String dateText = fmt.format(ldt);
+      updateDatePartsFromDateText(dateText);
     }
     setDone(Boolean.TRUE.equals(task.getDone()));
   }
 
   // Individual setters for external controllers
   public void setDate(String dateText) {
-    lblDate.setText(dateText);
+    // lblDate was removed from the UI; keep date parts updated
+    updateDatePartsFromDateText(dateText);
   }
 
   public void setName(String name) {
@@ -135,13 +153,30 @@ public class TaskerRowPanelController extends Pane {
   }
 
   public void setOpen(String openText) {
-    lblOpen.setText(openText);
-    done = "Done".equalsIgnoreCase(openText);
+    // Delegate to setDone so visibility of btDone is handled consistently
+    boolean isDone = "Done".equalsIgnoreCase(openText);
+    setDone(isDone);
   }
 
   public void setDone(boolean done) {
     this.done = done;
-    lblOpen.setText(done ? "Done" : "Open");
+    String text = done ? "Done" : "Open";
+    // Update status label
+    if (lblOpen != null) lblOpen.setText(text);
+    // The visible button should only appear when the task is Open (done == false)
+    boolean showButton = !done;
+    if (btDone != null) {
+      btDone.setVisible(showButton);
+      btDone.setManaged(showButton);
+      if (showButton) {
+        // The button's visible label must read "Done"
+        // btDone.setText("Done");
+      }
+    }
+    // Also update the label inside the button if present
+    if (lbDonebutton != null) {
+      lbDonebutton.setText(showButton ? "Done" : "");
+    }
   }
 
   public boolean isDone() {
@@ -164,7 +199,7 @@ public class TaskerRowPanelController extends Pane {
   }
 
   public void setPriority(String priorityText) {
-    lblPriority.setText(priorityText);
+    // lblPriority was removed from the UI; only apply paneDate styling based on priority
     applyPriorityStyle(priorityText);
   }
 
@@ -176,16 +211,82 @@ public class TaskerRowPanelController extends Pane {
   private void applyPriorityStyle(String priorityText) {
     if (priorityText == null) return;
     String normalized = priorityText.toLowerCase();
-    lblPriority
-        .getStyleClass()
-        .removeAll("task-priority-high", "task-priority-medium", "task-priority-low");
-    if (normalized.contains("high")) {
-      lblPriority.getStyleClass().add("task-priority-high");
-    } else if (normalized.contains("medium")) {
-      lblPriority.getStyleClass().add("task-priority-medium");
-    } else if (normalized.contains("low")) {
-      lblPriority.getStyleClass().add("task-priority-low");
+    // paneDate should show low-priority color when there's no date; otherwise follow priority
+    if (paneDate != null) {
+      paneDate
+          .getStyleClass()
+          .removeAll("date-priority-high", "date-priority-medium", "date-priority-low");
+      if (!hasDate) {
+        paneDate.getStyleClass().add("date-priority-low");
+      } else if (normalized.contains("high")) {
+        paneDate.getStyleClass().add("date-priority-high");
+      } else if (normalized.contains("medium")) {
+        paneDate.getStyleClass().add("date-priority-medium");
+      } else {
+        paneDate.getStyleClass().add("date-priority-low");
+      }
     }
+  }
+
+  /**
+   * Try to extract day number and month abbreviation from the same date text shown in lblDate.
+   * Expected format (by default): yyyy-MM-dd HH:mm. If parsing fails, clear the labels.
+   */
+  private void updateDatePartsFromDateText(String dateText) {
+    if (dateText == null || dateText.isEmpty()) {
+      hasDate = false;
+      if (lblDayNumber != null) lblDayNumber.setText("?");
+      if (lblMonthAbbrev != null) lblMonthAbbrev.setText("");
+      if (paneDate != null) {
+        paneDate
+            .getStyleClass()
+            .removeAll("date-priority-high", "date-priority-medium", "date-priority-low");
+        paneDate.getStyleClass().add("date-priority-low");
+      }
+      return;
+    }
+    try {
+      DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+      LocalDateTime ldt = LocalDateTime.parse(dateText, fmt);
+      hasDate = true;
+      if (lblDayNumber != null) lblDayNumber.setText(String.valueOf(ldt.getDayOfMonth()));
+      if (lblMonthAbbrev != null)
+        lblMonthAbbrev.setText(ldt.getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault()));
+    } catch (DateTimeParseException ex) {
+      // If parsing fails, try to extract simple numbers safely (fallback)
+      try {
+        // attempt to parse yyyy-MM-dd prefix
+        String[] parts = dateText.split(" ")[0].split("-");
+        if (parts.length >= 3) {
+          hasDate = true;
+          if (lblDayNumber != null)
+            lblDayNumber.setText(String.valueOf(Integer.parseInt(parts[2])));
+          if (lblMonthAbbrev != null) {
+            int month = Integer.parseInt(parts[1]);
+            lblMonthAbbrev.setText(
+                java.time.Month.of(month).getDisplayName(TextStyle.SHORT, Locale.getDefault()));
+          }
+          return;
+        }
+      } catch (Exception e) {
+        // ignore fallback errors
+      }
+      hasDate = false;
+      if (lblDayNumber != null) lblDayNumber.setText("?");
+      if (lblMonthAbbrev != null) lblMonthAbbrev.setText("");
+      if (paneDate != null) {
+        paneDate
+            .getStyleClass()
+            .removeAll("date-priority-high", "date-priority-medium", "date-priority-low");
+        paneDate.getStyleClass().add("date-priority-low");
+      }
+    }
+  }
+
+  private boolean isButtonDoneClicked(ActionEvent event) {
+    return event.getSource() == btDone
+        || event.getTarget() == btDone
+        || event.getTarget() == lbDonebutton;
   }
 
   private boolean isImageDownClicked(MouseEvent event) {
@@ -245,9 +346,17 @@ public class TaskerRowPanelController extends Pane {
     } else if (isImageDownClicked(event)) {
       if (rowActionListener != null) rowActionListener.onMoveDownClicked(this);
     } else if (isLabelOpenClicked(event)) {
+      // clicking the open label or the done button/label should produce the same action
       if (rowActionListener != null) rowActionListener.onOpenClicked(this);
     } else if (event.getSource() == paneRow) {
       if (rowActionListener != null) rowActionListener.onRowClicked(this);
+    }
+  }
+
+  @FXML
+  void buttonAction(ActionEvent event) {
+    if (isButtonDoneClicked(event)) {
+      if (rowActionListener != null) rowActionListener.onOpenClicked(this);
     }
   }
 }
