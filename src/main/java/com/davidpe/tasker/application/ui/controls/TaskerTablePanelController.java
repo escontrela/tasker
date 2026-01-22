@@ -4,6 +4,8 @@ import com.davidpe.tasker.domain.task.Task;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -87,9 +89,13 @@ public class TaskerTablePanelController extends Pane {
   // add more spacing and top margin because rows are taller now
   private static final double ROW_SPACING = 10.0;
   private static final double TOP_MARGIN = 30.0;
-  private static final double ROW_OFFSET_X = 30.0;
+  private static final double LEFT_COLUMN_OFFSET_X = 24.0;
+  private static final double RIGHT_COLUMN_OFFSET_X = 572.0;
   // reduce rows because each row is taller now
   private static final int MAX_ROWS = 4;
+  private static final int MAX_COLUMNS = 2;
+  private static final Duration ROW_FADE_DURATION = Duration.millis(220);
+  private static final Duration ROW_FADE_DELAY = Duration.millis(70);
 
   @FXML
   private void initializeInternal() {}
@@ -140,8 +146,9 @@ public class TaskerTablePanelController extends Pane {
       rows.add(row);
     }
     int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
-    if (currentPage >= totalPages) {
-      currentPage = Math.max(0, totalPages - 1);
+    int maxLeftPage = Math.max(0, totalPages - MAX_COLUMNS);
+    if (currentPage > maxLeftPage) {
+      currentPage = maxLeftPage;
     }
     renderPage();
   }
@@ -225,32 +232,52 @@ public class TaskerTablePanelController extends Pane {
 
   private void renderPage() {
     paneTableTask.getChildren().removeIf(node -> node instanceof TaskerRowPanelController);
-    int start = currentPage * MAX_ROWS;
-    int end = Math.min(start + MAX_ROWS, rows.size());
+    int baseStart = currentPage * MAX_ROWS;
     int visibleIndex = 0;
-    for (int i = start; i < end; i++) {
-      TaskerRowPanelController r = rows.get(i);
-      double y = TOP_MARGIN + visibleIndex * (ROW_HEIGHT + ROW_SPACING);
-      r.setLayoutX(ROW_OFFSET_X);
-      r.setLayoutY(y);
-      paneTableTask.getChildren().add(r);
-      visibleIndex++;
+    for (int column = 0; column < MAX_COLUMNS; column++) {
+      int start = baseStart + (column * MAX_ROWS);
+      int end = Math.min(start + MAX_ROWS, rows.size());
+      if (start >= rows.size()) {
+        continue;
+      }
+      int rowIndex = 0;
+      for (int i = start; i < end; i++) {
+        TaskerRowPanelController r = rows.get(i);
+        double y = TOP_MARGIN + rowIndex * (ROW_HEIGHT + ROW_SPACING);
+        r.setLayoutX(column == 0 ? LEFT_COLUMN_OFFSET_X : RIGHT_COLUMN_OFFSET_X);
+        r.setLayoutY(y);
+        r.setOpacity(0);
+        paneTableTask.getChildren().add(r);
+        animateRowIn(r, visibleIndex);
+        visibleIndex++;
+        rowIndex++;
+      }
     }
     updateNavigationVisibility();
+  }
+
+  private void animateRowIn(TaskerRowPanelController row, int orderIndex) {
+    FadeTransition fadeTransition = new FadeTransition(ROW_FADE_DURATION, row);
+    fadeTransition.setFromValue(0);
+    fadeTransition.setToValue(1);
+    fadeTransition.setDelay(ROW_FADE_DELAY.multiply(orderIndex));
+    fadeTransition.play();
   }
 
   private void updateNavigationVisibility() {
 
     int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
     boolean hasMultiplePages = totalPages > 1;
+    int maxLeftPage = Math.max(0, totalPages - MAX_COLUMNS);
     btLeft.setVisible(hasMultiplePages && currentPage > 0);
-    btRight.setVisible(hasMultiplePages && currentPage < totalPages - 1);
+    btRight.setVisible(hasMultiplePages && currentPage < maxLeftPage);
   }
 
   private void movePage(int delta) {
     int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
     if (totalPages <= 1) return;
-    int nextPage = Math.max(0, Math.min(currentPage + delta, totalPages - 1));
+    int maxLeftPage = Math.max(0, totalPages - MAX_COLUMNS);
+    int nextPage = Math.max(0, Math.min(currentPage + delta, maxLeftPage));
     if (nextPage != currentPage) {
       currentPage = nextPage;
       renderPage();
