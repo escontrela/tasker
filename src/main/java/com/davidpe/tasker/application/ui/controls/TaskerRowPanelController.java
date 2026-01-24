@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
@@ -62,6 +63,8 @@ public class TaskerRowPanelController extends Pane {
     void onRowExited(TaskerRowPanelController source);
 
     void onRowDoubleClicked(TaskerRowPanelController source);
+
+    void onRowContextMenuRequested(TaskerRowPanelController source, double screenX, double screenY);
   }
 
   private RowActionListener rowActionListener;
@@ -214,6 +217,13 @@ public class TaskerRowPanelController extends Pane {
   }
 
   private void onRowMouseClicked(MouseEvent event) {
+    if (event.getButton() == MouseButton.SECONDARY) {
+      if (rowActionListener != null) {
+        rowActionListener.onRowContextMenuRequested(this, event.getScreenX(), event.getScreenY());
+      }
+      event.consume();
+      return;
+    }
     if (event.getTarget() instanceof ImageView || event.getTarget() == lblOpen) {
       return;
     }

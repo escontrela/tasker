@@ -17,7 +17,7 @@ public final class WindowMenuTaskSelectedEvent extends WindowEvent {
   private final Action action;
 
   public WindowMenuTaskSelectedEvent(Long taskId, Action action) {
-    super(UiScreenId.NEW_TASK_DIALOG);
+    super(UiScreenId.MENU_TASK_DIALOG);
     this.taskId = taskId;
     this.action = action;
   }

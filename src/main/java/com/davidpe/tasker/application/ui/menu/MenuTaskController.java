@@ -92,19 +92,6 @@ public class MenuTaskController extends UiScreenController implements MenuTaskVi
     hideStage();
   }
 
-  @FXML
-  void onMouseEntered(MouseEvent event) {
-    // simple hover visual feedback: add a style class if available
-    Object src = event.getSource();
-    if (src instanceof Pane p) p.getStyleClass().add("hover");
-  }
-
-  @FXML
-  void onMouseExited(MouseEvent event) {
-    Object src = event.getSource();
-    if (src instanceof Pane p) p.getStyleClass().remove("hover");
-  }
-
   @Override
   public void setData(MenuTaskData data) {
     this.taskData = data;

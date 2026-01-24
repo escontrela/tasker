@@ -4,8 +4,10 @@ import com.davidpe.tasker.domain.task.Task;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -16,6 +18,10 @@ public class TaskerTablePanelController extends Pane {
   @FXML private ImageView imgMoveLeft;
 
   @FXML private ImageView imgMoveRight;
+
+  @FXML private ImageView imgChangeColumn;
+
+  @FXML private Button btColumns;
 
   @FXML private Pane paneTableTask;
 
@@ -54,6 +60,10 @@ public class TaskerTablePanelController extends Pane {
 
     void onRowDoubleClicked(TaskerRowPanelController row);
 
+    void onRowSelected(TaskerRowPanelController row);
+
+    void onRowContextMenuRequested(TaskerRowPanelController row, double screenX, double screenY);
+
     // Row specific actions forwarded
     void onRowDeleteClicked(TaskerRowPanelController row);
 
@@ -77,7 +87,12 @@ public class TaskerTablePanelController extends Pane {
   private static final double ROW_SPACING = 5.0;
   private static final double TOP_MARGIN = 20.0;
   private static final double ROW_OFFSET_X = 30.0;
+  private static final double COLUMN_GAP = 20.0;
   private static final int MAX_ROWS = 10;
+  private static final int MAX_COLUMNS = 2;
+  private static final int MIN_COLUMNS = 1;
+
+  private int columnCount = MIN_COLUMNS;
 
   @FXML
   private void initializeInternal() {}
@@ -127,7 +142,7 @@ public class TaskerTablePanelController extends Pane {
       attachRowListener(row);
       rows.add(row);
     }
-    int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
+    int totalPages = (int) Math.ceil(rows.size() / (double) rowsPerPage());
     if (currentPage >= totalPages) {
       currentPage = Math.max(0, totalPages - 1);
     }
@@ -167,8 +182,7 @@ public class TaskerTablePanelController extends Pane {
 
           @Override
           public void onRowClicked(TaskerRowPanelController source) {
-            if (tableActionListener != null)
-              tableActionListener.onRowClicked(TaskerTablePanelController.this);
+            if (tableActionListener != null) tableActionListener.onRowSelected(source);
           }
 
           @Override
@@ -190,6 +204,14 @@ public class TaskerTablePanelController extends Pane {
           public void onOpenClicked(TaskerRowPanelController source) {
             if (tableActionListener != null) tableActionListener.onRowOpenClicked(source);
           }
+
+          @Override
+          public void onRowContextMenuRequested(
+              TaskerRowPanelController source, double screenX, double screenY) {
+            if (tableActionListener != null) {
+              tableActionListener.onRowContextMenuRequested(source, screenX, screenY);
+            }
+          }
         });
   }
 
@@ -206,14 +228,21 @@ public class TaskerTablePanelController extends Pane {
 
   private void renderPage() {
     paneTableTask.getChildren().removeIf(node -> node instanceof TaskerRowPanelController);
-    int start = currentPage * MAX_ROWS;
-    int end = Math.min(start + MAX_ROWS, rows.size());
+    int rowsPerPage = rowsPerPage();
+    int start = currentPage * rowsPerPage;
+    int end = Math.min(start + rowsPerPage, rows.size());
     int visibleIndex = 0;
+    double columnWidth = columnWidth();
     for (int i = start; i < end; i++) {
       TaskerRowPanelController r = rows.get(i);
-      double y = TOP_MARGIN + visibleIndex * (ROW_HEIGHT + ROW_SPACING);
-      r.setLayoutX(ROW_OFFSET_X);
+      int columnIndex = visibleIndex / MAX_ROWS;
+      int rowIndex = visibleIndex % MAX_ROWS;
+      double y = TOP_MARGIN + rowIndex * (ROW_HEIGHT + ROW_SPACING);
+      double x = ROW_OFFSET_X + columnIndex * (columnWidth + COLUMN_GAP);
+      r.setLayoutX(x);
       r.setLayoutY(y);
+      r.setScaleX(columnWidth / r.getPrefWidth());
+      r.setScaleY(1.0);
       paneTableTask.getChildren().add(r);
       visibleIndex++;
     }
@@ -221,14 +250,14 @@ public class TaskerTablePanelController extends Pane {
   }
 
   private void updateNavigationVisibility() {
-    int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
+    int totalPages = (int) Math.ceil(rows.size() / (double) rowsPerPage());
     boolean hasMultiplePages = totalPages > 1;
     imgMoveLeft.setVisible(hasMultiplePages && currentPage > 0);
     imgMoveRight.setVisible(hasMultiplePages && currentPage < totalPages - 1);
   }
 
   private void movePage(int delta) {
-    int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
+    int totalPages = (int) Math.ceil(rows.size() / (double) rowsPerPage());
     if (totalPages <= 1) return;
     int nextPage = Math.max(0, Math.min(currentPage + delta, totalPages - 1));
     if (nextPage != currentPage) {
@@ -245,6 +274,32 @@ public class TaskerTablePanelController extends Pane {
     return event.getSource() == imgMoveRight;
   }
 
+  private boolean isImageChangeColumnClicked(MouseEvent event) {
+    return event.getSource() == imgChangeColumn;
+  }
+
+  private void toggleColumns() {
+    columnCount = columnCount == MIN_COLUMNS ? MAX_COLUMNS : MIN_COLUMNS;
+    currentPage = 0;
+    renderPage();
+  }
+
+  private int rowsPerPage() {
+    return MAX_ROWS * columnCount;
+  }
+
+  private double columnWidth() {
+    double availableWidth = paneTableTask.getPrefWidth() - (ROW_OFFSET_X * 2);
+    double totalGap = (columnCount - 1) * COLUMN_GAP;
+    double width = (availableWidth - totalGap) / columnCount;
+    return Math.max(1, width);
+  }
+
+  @FXML
+  void buttonAction(ActionEvent event) {
+    toggleColumns();
+  }
+
   @FXML
   void onMouseClicked(MouseEvent event) {
     if (isImageMoveLeftClicked(event)) {
@@ -253,6 +308,8 @@ public class TaskerTablePanelController extends Pane {
     } else if (isImageMoveRightClicked(event)) {
       movePage(1);
       if (tableActionListener != null) tableActionListener.onMoveRightClicked(this);
+    } else if (isImageChangeColumnClicked(event)) {
+      toggleColumns();
     } else if (event.getSource() == paneTableTask) {
       if (tableActionListener != null) tableActionListener.onRowClicked(this);
     }
