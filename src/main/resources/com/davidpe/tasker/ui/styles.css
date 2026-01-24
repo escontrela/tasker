@@ -380,6 +380,13 @@
     -fx-fill: linear-gradient(to bottom, #3a86ff, #6ea8ff); /* degradado azul */
 }
 
+.text-blue-gradient-medium {
+    -fx-font-size: 22px;
+    -fx-font-family: "Alatsi";
+    -fx-font-smoothing-type: gray;
+    -fx-fill: linear-gradient(to bottom, #3a86ff, #6ea8ff); /* degradado azul */
+}
+
 
 .text-gray-small{
     -fx-text-fill: #686b75;

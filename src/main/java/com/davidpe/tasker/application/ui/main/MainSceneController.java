@@ -27,13 +27,13 @@ import com.davidpe.tasker.domain.task.TaskDeletedEvent;
 import com.davidpe.tasker.domain.task.TaskDoneUpdatedEvent;
 import com.davidpe.tasker.domain.task.TaskSequenceUpdatedEvent;
 import com.davidpe.tasker.domain.task.TaskUpdatedEvent;
+import java.awt.Point;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -66,17 +66,9 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Button btClose;
 
-  @FXML private Button btLeft;
-
-  @FXML private Button btRight;
-
   @FXML private Button btSettings;
 
   @FXML private ImageView imgClose;
-
-  @FXML private ImageView imgMinimize12222;
-
-  @FXML private ImageView imgMinimize12223;
 
   @FXML private ImageView imgSettings;
 
@@ -111,6 +103,12 @@ public class MainSceneController extends UiScreenController {
   @FXML private Button btFilter;
 
   @FXML private ImageView imgFilter;
+
+  @FXML private Button btMenu;
+
+  @FXML private ImageView imgMenu;
+
+  @FXML private Text lbTitle;
 
   // Images for filter button (on / off)
   private Image imgFilterImageOn;
@@ -386,6 +384,23 @@ public class MainSceneController extends UiScreenController {
 
     // load tasks initially so the window shows data on first presentation
     Platform.runLater(this::loadTasks);
+
+    // Play a type-writer effect on the title and the hello label when the screen starts
+    try {
+      if (lbTitle != null) {
+        // Use a short interval for a snappy effect
+        com.davidpe.tasker.application.ui.effects.TypeWriterEffect.playTypeWriterEffect(
+            "Tasker", lbTitle, 0.08);
+      }
+
+      if (lblHello != null) {
+        String helloText = lblHello.getText() != null ? lblHello.getText() : "";
+        com.davidpe.tasker.application.ui.effects.TypeWriterEffect.playTypeWriterEffect(
+            helloText, lblHello, 0.08);
+      }
+    } catch (Throwable t) {
+      // don't break initialization if the effect fails
+    }
   }
 
   @Override
@@ -400,7 +415,8 @@ public class MainSceneController extends UiScreenController {
     Platform.runLater(
         () -> {
           switch (event.getAction()) {
-            case EDIT -> eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(event.getTaskId()));
+            case EDIT ->
+                eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(event.getTaskId()));
             case DELETE -> {
               pendingTaskId = event.getTaskId();
               pendingTaskAction = PendingTaskAction.DELETE;
