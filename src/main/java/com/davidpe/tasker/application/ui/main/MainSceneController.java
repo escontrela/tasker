@@ -289,6 +289,12 @@ public class MainSceneController extends UiScreenController {
           public void onMoveRightClicked(TaskerTablePanelController source) {}
 
           @Override
+          public void onColumnToggleClicked(TaskerTablePanelController source) {
+            Long selectedTaskId = selectedRow != null ? selectedRow.getTaskId() : null;
+            loadTasks(selectedTaskId);
+          }
+
+          @Override
           public void onRowClicked(TaskerTablePanelController source) {}
 
           @Override
@@ -538,6 +544,10 @@ public class MainSceneController extends UiScreenController {
   }
 
   private void loadTasks() {
+    loadTasks(null);
+  }
+
+  private void loadTasks(Long preserveTaskId) {
 
     // Populate the Tasker table panel with tasks.
     List<Task> tasks = filterOn ? taskService.getTasksNotDone() : taskService.getTasks();
@@ -545,16 +555,26 @@ public class MainSceneController extends UiScreenController {
     orderedTasks.sort(
         Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
             .thenComparing(Task::getCreatedAt, Comparator.reverseOrder()));
-    populateTaskerPanel(orderedTasks);
+    populateTaskerPanel(orderedTasks, preserveTaskId);
   }
 
   private void populateTaskerPanel(List<Task> orderedTasks) {
+    populateTaskerPanel(orderedTasks, null);
+  }
+
+  private void populateTaskerPanel(List<Task> orderedTasks, Long preserveTaskId) {
     if (pnlTaskerTable == null) return;
 
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     pnlTaskerTable.setTasks(orderedTasks);
-    if (orderedTasks == null || orderedTasks.isEmpty()) return;
+    if (orderedTasks == null || orderedTasks.isEmpty()) {
+      if (selectedRow != null) {
+        selectedRow.setSelected(false);
+      }
+      selectedRow = null;
+      return;
+    }
 
     List<TaskerRowPanelController> rows = pnlTaskerTable.getRows();
     for (int i = 0; i < orderedTasks.size() && i < rows.size(); i++) {
@@ -583,5 +603,26 @@ public class MainSceneController extends UiScreenController {
               : "";
       row.setTags(tagText, "");
     }
+
+    if (preserveTaskId != null) {
+      TaskerRowPanelController rowToSelect = findRowByTaskId(preserveTaskId);
+      if (rowToSelect != null) {
+        selectRow(rowToSelect);
+        pnlTaskerTable.ensureRowVisibleByTaskId(preserveTaskId);
+      } else if (selectedRow != null) {
+        selectedRow.setSelected(false);
+        selectedRow = null;
+      }
+    }
+  }
+
+  private TaskerRowPanelController findRowByTaskId(Long taskId) {
+    if (taskId == null || pnlTaskerTable == null) return null;
+    for (TaskerRowPanelController row : pnlTaskerTable.getRows()) {
+      if (row != null && taskId.equals(row.getTaskId())) {
+        return row;
+      }
+    }
+    return null;
   }
 }
