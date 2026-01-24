@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -33,6 +34,9 @@ public class TaskerTablePanelController extends Pane {
 
   @FXML private ImageView imgColumn;
 
+  private Image imgTwoColumnsOn;
+  private Image imgTwoColumnsOff;
+
   public TaskerTablePanelController() {
     FXMLLoader fxmlLoader =
         new FXMLLoader(
@@ -50,7 +54,10 @@ public class TaskerTablePanelController extends Pane {
   }
 
   @FXML
-  private void initialize() {}
+  private void initialize() {
+
+    initializeToggleColumnsImages();
+  }
 
   // Listener for table-level actions
   public interface TableActionListener {
@@ -254,6 +261,15 @@ public class TaskerTablePanelController extends Pane {
 
   public void toggleColumnCount() {
     setColumnCount(columnCount == MIN_COLUMNS ? MAX_COLUMNS : MIN_COLUMNS);
+    updateToggleColumnsImages();
+  }
+
+  private void updateToggleColumnsImages() {
+    if (columnCount == MAX_COLUMNS) {
+      imgColumn.setImage(imgTwoColumnsOn);
+    } else {
+      imgColumn.setImage(imgTwoColumnsOff);
+    }
   }
 
   public void ensureRowVisibleByTaskId(Long taskId) {
@@ -394,5 +410,24 @@ public class TaskerTablePanelController extends Pane {
     int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
     int maxLeftPage = Math.max(0, totalPages - columnCount);
     currentPage = Math.max(0, Math.min(pageIndex, maxLeftPage));
+  }
+
+  private void initializeToggleColumnsImages() {
+
+    // Load filter icons (fallback quietly if missing)
+    try {
+      var onUrl =
+          getClass().getResource("/com/davidpe/tasker/ui/images/table_rows_narrow_24dp_white.png");
+      var offUrl =
+          getClass().getResource("/com/davidpe/tasker/ui/images/view_column_2_24dp_white.png");
+
+      if (onUrl != null) imgTwoColumnsOn = new Image(onUrl.toExternalForm());
+      if (offUrl != null) imgTwoColumnsOff = new Image(offUrl.toExternalForm());
+
+      updateToggleColumnsImages();
+
+    } catch (Exception e) {
+      // ignore image loading errors
+    }
   }
 }

@@ -23,16 +23,12 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="btColumn" alignment="BASELINE_CENTER" layoutX="963.0" layoutY="483.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
+      <Button fx:id="btColumn" alignment="BASELINE_CENTER" layoutX="20.0" layoutY="483.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>
          <graphic>
-            <ImageView fx:id="imgColumn" fitHeight="16.0" fitWidth="25.0" onMouseClicked="#onMouseClicked" preserveRatio="true">
-               <image>
-                  <Image url="@../images/chevron_left_18dp_white.png" />
-               </image>
-            </ImageView>
+            <ImageView fx:id="imgColumn" fitHeight="16.0" fitWidth="25.0" onMouseClicked="#onMouseClicked" preserveRatio="true" />
          </graphic>
       </Button>
       <Button fx:id="btRight" alignment="BASELINE_CENTER" layoutX="1051.0" layoutY="483.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
