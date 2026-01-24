@@ -29,6 +29,10 @@ public class TaskerTablePanelController extends Pane {
 
   @FXML private Button btRight;
 
+  @FXML private Button btColumn;
+
+  @FXML private ImageView imgColumn;
+
   public TaskerTablePanelController() {
     FXMLLoader fxmlLoader =
         new FXMLLoader(
@@ -53,6 +57,8 @@ public class TaskerTablePanelController extends Pane {
     void onMoveLeftClicked(TaskerTablePanelController source);
 
     void onMoveRightClicked(TaskerTablePanelController source);
+
+    void onColumnToggleClicked(TaskerTablePanelController source);
 
     void onRowClicked(TaskerTablePanelController source);
 
@@ -93,9 +99,11 @@ public class TaskerTablePanelController extends Pane {
   private static final double RIGHT_COLUMN_OFFSET_X = 572.0;
   // reduce rows because each row is taller now
   private static final int MAX_ROWS = 4;
+  private static final int MIN_COLUMNS = 1;
   private static final int MAX_COLUMNS = 2;
   private static final Duration ROW_FADE_DURATION = Duration.millis(220);
   private static final Duration ROW_FADE_DELAY = Duration.millis(70);
+  private int columnCount = MAX_COLUMNS;
 
   @FXML
   private void initializeInternal() {}
@@ -146,7 +154,7 @@ public class TaskerTablePanelController extends Pane {
       rows.add(row);
     }
     int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
-    int maxLeftPage = Math.max(0, totalPages - MAX_COLUMNS);
+    int maxLeftPage = Math.max(0, totalPages - columnCount);
     if (currentPage > maxLeftPage) {
       currentPage = maxLeftPage;
     }
@@ -230,11 +238,37 @@ public class TaskerTablePanelController extends Pane {
     return new ArrayList<>(rows);
   }
 
+  public int getColumnCount() {
+    return columnCount;
+  }
+
+  public void setColumnCount(int columnCount) {
+    int nextColumnCount = Math.max(MIN_COLUMNS, Math.min(columnCount, MAX_COLUMNS));
+    if (this.columnCount == nextColumnCount) {
+      return;
+    }
+    this.columnCount = nextColumnCount;
+    adjustPageForColumnCount();
+    renderPage();
+  }
+
+  public void toggleColumnCount() {
+    setColumnCount(columnCount == MIN_COLUMNS ? MAX_COLUMNS : MIN_COLUMNS);
+  }
+
+  public void ensureRowVisibleByTaskId(Long taskId) {
+    if (taskId == null) return;
+    int index = findRowIndexByTaskId(taskId);
+    if (index < 0) return;
+    updatePageForRowIndex(index);
+    renderPage();
+  }
+
   private void renderPage() {
     paneTableTask.getChildren().removeIf(node -> node instanceof TaskerRowPanelController);
     int baseStart = currentPage * MAX_ROWS;
     int visibleIndex = 0;
-    for (int column = 0; column < MAX_COLUMNS; column++) {
+    for (int column = 0; column < columnCount; column++) {
       int start = baseStart + (column * MAX_ROWS);
       int end = Math.min(start + MAX_ROWS, rows.size());
       if (start >= rows.size()) {
@@ -268,7 +302,7 @@ public class TaskerTablePanelController extends Pane {
 
     int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
     boolean hasMultiplePages = totalPages > 1;
-    int maxLeftPage = Math.max(0, totalPages - MAX_COLUMNS);
+    int maxLeftPage = Math.max(0, totalPages - columnCount);
     btLeft.setVisible(hasMultiplePages && currentPage > 0);
     btRight.setVisible(hasMultiplePages && currentPage < maxLeftPage);
   }
@@ -276,7 +310,7 @@ public class TaskerTablePanelController extends Pane {
   private void movePage(int delta) {
     int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
     if (totalPages <= 1) return;
-    int maxLeftPage = Math.max(0, totalPages - MAX_COLUMNS);
+    int maxLeftPage = Math.max(0, totalPages - columnCount);
     int nextPage = Math.max(0, Math.min(currentPage + delta, maxLeftPage));
     if (nextPage != currentPage) {
       currentPage = nextPage;
@@ -300,6 +334,14 @@ public class TaskerTablePanelController extends Pane {
     return event.getSource() == btRight;
   }
 
+  private boolean isBtnColumnClicked(ActionEvent event) {
+    return event.getSource() == btColumn;
+  }
+
+  private boolean isImageColumnClicked(MouseEvent event) {
+    return event.getSource() == imgColumn;
+  }
+
   @FXML
   void onMouseClicked(MouseEvent event) {
     if (isImageMoveLeftClicked(event)) {
@@ -308,6 +350,9 @@ public class TaskerTablePanelController extends Pane {
     } else if (isImageMoveRightClicked(event)) {
       movePage(1);
       if (tableActionListener != null) tableActionListener.onMoveRightClicked(this);
+    } else if (isImageColumnClicked(event)) {
+      toggleColumnCount();
+      if (tableActionListener != null) tableActionListener.onColumnToggleClicked(this);
     } else if (event.getSource() == paneTableTask) {
       if (tableActionListener != null) tableActionListener.onRowClicked(this);
     }
@@ -321,6 +366,33 @@ public class TaskerTablePanelController extends Pane {
     } else if (isBtnRightClicked(event)) {
       movePage(1);
       if (tableActionListener != null) tableActionListener.onMoveRightClicked(this);
+    } else if (isBtnColumnClicked(event)) {
+      toggleColumnCount();
+      if (tableActionListener != null) tableActionListener.onColumnToggleClicked(this);
     }
+  }
+
+  private void adjustPageForColumnCount() {
+    int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
+    int maxLeftPage = Math.max(0, totalPages - columnCount);
+    currentPage = Math.max(0, Math.min(currentPage, maxLeftPage));
+  }
+
+  private int findRowIndexByTaskId(Long taskId) {
+    for (int i = 0; i < rows.size(); i++) {
+      TaskerRowPanelController row = rows.get(i);
+      if (row != null && taskId.equals(row.getTaskId())) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private void updatePageForRowIndex(int rowIndex) {
+    if (rowIndex < 0) return;
+    int pageIndex = rowIndex / MAX_ROWS;
+    int totalPages = (int) Math.ceil(rows.size() / (double) MAX_ROWS);
+    int maxLeftPage = Math.max(0, totalPages - columnCount);
+    currentPage = Math.max(0, Math.min(pageIndex, maxLeftPage));
   }
 }
