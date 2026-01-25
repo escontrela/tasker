@@ -387,6 +387,13 @@
     -fx-fill: linear-gradient(to bottom, #3a86ff, #6ea8ff); /* degradado azul */
 }
 
+.text-blue-gradient-small {
+    -fx-font-size: 14px;
+    -fx-font-family: "Alatsi";
+    -fx-font-smoothing-type: gray;
+    -fx-fill: linear-gradient(to bottom, #3a86ff, #6ea8ff); /* degradado azul */
+}
+
 
 .text-gray-small{
     -fx-text-fill: #686b75;
@@ -1105,24 +1112,26 @@
 }
 
 .task-priority-high {
-    -fx-text-fill: #ff5f5f;
+    -fx-text-fill: #E5484D;
 }
 
 .task-priority-medium {
-    -fx-text-fill: #f0b429;
+    -fx-text-fill:#F2A900;/* yellow */
 }
 
 .task-priority-low {
-    -fx-text-fill: #55c26b;
+    -fx-text-fill: transparent;
 }
 
 /* Date pane background colors according to priority */
 .date-priority-high {
-    -fx-background-color: #ff6b6b; /* red */
+    -fx-background-color: #E5484D;/* red */
+    -fx-opacity: 0.8;
 }
 
 .date-priority-medium {
-    -fx-background-color: #ffd54f; /* yellow */
+    -fx-background-color: #F2A900;/* yellow */
+    -fx-opacity: 0.8;
 }
 
 .date-priority-low {

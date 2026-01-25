@@ -15,7 +15,7 @@
 <Pane fx:id="mainPane" onMouseClicked="#handleButtonClick" prefHeight="830.0" prefWidth="1290.0" styleClass="root-gemini-style" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.main.MainSceneController">
    <children>
       <TaskerTablePanelController fx:id="pnlTaskerTable" layoutX="87.0" layoutY="205.0" />
-      <HBox fx:id="taskBar" alignment="CENTER" layoutX="615.0" layoutY="42.0" prefHeight="37.0" prefWidth="459.0" spacing="40.0" styleClass="task-bar">
+      <HBox fx:id="taskBar" alignment="CENTER" layoutX="635.0" layoutY="43.0" prefHeight="37.0" prefWidth="459.0" spacing="40.0" styleClass="task-bar">
          <children>
             <StackPane fx:id="taskOption_analysis" prefHeight="40.0" prefWidth="97.0" styleClass="task-item">
                <children>
@@ -76,7 +76,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="btFilter" alignment="BASELINE_CENTER" layoutX="1086.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
+      <Button fx:id="btFilter" alignment="BASELINE_CENTER" layoutX="580.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>
@@ -106,10 +106,63 @@
             </ImageView>
          </graphic>
       </Button>
-      <Text fx:id="lbTitle" fill="WHITE" layoutX="63.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tasker" wrappingWidth="123.0">
+      <Text fx:id="lbTitle" fill="WHITE" layoutX="115.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-blue-gradient-small" text="| tasker" wrappingWidth="123.0">
          <font>
-            <Font name="Alatsi Regular" size="25.0" />
+            <Font name="Alatsi Regular" size="16.0" />
          </font>
       </Text>
+      <ImageView fitHeight="64.0" fitWidth="114.0" layoutX="39.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/tk-logo.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="btnNewTask" alignment="BASELINE_CENTER" layoutX="350.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
+         <font>
+            <Font name="Alatsi Regular" size="18.0" />
+         </font>
+         <graphic>
+            <ImageView fx:id="imgNewTask" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
+               <image>
+                  <Image url="@images/post_add_24dp_white.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="btnNewProject" alignment="BASELINE_CENTER" layoutX="400.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
+         <font>
+            <Font name="Alatsi Regular" size="18.0" />
+         </font>
+         <graphic>
+            <ImageView fx:id="imgNewProject" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
+               <image>
+                  <Image url="@images/rocket_launch_24dp_white.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="btnShowStats" alignment="BASELINE_CENTER" layoutX="450.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
+         <font>
+            <Font name="Alatsi Regular" size="18.0" />
+         </font>
+         <graphic>
+            <ImageView fx:id="imgShowStats" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
+               <image>
+                  <Image url="@images/bar_chart_4_bars_24dp_white.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="btnSearch" alignment="BASELINE_CENTER" layoutX="530.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
+         <font>
+            <Font name="Alatsi Regular" size="18.0" />
+         </font>
+         <graphic>
+            <ImageView fx:id="imgSearch" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
+               <image>
+                  <Image url="@images/search_18dp_white.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
 </Pane>

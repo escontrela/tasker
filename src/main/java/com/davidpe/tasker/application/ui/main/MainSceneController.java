@@ -110,6 +110,22 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Text lbTitle;
 
+  @FXML private Button btnNewProject;
+
+  @FXML private Button btnNewTask;
+
+  @FXML private Button btnShowStats;
+
+  @FXML private Button btnSearch;
+
+  @FXML private ImageView imgNewProject;
+
+  @FXML private ImageView imgNewTask;
+
+  @FXML private ImageView imgShowStats;
+
+  @FXML private ImageView imgSearch;
+
   // Images for filter button (on / off)
   private Image imgFilterImageOn;
   private Image imgFilterImageOff;
@@ -156,6 +172,11 @@ public class MainSceneController extends UiScreenController {
   @FXML
   void buttonAction(ActionEvent event) {
 
+    if (isButtonNewTaskClicked(event)) {
+
+      eventPublisher.publishEvent(new WindowNewTaskOpenedEvent());
+    }
+
     if (isButtonCloseClicked(event)) {
 
       hideStage();
@@ -194,12 +215,21 @@ public class MainSceneController extends UiScreenController {
   }
 
   @FXML
-  void handleButtonClick(MouseEvent event) {
+  void handleButtonClick(MouseEvent event) {}
 
-    if (isButtonNewOpClicked(event)) {
+  private boolean isButtonNewProjectClicked(ActionEvent event) {
 
-      eventPublisher.publishEvent(new WindowNewTaskOpenedEvent());
-    }
+    return event.getSource() == btnNewProject || event.getSource() == imgNewProject;
+  }
+
+  private boolean isButtonNewTaskClicked(ActionEvent event) {
+
+    return event.getSource() == btnNewTask;
+  }
+
+  private boolean isButtonShowStatsClicked(ActionEvent event) {
+
+    return event.getSource() == btnShowStats;
   }
 
   private boolean isButtonSettingsClicked(ActionEvent event) {
@@ -220,6 +250,11 @@ public class MainSceneController extends UiScreenController {
   private boolean isButtonFilterClicked(ActionEvent event) {
 
     return event.getSource() == btFilter || event.getSource() == imgFilter;
+  }
+
+  private boolean isButtonSearchClicked(ActionEvent event) {
+
+    return event.getSource() == btnSearch || event.getSource() == imgSearch;
   }
 
   private void showDeletePanel(Pane panel) {
