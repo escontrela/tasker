@@ -10,8 +10,8 @@
 <fx:root fx:id="paneTableTask" prefHeight="533.0" prefWidth="1144.0" styleClass="note-panel" stylesheets="@../styles.css" type="Pane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
 
    <children>
-      <Separator fx:id="sepTasker" layoutX="15.0" layoutY="473.0" prefHeight="0.0" prefWidth="1081.0" />
-      <Button fx:id="btLeft" alignment="BASELINE_CENTER" layoutX="1007.0" layoutY="483.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
+      <Separator fx:id="sepTasker" layoutX="15.0" layoutY="473.0" opacity="0.17" prefHeight="0.0" prefWidth="1105.0" />
+      <Button fx:id="btLeft" alignment="BASELINE_CENTER" layoutX="1032.0" layoutY="487.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>
@@ -23,7 +23,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="btColumn" alignment="BASELINE_CENTER" layoutX="20.0" layoutY="483.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
+      <Button fx:id="btColumn" alignment="BASELINE_CENTER" layoutX="20.0" layoutY="487.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>
@@ -31,7 +31,7 @@
             <ImageView fx:id="imgColumn" fitHeight="16.0" fitWidth="25.0" onMouseClicked="#onMouseClicked" preserveRatio="true" />
          </graphic>
       </Button>
-      <Button fx:id="btRight" alignment="BASELINE_CENTER" layoutX="1051.0" layoutY="483.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
+      <Button fx:id="btRight" alignment="BASELINE_CENTER" layoutX="1076.0" layoutY="487.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@../styles.css" textFill="WHITE">
          <font>
             <Font name="Alatsi Regular" size="18.0" />
          </font>

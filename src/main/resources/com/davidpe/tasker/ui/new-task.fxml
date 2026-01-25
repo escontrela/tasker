@@ -1,101 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<Pane prefHeight="534.0" prefWidth="643.0" styleClass="note-panel" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.tasks.NewTaskPanelController">
+<Pane prefHeight="655.0" prefWidth="770.0" styleClass="note-panel-shadow-strong" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.tasks.NewTaskPanelController">
               
        <children>
-            <Label fx:id="lblTitle" layoutX="23.0" layoutY="6.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" styleClass="note-label" text="Nueva tarea" />
-            <ImageView fx:id="imgIcon" fitHeight="27.0" fitWidth="31.0" layoutX="585.0" layoutY="24.0" preserveRatio="true" styleClass="note-icon">
-               <image>
-                  <Image url="@images/chat_40dp_white.png" />
-               </image>
-            </ImageView>
-            <Button fx:id="btnCancel" alignment="BASELINE_CENTER" layoutX="528.0" layoutY="481.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="39.0" prefWidth="41.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-                  <font>
-                     <Font name="Alatsi Regular" size="18.0" />
-                  </font>
-                  <graphic>
-                     <ImageView fx:id="imgCancel" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-                        <image>
-                           <Image url="@images/close_18dp_white.png" />
-                        </image>
-                     </ImageView>
-                  </graphic>
-            </Button>
-            <Button fx:id="btnOk" alignment="BASELINE_CENTER" layoutX="579.0" layoutY="481.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="39.0" prefWidth="41.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-                  <font>
-                     <Font name="Alatsi Regular" size="18.0" />
-                  </font>
-                  <graphic>
-                     <ImageView fx:id="imgOk" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-                        <image>
-                           <Image url="@images/check_18dp_white.png" />
-                        </image>
-                     </ImageView>
-                  </graphic>
-            </Button>
-            
-            <Label fx:id="lblMessage" layoutX="36.0" layoutY="38.0" styleClass="note-label" text="Completa los datos de la tarea">
+            <Label fx:id="lblTitle" layoutX="25.0" layoutY="14.0" styleClass="modal-title-text" text="Nueva tarea" />
+      <Label fx:id="lblSubtitle" layoutX="25.0" layoutY="47.0" styleClass="modal-sub-title-text" text="General Project">
          <font>
             <Font size="12.0" />
-         </font></Label>
-            <GridPane hgap="10" layoutX="31.0" layoutY="57.0" prefHeight="274.0" prefWidth="449.0" vgap="10">
-                <padding>
-                    <Insets bottom="10" left="10" right="10" top="10" />
-                </padding>
-                <Label text="Título" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <TextField fx:id="txtTitle" prefHeight="32.0" prefWidth="320.0" promptText="Título" styleClass="popup-text-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
-                <Label text="Código externo" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <TextField fx:id="txtExtCode" promptText="ABC-123" styleClass="popup-text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-                <Label text="Proyecto" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <ComboBox fx:id="cbxProject" onAction="#onProjectChanged" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-                <Label text="Prioridad" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                <ComboBox fx:id="cbxPriority" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
-                <Label text="Tag" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <ComboBox fx:id="cbxTag" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-
-                <Label text="Inicio" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                <DatePicker fx:id="dpStartDate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-
-                <Label text="Fin" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-                <DatePicker fx:id="dpEndDate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-         <columnConstraints>
-            <ColumnConstraints />
-            <ColumnConstraints />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
-            </GridPane>
-            <Label layoutX="36.0" layoutY="337.0" text="Descripción" /> 
-            <TextArea fx:id="taDescription" layoutX="31.0" layoutY="364.0" prefHeight="101.0" prefRowCount="4" prefWidth="587.0" styleClass="popup-text-field" />
+         </font>
+      </Label>
+      <Button fx:id="btnClose" alignment="BASELINE_CENTER" layoutX="730.0" layoutY="10.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-simple" stylesheets="@styles.css" textFill="WHITE">
+         <font>
+            <Font name="Alatsi Regular" size="18.0" />
+         </font>
+         <graphic>
+            <ImageView fx:id="imgClose" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
+               <image>
+                  <Image url="@images/close_18dp_white.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Separator layoutX="3.0" layoutY="84.0" opacity="0.2" prefHeight="0.0" prefWidth="764.0" />
+            <Button fx:id="btnCancel" alignment="BASELINE_CENTER" layoutX="525.0" layoutY="606.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="103.0" styleClass="button-cancel" stylesheets="@styles.css" text="Cancel" textFill="WHITE">
+                  <font>
+                     <Font name="Alatsi Regular" size="18.0" />
+                  </font>
+            </Button>
+            <Button fx:id="btnOk" alignment="BASELINE_CENTER" layoutX="648.0" layoutY="606.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="103.0" styleClass="button-ok" stylesheets="@styles.css" text="Save" textFill="WHITE">
+                  <font>
+                     <Font name="Alatsi Regular" size="18.0" />
+                  </font>
+            </Button> 
+            <TextArea fx:id="taDescription" layoutX="73.0" layoutY="445.0" prefHeight="123.0" prefRowCount="4" prefWidth="653.0" styleClass="popup-text-field" />
 
 
-            <Label fx:id="lblError" layoutX="486.0" layoutY="329.0" prefHeight="17.0" prefWidth="125.0" textFill="red" />
+            <Label fx:id="lblError" layoutX="76.0" layoutY="609.0" prefHeight="17.0" prefWidth="399.0" textFill="red" />
+             <TextField fx:id="txtTitle" layoutX="70.0" layoutY="142.0" prefHeight="32.0" prefWidth="452.0" promptText="Título" styleClass="popup-text-field" />
+             <Label fx:id="lblName" layoutX="73.0" layoutY="116.0" styleClass="note-label" text="Título" />
+
+             <Label fx:id="lblCode" layoutX="549.0" layoutY="116.0" styleClass="note-label" text="External Code" />
+             <TextField fx:id="txtExtCode" layoutX="550.0" layoutY="142.0" promptText="ABC-123" styleClass="popup-text-field" />
+
+             <Label layoutX="73.0" layoutY="188.0" styleClass="note-label" text="Proyecto" />
+             <ComboBox fx:id="cbxProject" layoutX="73.0" layoutY="213.0" onAction="#onProjectChanged" prefHeight="19.0" prefWidth="200" styleClass="popup-text-field" />
+
+             <Label layoutX="327.0" layoutY="188.0" styleClass="note-label" text="Prioridad" />
+             <ComboBox fx:id="cbxPriority" layoutX="327.0" layoutY="213.0" prefWidth="200" styleClass="popup-text-field" />
+
+             <Label layoutX="73.0" layoutY="264.0" styleClass="note-label" text="Tag" />
+             <ComboBox fx:id="cbxTag" layoutX="73.0" layoutY="289.0" prefWidth="200" styleClass="popup-text-field" />
+
+             <Label layoutX="74.0" layoutY="340.0" styleClass="note-label" text="Inicio" />
+             <DatePicker fx:id="dpStartDate" layoutX="73.0" layoutY="366.0" styleClass="popup-text-field" />
+
+             <Label layoutX="327.0" layoutY="340.0" styleClass="note-label" text="Fin" />
+             <DatePicker fx:id="dpEndDate" layoutX="327.0" layoutY="366.0" styleClass="popup-text-field" />
+      <Label layoutX="73.0" layoutY="420.0" styleClass="note-label" text="Descripcion" />
+      <Separator layoutX="3.0" layoutY="590.0" opacity="0.2" prefHeight="0.0" prefWidth="764.0" />
             
    </children>
 </Pane>

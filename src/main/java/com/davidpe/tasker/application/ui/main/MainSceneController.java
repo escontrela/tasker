@@ -27,13 +27,13 @@ import com.davidpe.tasker.domain.task.TaskDeletedEvent;
 import com.davidpe.tasker.domain.task.TaskDoneUpdatedEvent;
 import com.davidpe.tasker.domain.task.TaskSequenceUpdatedEvent;
 import com.davidpe.tasker.domain.task.TaskUpdatedEvent;
+import java.awt.Point;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -66,25 +66,15 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Button btClose;
 
-  @FXML private Button btLeft;
-
-  @FXML private Button btRight;
-
   @FXML private Button btSettings;
 
   @FXML private ImageView imgClose;
-
-  @FXML private ImageView imgMinimize12222;
-
-  @FXML private ImageView imgMinimize12223;
 
   @FXML private ImageView imgSettings;
 
   @FXML private Label lbUserInitials;
 
   @FXML private Text lblHello;
-
-  @FXML private Text lblPractice;
 
   @FXML private Pane mainPane;
 
@@ -111,6 +101,28 @@ public class MainSceneController extends UiScreenController {
   @FXML private Button btFilter;
 
   @FXML private ImageView imgFilter;
+
+  @FXML private Button btMenu;
+
+  @FXML private ImageView imgMenu;
+
+  @FXML private Text lbTitle;
+
+  @FXML private Button btnNewProject;
+
+  @FXML private Button btnNewTask;
+
+  @FXML private Button btnShowStats;
+
+  @FXML private Button btnSearch;
+
+  @FXML private ImageView imgNewProject;
+
+  @FXML private ImageView imgNewTask;
+
+  @FXML private ImageView imgShowStats;
+
+  @FXML private ImageView imgSearch;
 
   // Images for filter button (on / off)
   private Image imgFilterImageOn;
@@ -158,6 +170,11 @@ public class MainSceneController extends UiScreenController {
   @FXML
   void buttonAction(ActionEvent event) {
 
+    if (isButtonNewTaskClicked(event)) {
+
+      eventPublisher.publishEvent(new WindowNewTaskOpenedEvent());
+    }
+
     if (isButtonCloseClicked(event)) {
 
       hideStage();
@@ -196,12 +213,21 @@ public class MainSceneController extends UiScreenController {
   }
 
   @FXML
-  void handleButtonClick(MouseEvent event) {
+  void handleButtonClick(MouseEvent event) {}
 
-    if (isButtonNewOpClicked(event)) {
+  private boolean isButtonNewProjectClicked(ActionEvent event) {
 
-      eventPublisher.publishEvent(new WindowNewTaskOpenedEvent());
-    }
+    return event.getSource() == btnNewProject || event.getSource() == imgNewProject;
+  }
+
+  private boolean isButtonNewTaskClicked(ActionEvent event) {
+
+    return event.getSource() == btnNewTask;
+  }
+
+  private boolean isButtonShowStatsClicked(ActionEvent event) {
+
+    return event.getSource() == btnShowStats;
   }
 
   private boolean isButtonSettingsClicked(ActionEvent event) {
@@ -224,6 +250,11 @@ public class MainSceneController extends UiScreenController {
     return event.getSource() == btFilter || event.getSource() == imgFilter;
   }
 
+  private boolean isButtonSearchClicked(ActionEvent event) {
+
+    return event.getSource() == btnSearch || event.getSource() == imgSearch;
+  }
+
   private void showDeletePanel(Pane panel) {
 
     panel.setVisible(!panel.isVisible());
@@ -237,7 +268,6 @@ public class MainSceneController extends UiScreenController {
     // Mostrar la fecha de hoy en formato largo en lblHello
     DateTimeFormatter longDateFmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
     lblHello.setText(LocalDate.now().format(longDateFmt));
-    lblPractice.setText("—");
 
     // Load filter icons (fallback quietly if missing)
     try {
@@ -386,6 +416,23 @@ public class MainSceneController extends UiScreenController {
 
     // load tasks initially so the window shows data on first presentation
     Platform.runLater(this::loadTasks);
+
+    // Play a type-writer effect on the title and the hello label when the screen starts
+    try {
+      if (lbTitle != null) {
+        // Use a short interval for a snappy effect
+        com.davidpe.tasker.application.ui.effects.TypeWriterEffect.playTypeWriterEffect(
+            " | tasker", lbTitle, 0.05);
+      }
+
+      if (lblHello != null) {
+        String helloText = lblHello.getText() != null ? lblHello.getText() : "";
+        com.davidpe.tasker.application.ui.effects.TypeWriterEffect.playTypeWriterEffect(
+            helloText, lblHello, 0.08);
+      }
+    } catch (Throwable t) {
+      // don't break initialization if the effect fails
+    }
   }
 
   @Override
@@ -400,7 +447,8 @@ public class MainSceneController extends UiScreenController {
     Platform.runLater(
         () -> {
           switch (event.getAction()) {
-            case EDIT -> eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(event.getTaskId()));
+            case EDIT ->
+                eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(event.getTaskId()));
             case DELETE -> {
               pendingTaskId = event.getTaskId();
               pendingTaskAction = PendingTaskAction.DELETE;

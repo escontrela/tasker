@@ -380,6 +380,20 @@
     -fx-fill: linear-gradient(to bottom, #3a86ff, #6ea8ff); /* degradado azul */
 }
 
+.text-blue-gradient-medium {
+    -fx-font-size: 22px;
+    -fx-font-family: "Alatsi";
+    -fx-font-smoothing-type: gray;
+    -fx-fill: linear-gradient(to bottom, #3a86ff, #6ea8ff); /* degradado azul */
+}
+
+.text-blue-gradient-small {
+    -fx-font-size: 14px;
+    -fx-font-family: "Alatsi";
+    -fx-font-smoothing-type: gray;
+    -fx-fill: linear-gradient(to bottom, #3a86ff, #6ea8ff); /* degradado azul */
+}
+
 
 .text-gray-small{
     -fx-text-fill: #686b75;
@@ -582,8 +596,8 @@
     -fx-background-color: #1C1C1C;
     -fx-text-fill: #ffffff;
     -fx-font-size: 14px;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
     -fx-border-color: #3A3A3A;
     -fx-border-width: 1;
     -fx-padding: 6 10;
@@ -596,14 +610,14 @@
 
 .popup-text-field.text-area .content {
     -fx-background-color: #1C1C1C;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
 }
 
 .popup-text-field.text-area .scroll-pane {
     -fx-background-color: transparent;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
 }
 
 .popup-text-field.text-area .viewport {
@@ -617,7 +631,7 @@
 
 .popup-text-field.text-area .scroll-bar:vertical .thumb {
     -fx-background-color: #3A3A3A;
-    -fx-background-radius: 6;
+    -fx-background-radius: 4;
 }
 
 /* Botón rojo con estilo premium tipo degradado */
@@ -857,8 +871,8 @@
 .button-red{
     -fx-text-fill: #ffffff;
     -fx-background-color: #e55c45;
-    -fx-border-radius: 20;
-    -fx-background-radius: 20;
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
     -fx-padding: 5;
 }
 
@@ -878,27 +892,7 @@
 /* end: system design - button red */
 
 /* start: system design - button 3 */
-.button-gray{
-    -fx-text-fill: #787787;
-    -fx-background-color: #303040;
-    -fx-border-radius: 20;
-    -fx-background-radius: 20;
-    -fx-padding: 5;
-}
 
-.button-gray:hover{
-    -fx-text-fill: #ffffff;
-    -fx-background-color: #504F61;
-    -fx-border-radius: 20;
-    -fx-background-radius: 20;
-    -fx-padding: 5;
-}
-
-.button-gray:pressed {
-    -fx-background-color: #303040;
-    -fx-border-width: 0;
-
-}
 /* end: system design - button 3 */
 
 /* start: system design - button 3 */
@@ -1098,24 +1092,26 @@
 }
 
 .task-priority-high {
-    -fx-text-fill: #ff5f5f;
+    -fx-text-fill: #E5484D;
 }
 
 .task-priority-medium {
-    -fx-text-fill: #f0b429;
+    -fx-text-fill:#F2A900;/* yellow */
 }
 
 .task-priority-low {
-    -fx-text-fill: #55c26b;
+    -fx-text-fill: transparent;
 }
 
 /* Date pane background colors according to priority */
 .date-priority-high {
-    -fx-background-color: #ff6b6b; /* red */
+    -fx-background-color: #E5484D;/* red */
+    -fx-opacity: 0.8;
 }
 
 .date-priority-medium {
-    -fx-background-color: #ffd54f; /* yellow */
+    -fx-background-color: #F2A900;/* yellow */
+    -fx-opacity: 0.8;
 }
 
 .date-priority-low {
@@ -1297,6 +1293,63 @@
 }
 /* end: 2D Chart Control */
 
+/* Texto con iniciales */
+.modal-title-text {
+    -fx-text-fill: white;                  /* color del texto */
+    -fx-font-size: 20px;
+    -fx-font-family: "Alatsi";
+}
+
+/* Texto de la nota */
+.modal-sub-title-text {
+    -fx-font-size: 15px;
+    -fx-font-weight: normal;
+    -fx-text-fill:  #b3b3b3;   /* Texto claro */
+}
+
+.button-cancel{
+    -fx-text-fill: #787787;
+    -fx-background-color: #303040;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 5;
+}
+
+.button-cancel:hover{
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #504F61;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 5;
+}
+
+.button-cancel:pressed {
+    -fx-background-color: #303040;
+    -fx-border-width: 0;
+
+}
+
+.button-ok{
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color:  linear-gradient(to bottom, #3a86ff, #6ea8ff); 
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 5;
+}
+
+.button-ok:hover{
+    -fx-text-fill: #ffffff;
+    -fx-background-color: linear-gradient(to bottom, #899fc2, #93bbf8); 
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 5;
+}
+
+.button-ok:pressed {
+    -fx-background-color: linear-gradient(to bottom, #3a86ff, #6ea8ff); 
+    -fx-border-width: 0;
+
+}
 
 /******************************************/
 /** END: NEW SYSTEM DESIGN  10-01-2025 **/
