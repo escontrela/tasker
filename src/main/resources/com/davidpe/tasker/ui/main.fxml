@@ -24,7 +24,7 @@
             </StackPane>
             <StackPane fx:id="taskOption_games" prefHeight="40.0" prefWidth="103.0" styleClass="task-item">
                <children>
-                  <Label text="Pending" />
+                  <Label text="To Do" />
                </children>
             </StackPane>
             <StackPane fx:id="taskOption_stats" prefHeight="40.0" prefWidth="96.0" styleClass="task-item">
@@ -130,7 +130,7 @@
          <graphic>
             <ImageView fx:id="imgNewProject" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
                <image>
-                  <Image url="@images/rocket_launch_24dp_white.png" />
+                  <Image url="@images/rocket_launch_24dp_red.png" />
                </image>
             </ImageView>
          </graphic>
