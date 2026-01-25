@@ -88,11 +88,6 @@
             </ImageView>
          </graphic>
       </Button>
-      <Text fx:id="lblPractice" fill="#686b75" layoutX="87.0" layoutY="793.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-gray-medium" text="— your task manager">
-         <font>
-            <Font name="Alatsi Regular" size="35.0" />
-         </font>
-      </Text>
        <MessagePanelController fx:id="pnlMessage" layoutX="700.0" layoutY="720.0" prefWidth="536.0" visible="false" />
       <Button fx:id="btMenu" alignment="BASELINE_CENTER" layoutX="14.0" layoutY="19.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
          <font>

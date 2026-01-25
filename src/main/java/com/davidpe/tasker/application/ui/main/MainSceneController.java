@@ -76,8 +76,6 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Text lblHello;
 
-  @FXML private Text lblPractice;
-
   @FXML private Pane mainPane;
 
   @FXML private StackPane pnlMenu;
@@ -270,7 +268,6 @@ public class MainSceneController extends UiScreenController {
     // Mostrar la fecha de hoy en formato largo en lblHello
     DateTimeFormatter longDateFmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
     lblHello.setText(LocalDate.now().format(longDateFmt));
-    lblPractice.setText("—");
 
     // Load filter icons (fallback quietly if missing)
     try {
