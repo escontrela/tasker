@@ -422,7 +422,7 @@ public class MainSceneController extends UiScreenController {
       if (lbTitle != null) {
         // Use a short interval for a snappy effect
         com.davidpe.tasker.application.ui.effects.TypeWriterEffect.playTypeWriterEffect(
-            "Tasker", lbTitle, 0.08);
+            " | tasker", lbTitle, 0.05);
       }
 
       if (lblHello != null) {
