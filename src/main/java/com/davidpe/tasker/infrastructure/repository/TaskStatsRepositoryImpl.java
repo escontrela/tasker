@@ -37,8 +37,9 @@ public class TaskStatsRepositoryImpl implements TaskStatsRepository {
                COUNT(*) AS value
         FROM tasks
         WHERE project_id = ?
-          AND date(created_at / 1000, 'unixepoch') >= ?
-          AND date(created_at / 1000, 'unixepoch') <= ?
+          AND start_at IS NOT NULL
+          AND date(start_at / 1000, 'unixepoch') >= ?
+          AND date(start_at / 1000, 'unixepoch') <= ?
         GROUP BY period_start
         ORDER BY period_start
         """
@@ -57,9 +58,9 @@ public class TaskStatsRepositoryImpl implements TaskStatsRepository {
 
   private String periodExpression(StatsAggregationLevel level) {
     return switch (level) {
-      case DAILY -> "date(created_at / 1000, 'unixepoch')";
-      case WEEKLY -> "date(created_at / 1000, 'unixepoch', 'weekday 1', '-7 days')";
-      case MONTHLY -> "date(created_at / 1000, 'unixepoch', 'start of month')";
+      case DAILY -> "date(start_at / 1000, 'unixepoch')";
+      case WEEKLY -> "date(start_at / 1000, 'unixepoch', 'weekday 1', '-7 days')";
+      case MONTHLY -> "date(start_at / 1000, 'unixepoch', 'start of month')";
     };
   }
 }
