@@ -37,7 +37,7 @@
             <Image url="@../images/text_select_move_down_18dp_white.png" />
          </image>
       </ImageView>
-      <Pane fx:id="paneDate" layoutX="14.0" layoutY="8.0" prefHeight="71.0" prefWidth="71.0" styleClass="date-square-panel" stylesheets="@../../../../../../../../../chess-journey/src/main/resources/com/davidp/chessjourney/custom-styles.css">
+      <Pane fx:id="paneDate" layoutX="14.0" layoutY="8.0" prefHeight="71.0" prefWidth="71.0" styleClass="date-square-panel" stylesheets="@../styles.css">
          <children>
             <Label fx:id="lblMonthAbbrev" alignment="CENTER" layoutX="0.0" layoutY="15.0" prefHeight="16.0" prefWidth="71.0" styleClass="date-month-label" text="Sep" textAlignment="CENTER" textFill="#CCCCCC">
                <font>

@@ -192,6 +192,14 @@ public class MainSceneController extends UiScreenController {
       return;
     }
 
+    if (isButtonShowStatsClicked(event)) {
+
+      UiScreen stats = screenFactory.create(UiScreenId.STATS);
+      stats.reset();
+      stats.show();
+      return;
+    }
+
     if (isButtonFilterClicked(event)) {
       // Toggle filter icon between on/off
       try {

@@ -2,6 +2,7 @@ package com.davidpe.tasker.application.ui.common;
 
 import com.davidpe.tasker.application.ui.main.MainSceneController;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneController;
+import com.davidpe.tasker.application.ui.stats.StatsSceneController;
 import com.davidpe.tasker.application.ui.tasks.NewTaskPanelController;
 import java.io.IOException;
 import java.util.EnumMap;
@@ -51,7 +52,13 @@ public class UiScreenFactory {
                   UiScreenId.MENU_TASK_DIALOG.getResourcePath(),
                   (stage, supplier, controller) ->
                       new UiModalScreen(UiScreenId.MENU_TASK_DIALOG, stage, supplier, controller),
-                  com.davidpe.tasker.application.ui.menu.MenuTaskController.class));
+                  com.davidpe.tasker.application.ui.menu.MenuTaskController.class),
+              UiScreenId.STATS,
+              new UiScreenDescriptor<>(
+                  UiScreenId.STATS.getResourcePath(),
+                  (stage, supplier, controller) ->
+                      new UiPrimaryScreen(UiScreenId.STATS, stage, supplier, controller),
+                  StatsSceneController.class));
 
   private final UiViewLoader fxmlLoader;
   private final Stage primaryStage;
