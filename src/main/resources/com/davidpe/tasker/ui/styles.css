@@ -603,9 +603,142 @@
     -fx-padding: 6 10;
 }
 
+/* Aplica solo a ComboBox dentro de .popup-text-field */
+/* Variantes: la clase `popup-text-field` puede aplicarse al contenedor padre
+   o directamente al control (ej. <ComboBox styleClass="popup-text-field"/>).
+   Añadimos selectores que cubran ambos casos. */
+
+/* Descendiente: estilo cuando la clase está en un wrapper que contiene el control */
+.popup-text-field .combo-box .button-cell,
+.popup-text-field .combo-box:not(.showing) .button-cell {
+    -fx-text-fill: #CCCCCC; /* color para estado cerrado */
+}
+.popup-text-field .combo-box:showing .button-cell {
+    -fx-text-fill: #FFFFFF; /* color para estado abierto */
+}
+.popup-text-field .combo-box .text-field {
+    -fx-text-fill: #CCCCCC;
+}
+.popup-text-field .combo-box:showing .text-field {
+    -fx-text-fill: #FFFFFF;
+}
+.popup-text-field .combo-box .list-cell {
+    -fx-text-fill: #E0E0E0; /* color de los items en la lista */
+}
+.popup-text-field .combo-box .label { -fx-text-fill: #CCCCCC; }
+
+/* Control-level: cuando la clase está en el propio ComboBox/TextField/TextArea/DatePicker */
+.combo-box.popup-text-field .button-cell,
+.combo-box.popup-text-field:not(.showing) .button-cell {
+    -fx-text-fill: #CCCCCC;
+}
+.combo-box.popup-text-field:showing .button-cell {
+    -fx-text-fill: #FFFFFF;
+}
+.combo-box.popup-text-field .text-field {
+    -fx-text-fill: #CCCCCC;
+}
+.combo-box.popup-text-field .list-cell {
+    -fx-text-fill: #E0E0E0;
+}
+.combo-box.popup-text-field .label { -fx-text-fill: #CCCCCC; }
+
+/* TextField / TextArea cuando la clase se aplica directamente al control */
+.text-field.popup-text-field {
+    -fx-text-fill: #FFFFFF; /* coincide con el color base definido más arriba */
+}
+.text-area.popup-text-field {
+    -fx-text-fill: #FFFFFF;
+}
+
+/* DatePicker: la clase suele aplicarse al DatePicker, el text field es hijo */
+.date-picker.popup-text-field .text-field {
+    -fx-text-fill: #CCCCCC;
+}
+
 /* Estilos específicos para TextArea con la misma apariencia */
 .popup-text-field.text-area {
     -fx-background-color: #1C1C1C;
+}
+
+/* Fallbacks y selectores directos para forzar color de texto y prompt */
+/* TextField: aplicar color al propio control y al nodo interno .text (dependiendo del skin) */
+.popup-text-field .text-field,
+.text-field.popup-text-field {
+    -fx-text-fill: #FFFFFF; /* texto visible */
+    -fx-prompt-text-fill: rgba(255,255,255,0.45); /* placeholder */
+}
+.popup-text-field .text-field .text,
+.text-field.popup-text-field .text {
+    -fx-fill: #FFFFFF; /* para nodos Text internos */
+}
+
+/* TextArea: color del texto y del contenido */
+.popup-text-field .text-area,
+.text-area.popup-text-field {
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: rgba(255,255,255,0.45);
+}
+.popup-text-field .text-area .content .text,
+.text-area.popup-text-field .content .text {
+    -fx-fill: #FFFFFF;
+}
+
+/* ComboBox non-editable: la celda visible suele contener una .label */
+.popup-text-field .combo-box .button-cell .label,
+.combo-box.popup-text-field .button-cell .label,
+.popup-text-field .combo-box .label,
+.combo-box.popup-text-field .label {
+    -fx-text-fill: #CCCCCC;
+}
+
+/* ComboBox editable: el editor es un TextField hijo */
+.popup-text-field .combo-box .text-field,
+.combo-box.popup-text-field .text-field {
+    -fx-text-fill: #CCCCCC;
+    -fx-prompt-text-fill: rgba(131, 34, 34, 0.45);
+}
+
+/* DatePicker: el campo visible es un TextField dentro del control */
+.popup-text-field .date-picker .text-field,
+.date-picker.popup-text-field .text-field {
+    -fx-text-fill: #CCCCCC;
+    -fx-prompt-text-fill: rgba(255,255,255,0.45);
+}
+
+/* Aumentar especificidad en caso de que otras reglas sobrescriban: colocar un selector más específico */
+.popup-text-field .text-field.popup-text-field,
+.popup-text-field .combo-box.popup-text-field {
+    -fx-text-fill: #CCCCCC;
+}
+
+/* Lista desplegable (items) EFECTIVO EN COMBO BOX */
+.popup-text-field .combo-box .list-cell,
+.combo-box.popup-text-field .list-cell {
+    -fx-text-fill: #E0E0E0; /* color QUE SE MUESTRA CON EL COMBO CERRADO */
+}
+
+/* Extra: estilos para la lista desplegable que vive en un popup (skin-specific) */
+.combo-box-popup .list-view .list-cell,
+.popup-text-field .combo-box .list-view .list-cell,
+.combo-box.popup-text-field .list-view .list-cell {
+    -fx-text-fill: #E0E0E0; /* COLOR QUE SE MUESTRA EN LOS ITEMS DE LA LISTA */
+    -fx-background-color: #1C1C1C;
+}
+ 
+
+/* DatePicker inner text node (skin-specific) */
+.date-picker .text-field .text,
+.date-picker.popup-text-field .text-field .text,
+.popup-text-field .date-picker .text-field .text {
+    -fx-fill: #CCCCCC; /* for Text nodes inside DatePicker */
+}
+
+/* Last-resort high-specificity rule to override other styles: use the full path */
+.popup-root .popup-text-field .text-field,
+.popup-root .popup-text-field .combo-box .label,
+.popup-root .popup-text-field .combo-box .button-cell .label {
+    -fx-text-fill: #CCCCCC !important;
 }
 
 .popup-text-field.text-area .content {

@@ -1,58 +1,56 @@
 package com.davidpe.tasker.bootstrap;
 
+import com.davidpe.tasker.application.ui.common.UiScreenFactory;
+import com.davidpe.tasker.application.ui.common.UiScreenId;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.davidpe.tasker.application.ui.common.UiScreenFactory;
-import com.davidpe.tasker.application.ui.common.UiScreenId;
-
 @SpringBootApplication(scanBasePackages = "com.davidpe.tasker")
 public class TaskerApplication extends Application {
 
-    private ConfigurableApplicationContext applicationContext;
-    private UiScreenFactory screenFactory;
+  private ConfigurableApplicationContext applicationContext;
+  private UiScreenFactory screenFactory;
 
-    public static void main(String[] args) {
-        
-        launch(args);
+  public static void main(String[] args) {
+
+    launch(args);
+  }
+
+  @Override
+  public void init() {
+
+    SpringApplicationBuilder builder = new SpringApplicationBuilder(TaskerApplication.class);
+    applicationContext = builder.headless(false).run();
+  }
+
+  @Override
+  public void stop() {
+
+    if (applicationContext != null) {
+      applicationContext.close();
     }
-
-    @Override
-    public void init() {
-
-      SpringApplicationBuilder builder = new SpringApplicationBuilder(TaskerApplication.class);
-      applicationContext = builder.headless(false).run();
+    if (screenFactory != null) {
+      screenFactory.close();
     }
+  }
 
-    @Override
-    public void stop() {
+  @Override
+  public void start(Stage primaryStage) {
 
-        if (applicationContext != null) {
-            applicationContext.close();
-        }
-        if (screenFactory != null) {
-            screenFactory.close();
-        }
-    }
+    primaryStage.initStyle(StageStyle.TRANSPARENT);
 
-    @Override
-    public void start(Stage primaryStage) {
+    String appTitle = applicationContext.getBean("applicationTitle", String.class);
+    primaryStage.setTitle(appTitle);
 
-        primaryStage.initStyle(StageStyle.TRANSPARENT);
+    applicationContext.getBeanFactory().registerSingleton("primaryStage", primaryStage);
 
-        String appTitle = applicationContext.getBean("applicationTitle", String.class);
-        primaryStage.setTitle(appTitle);
+    screenFactory = applicationContext.getBean(UiScreenFactory.class);
+    // screenFactory = applicationContext.getBean(UiScreenFactory.class,primaryStage);
 
-        applicationContext.getBeanFactory().registerSingleton("primaryStage", primaryStage);
-    
-        screenFactory = applicationContext.getBean(UiScreenFactory.class);        
-        //screenFactory = applicationContext.getBean(UiScreenFactory.class,primaryStage);      
-        
-        screenFactory.create(UiScreenId.MAIN).show();
-    }
+    screenFactory.create(UiScreenId.MAIN).show();
+  }
 }
