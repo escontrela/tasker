@@ -15,6 +15,10 @@ public interface TaskRepository {
 
     List<Task> findAllNotDoneByProjectId(Long projectId);
 
+    List<Task> findAllDone();
+
+    List<Task> findAllDoneByProjectId(Long projectId);
+
     Optional<Task> findById(Long taskId);
 
     void deleteById(Long taskId);

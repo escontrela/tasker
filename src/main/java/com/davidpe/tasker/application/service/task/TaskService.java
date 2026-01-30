@@ -64,6 +64,13 @@ public class TaskService {
     return taskRepository.findAllNotDoneByProjectId(projectId);
   }
 
+  public List<Task> getTasksDone(Long projectId) {
+    if (projectId == null) {
+      return taskRepository.findAllDone();
+    }
+    return taskRepository.findAllDoneByProjectId(projectId);
+  }
+
   public Optional<Priority> getPriorityById(Long priorityId) {
     return priorityRepository.findById(priorityId);
   }
