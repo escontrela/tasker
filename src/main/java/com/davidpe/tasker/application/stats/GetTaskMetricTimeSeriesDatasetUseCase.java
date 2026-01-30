@@ -28,7 +28,22 @@ public class GetTaskMetricTimeSeriesDatasetUseCase {
     Objects.requireNonNull(request, "request must not be null");
     TaskStatsQuery query = request.getQuery();
 
+    System.out.println(
+        "GetTaskMetricTimeSeriesDatasetUseCase.execute: metric="
+            + request.getMetric()
+            + ", projectId="
+            + query.getProjectId()
+            + ", from="
+            + query.getFrom()
+            + ", to="
+            + query.getTo()
+            + ", aggregationLevel="
+            + query.getAggregationLevel());
+
     List<StatsPoint> points = taskStatsRepository.getMetricSeries(request.getMetric(), query);
+
+    System.out.println("GetTaskMetricTimeSeriesDatasetUseCase.execute: points=" + points.size());
+
     TimeSeries series = new TimeSeries("Tasks created");
     for (StatsPoint point : points) {
       TimePeriod period = toPeriod(point.getPeriodStart(), query.getAggregationLevel());

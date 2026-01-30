@@ -214,6 +214,11 @@ public class StatsSceneController extends UiScreenController
     TimeSeriesDataset dataset = getTaskMetricTimeSeriesDatasetUseCase.execute(request);
 
     ChartData chartData = convertToChartData(dataset);
+    System.out.println("ChartData: " + chartData.dataPoints().size() + " series");
+
+    chartData.dataPoints.getFirst().forEach(point -> System.out.println("DataPoint: " + point));
+    System.out.println("ChartLabels: " + chartData.labels());
+
     grhStats.setChartTitle("Tasks created for " + project.getName());
     grhStats.setSeriesNames(chartData.seriesNames);
     grhStats.setDatasets(chartData.dataPoints, chartData.labels);

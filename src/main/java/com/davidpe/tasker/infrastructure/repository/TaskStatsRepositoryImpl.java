@@ -5,7 +5,6 @@ import com.davidpe.tasker.domain.stats.StatsPoint;
 import com.davidpe.tasker.domain.stats.TaskMetric;
 import com.davidpe.tasker.domain.stats.TaskStatsQuery;
 import com.davidpe.tasker.domain.stats.TaskStatsRepository;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,22 +35,15 @@ public class TaskStatsRepositoryImpl implements TaskStatsRepository {
         SELECT %s AS period_start,
                COUNT(*) AS value
         FROM tasks
-        WHERE project_id = ?
-          AND start_at IS NOT NULL
-          AND date(start_at / 1000, 'unixepoch') >= ?
-          AND date(start_at / 1000, 'unixepoch') <= ?
         GROUP BY period_start
         ORDER BY period_start
         """
             .formatted(periodExpression);
 
     return switch (metric) {
-      case CREATED_TASKS -> jdbcTemplate.query(
-          sql,
-          statsPointMapper,
-          query.getProjectId(),
-          Date.valueOf(query.getFrom()),
-          Date.valueOf(query.getTo()));
+      case CREATED_TASKS -> jdbcTemplate.query(sql, statsPointMapper);
+      // Date.valueOf(query.getFrom()),
+      // Date.valueOf(query.getTo()));
       case OPEN_TASKS, DONE_TASKS -> List.of();
     };
   }
