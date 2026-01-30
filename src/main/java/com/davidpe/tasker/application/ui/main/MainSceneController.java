@@ -92,17 +92,11 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private StackPane taskOption_all;
 
-  @FXML private StackPane taskOption_todo;
-
-  @FXML private StackPane taskOption_settings;
-
   @FXML private StackPane taskOption_done;
 
+  @FXML private StackPane taskOption_todo;
+
   @FXML private Label lblNewAll;
-
-  @FXML private Label lblTodo;
-
-  @FXML private Label lblDone;
 
   @FXML private MessagePanelController pnlMessage;
 
@@ -136,10 +130,16 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private ComboBox<Project> cbxProject;
 
+  @FXML private Label lblTodo;
+
+  @FXML private Label lblDone;
+
   // Images for filter button (on / off)
   private Image imgFilterImageOn;
   private Image imgFilterImageOff;
-  private boolean filterOn = true;
+  private boolean filterOn = false;
+
+  private TaskStatusFilter taskStatusFilter = TaskStatusFilter.ALL;
 
   // Reusable notification panel (separate from pnlMessage which is used for delete confirmation)
   private MessagePanelController pnlNotification;
@@ -162,6 +162,12 @@ public class MainSceneController extends UiScreenController {
   private enum PendingTaskAction {
     DELETE,
     CLOSE
+  }
+
+  private enum TaskStatusFilter {
+    ALL,
+    TODO,
+    DONE
   }
 
   @Lazy
@@ -227,27 +233,28 @@ public class MainSceneController extends UiScreenController {
     }
 
     if (isButtonFilterClicked(event)) {
-      // Toggle filter icon between on/off
-      try {
-        filterOn = !filterOn;
-        if (imgFilter != null) {
-          if (filterOn && imgFilterImageOn != null) {
-            imgFilter.setImage(imgFilterImageOn);
-          } else if (!filterOn && imgFilterImageOff != null) {
-            imgFilter.setImage(imgFilterImageOff);
-          }
-        }
-      } catch (Exception ex) {
-        // ignore
-      }
-
-      loadTasks();
+      TaskStatusFilter nextFilter =
+          taskStatusFilter == TaskStatusFilter.TODO ? TaskStatusFilter.ALL : TaskStatusFilter.TODO;
+      applyTaskFilter(nextFilter);
       return;
     }
   }
 
   @FXML
   void handleButtonClick(MouseEvent event) {}
+
+  @FXML
+  void onTaskFilterClicked(MouseEvent event) {
+    if (event == null) return;
+    Object source = event.getSource();
+    if (source == taskOption_all) {
+      applyTaskFilter(TaskStatusFilter.ALL);
+    } else if (source == taskOption_todo) {
+      applyTaskFilter(TaskStatusFilter.TODO);
+    } else if (source == taskOption_done) {
+      applyTaskFilter(TaskStatusFilter.DONE);
+    }
+  }
 
   private boolean isButtonNewProjectClicked(ActionEvent event) {
 
@@ -267,11 +274,6 @@ public class MainSceneController extends UiScreenController {
   private boolean isButtonSettingsClicked(ActionEvent event) {
 
     return event.getSource() == btSettings || event.getSource() == imgSettings;
-  }
-
-  private boolean isButtonTodoClicked(MouseEvent event) {
-
-    return event.getSource() == lblTodo;
   }
 
   private boolean isButtonCloseClicked(ActionEvent event) {
@@ -310,13 +312,13 @@ public class MainSceneController extends UiScreenController {
           getClass().getResource("/com/davidpe/tasker/ui/images/filter_alt_off_18dp_white.png");
       if (onUrl != null) imgFilterImageOn = new Image(onUrl.toExternalForm());
       if (offUrl != null) imgFilterImageOff = new Image(offUrl.toExternalForm());
-      if (imgFilter != null && imgFilterImageOn != null) {
-        imgFilter.setImage(imgFilterImageOn);
-        filterOn = true;
-      }
     } catch (Exception e) {
       // ignore image loading errors
     }
+
+    taskStatusFilter = TaskStatusFilter.ALL;
+    updateTaskFilterStyles();
+    updateFilterIcon();
 
     pnlMessage.setMessagePanelActionListener(
         new MessagePanelController.MessagePanelActionListener() {
@@ -643,13 +645,56 @@ public class MainSceneController extends UiScreenController {
 
     // Populate the Tasker table panel with tasks.
     Long projectId = selectedProjectId();
-    List<Task> tasks =
-        filterOn ? taskService.getTasksNotDone(projectId) : taskService.getTasks(projectId);
+    List<Task> tasks = getFilteredTasks(projectId);
     List<Task> orderedTasks = new ArrayList<>(tasks);
     orderedTasks.sort(
         Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
             .thenComparing(Task::getCreatedAt, Comparator.reverseOrder()));
     populateTaskerPanel(orderedTasks, preserveTaskId);
+  }
+
+  private List<Task> getFilteredTasks(Long projectId) {
+    return switch (taskStatusFilter) {
+      case TODO -> taskService.getTasksNotDone(projectId);
+      case DONE -> taskService.getTasksDone(projectId);
+      case ALL -> taskService.getTasks(projectId);
+    };
+  }
+
+  private void applyTaskFilter(TaskStatusFilter filter) {
+    if (filter == null || filter == taskStatusFilter) return;
+    taskStatusFilter = filter;
+    updateTaskFilterStyles();
+    updateFilterIcon();
+    Long selectedTaskId = selectedRow != null ? selectedRow.getTaskId() : null;
+    loadTasks(selectedTaskId);
+  }
+
+  private void updateTaskFilterStyles() {
+    setTaskOptionSelected(taskOption_all, taskStatusFilter == TaskStatusFilter.ALL);
+    setTaskOptionSelected(taskOption_todo, taskStatusFilter == TaskStatusFilter.TODO);
+    setTaskOptionSelected(taskOption_done, taskStatusFilter == TaskStatusFilter.DONE);
+  }
+
+  private void setTaskOptionSelected(StackPane option, boolean selected) {
+    if (option == null) return;
+    if (selected) {
+      if (!option.getStyleClass().contains("selected")) {
+        option.getStyleClass().add("selected");
+      }
+    } else {
+      option.getStyleClass().remove("selected");
+    }
+  }
+
+  private void updateFilterIcon() {
+    filterOn = taskStatusFilter == TaskStatusFilter.TODO;
+    if (imgFilter == null) return;
+    if (filterOn && imgFilterImageOn != null) {
+      imgFilter.setImage(imgFilterImageOn);
+    } else if (!filterOn && imgFilterImageOff != null) {
+      imgFilter.setImage(imgFilterImageOff);
+    }
   }
 
   private void loadProjects(Long selectProjectId) {

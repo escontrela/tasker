@@ -72,6 +72,18 @@ public class TaskRepositoryImpl implements TaskRepository {
         return jdbcTemplate.query(sql, mapper, projectId);
     }
 
+    @Override
+    public List<Task> findAllDone() {
+        String sql = "SELECT id, project_id, priority_id, tag_id, external_code, title, description, start_at, end_at, sequence, done, created_at, updated_at FROM tasks WHERE done = 1 ORDER BY created_at DESC";
+        return jdbcTemplate.query(sql, mapper);
+    }
+
+    @Override
+    public List<Task> findAllDoneByProjectId(Long projectId) {
+        String sql = "SELECT id, project_id, priority_id, tag_id, external_code, title, description, start_at, end_at, sequence, done, created_at, updated_at FROM tasks WHERE project_id = ? AND done = 1 ORDER BY created_at DESC";
+        return jdbcTemplate.query(sql, mapper, projectId);
+    }
+
     private Task insert(Task task) {
         String sql = "INSERT INTO tasks (project_id, priority_id, tag_id, external_code, title, description, start_at, end_at, sequence, done, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
