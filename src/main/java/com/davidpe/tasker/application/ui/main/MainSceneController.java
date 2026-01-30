@@ -90,15 +90,19 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private HBox taskBar;
 
-  @FXML private StackPane taskOption_analysis;
+  @FXML private StackPane taskOption_all;
 
-  @FXML private StackPane taskOption_games;
+  @FXML private StackPane taskOption_todo;
 
   @FXML private StackPane taskOption_settings;
 
-  @FXML private StackPane taskOption_stats;
+  @FXML private StackPane taskOption_done;
 
-  @FXML private Label lblNewOp;
+  @FXML private Label lblNewAll;
+
+  @FXML private Label lblTodo;
+
+  @FXML private Label lblDone;
 
   @FXML private MessagePanelController pnlMessage;
 
@@ -265,9 +269,9 @@ public class MainSceneController extends UiScreenController {
     return event.getSource() == btSettings || event.getSource() == imgSettings;
   }
 
-  private boolean isButtonNewOpClicked(MouseEvent event) {
+  private boolean isButtonTodoClicked(MouseEvent event) {
 
-    return event.getSource() == lblNewOp;
+    return event.getSource() == lblTodo;
   }
 
   private boolean isButtonCloseClicked(ActionEvent event) {

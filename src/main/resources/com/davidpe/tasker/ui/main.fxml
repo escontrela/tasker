@@ -18,19 +18,19 @@
       <TaskerTablePanelController fx:id="pnlTaskerTable" layoutX="87.0" layoutY="205.0" />
       <HBox fx:id="taskBar" alignment="CENTER" layoutX="635.0" layoutY="43.0" prefHeight="37.0" prefWidth="459.0" spacing="40.0" styleClass="task-bar">
          <children>
-            <StackPane fx:id="taskOption_analysis" prefHeight="40.0" prefWidth="97.0" styleClass="task-item">
+            <StackPane fx:id="taskOption_all" prefHeight="40.0" prefWidth="97.0" styleClass="task-item">
                <children>
-                  <Label fx:id="lblNewOp" onMouseClicked="#handleButtonClick" prefHeight="15.0" prefWidth="34.0" text="All" />
+                  <Label fx:id="lblNewAll" onMouseClicked="#handleButtonClick" prefHeight="15.0" prefWidth="34.0" text="All" />
                </children>
             </StackPane>
-            <StackPane fx:id="taskOption_games" prefHeight="40.0" prefWidth="103.0" styleClass="task-item">
+            <StackPane fx:id="taskOption_todo" prefHeight="40.0" prefWidth="103.0" styleClass="task-item">
                <children>
-                  <Label text="To Do" />
+                  <Label fx:id="lblTodo" text="To Do" />
                </children>
             </StackPane>
-            <StackPane fx:id="taskOption_stats" prefHeight="40.0" prefWidth="96.0" styleClass="task-item">
+            <StackPane fx:id="taskOption_done" prefHeight="40.0" prefWidth="96.0" styleClass="task-item">
                <children>
-                  <Label text="Done" />
+                  <Label fx:id="lblDone" text="Done" />
                </children>
             </StackPane>
          </children>
