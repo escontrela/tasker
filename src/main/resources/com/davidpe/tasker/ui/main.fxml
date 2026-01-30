@@ -3,6 +3,7 @@
 <?import com.davidpe.tasker.application.ui.controls.MessagePanelController?>
 <?import com.davidpe.tasker.application.ui.controls.TaskerTablePanelController?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -159,5 +160,7 @@
             </ImageView>
          </graphic>
       </Button>
+      <Label layoutX="957.0" layoutY="162.0" styleClass="note-label" text="Proyecto" />
+      <ComboBox fx:id="cbxProject" layoutX="1028.0" layoutY="149.0" onAction="#onProjectChanged" prefHeight="19.0" prefWidth="200" styleClass="popup-text-field" />
    </children>
 </Pane>

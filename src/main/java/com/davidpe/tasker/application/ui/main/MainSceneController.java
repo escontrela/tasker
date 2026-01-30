@@ -45,6 +45,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -125,6 +126,8 @@ public class MainSceneController extends UiScreenController {
   @FXML private ImageView imgShowStats;
 
   @FXML private ImageView imgSearch;
+
+  @FXML private ComboBox<?> cbxProject;
 
   // Images for filter button (on / off)
   private Image imgFilterImageOn;
@@ -691,4 +694,7 @@ public class MainSceneController extends UiScreenController {
     }
     return null;
   }
+
+  @FXML
+  void onProjectChanged(ActionEvent event) {}
 }

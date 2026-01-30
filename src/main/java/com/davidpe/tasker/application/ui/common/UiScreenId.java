@@ -6,7 +6,8 @@ public enum UiScreenId {
   SETTINGS("/com/davidpe/tasker/ui/settings.fxml"),
   NEW_TASK_DIALOG("/com/davidpe/tasker/ui/new-task.fxml"),
   MENU_TASK_DIALOG("/com/davidpe/tasker/ui/menu-task.fxml"),
-  STATS("/com/davidpe/tasker/ui/stats.fxml");
+  STATS("/com/davidpe/tasker/ui/stats.fxml"),
+  NEW_PROJECT_DIALOG("/com/davidpe/tasker/ui/new-project.fxml");
 
   private final String resourcePath;
 

@@ -1,6 +1,7 @@
 package com.davidpe.tasker.application.ui.common;
 
 import com.davidpe.tasker.application.ui.main.MainSceneController;
+import com.davidpe.tasker.application.ui.project.NewProjectPanelController;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneController;
 import com.davidpe.tasker.application.ui.stats.StatsSceneController;
 import com.davidpe.tasker.application.ui.tasks.NewTaskPanelController;
@@ -58,7 +59,13 @@ public class UiScreenFactory {
                   UiScreenId.STATS.getResourcePath(),
                   (stage, supplier, controller) ->
                       new UiPrimaryScreen(UiScreenId.STATS, stage, supplier, controller),
-                  StatsSceneController.class));
+                  StatsSceneController.class),
+              UiScreenId.NEW_PROJECT_DIALOG,
+              new UiScreenDescriptor<>(
+                  UiScreenId.NEW_PROJECT_DIALOG.getResourcePath(),
+                  (stage, supplier, controller) ->
+                      new UiModalScreen(UiScreenId.NEW_PROJECT_DIALOG, stage, supplier, controller),
+                  NewProjectPanelController.class));
 
   private final UiViewLoader fxmlLoader;
   private final Stage primaryStage;
