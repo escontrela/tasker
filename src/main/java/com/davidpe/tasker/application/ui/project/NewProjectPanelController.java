@@ -47,6 +47,18 @@ public class NewProjectPanelController extends UiScreenController implements New
     this.presenter = presenter;
   }
 
+  @FXML
+  void buttonAction(ActionEvent event) {
+
+    if (isButtonCancelClicked(event) || isButtonCloseClicked(event)) {
+      hideStage();
+      return;
+    }
+    if (isButtonOkClicked(event)) {
+      presenter.onSaveRequested();
+    }
+  }
+
   private boolean isButtonCancelClicked(ActionEvent event) {
 
     return event.getSource() == btnCancel;
@@ -76,6 +88,7 @@ public class NewProjectPanelController extends UiScreenController implements New
     lblError.setText("");
     lblSubtitle.setText("");
     txtTitle.clear();
+    projectData = null;
   }
 
   private boolean isEditing() {
@@ -113,5 +126,19 @@ public class NewProjectPanelController extends UiScreenController implements New
   }
 
   @Override
-  public void populateProjectData(Project p) {}
+  public String titleInput() {
+    return txtTitle.getText();
+  }
+
+  @Override
+  public void showError(String message) {
+    lblError.setText(message);
+  }
+
+  @Override
+  public void populateProjectData(Project p) {
+    if (p == null) return;
+    txtTitle.setText(p.getName());
+    lblSubtitle.setText(p.getName());
+  }
 }

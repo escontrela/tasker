@@ -19,8 +19,11 @@ import com.davidpe.tasker.application.ui.controls.TaskerTablePanelController;
 import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowMenuTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowMenuTaskSelectedEvent;
+import com.davidpe.tasker.application.ui.events.WindowNewProjectOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
+import com.davidpe.tasker.domain.project.Project;
+import com.davidpe.tasker.domain.project.ProjectCreatedEvent;
 import com.davidpe.tasker.domain.task.Tag;
 import com.davidpe.tasker.domain.task.Task;
 import com.davidpe.tasker.domain.task.TaskCreatedEvent;
@@ -127,7 +130,7 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private ImageView imgSearch;
 
-  @FXML private ComboBox<?> cbxProject;
+  @FXML private ComboBox<Project> cbxProject;
 
   // Images for filter button (on / off)
   private Image imgFilterImageOn;
@@ -186,6 +189,12 @@ public class MainSceneController extends UiScreenController {
     if (isButtonNewTaskClicked(event)) {
 
       eventPublisher.publishEvent(new WindowNewTaskOpenedEvent());
+    }
+
+    if (isButtonNewProjectClicked(event)) {
+
+      eventPublisher.publishEvent(new WindowNewProjectOpenedEvent());
+      return;
     }
 
     if (isButtonCloseClicked(event)) {
@@ -436,7 +445,11 @@ public class MainSceneController extends UiScreenController {
         });
 
     // load tasks initially so the window shows data on first presentation
-    Platform.runLater(this::loadTasks);
+    Platform.runLater(
+        () -> {
+          loadProjects(null);
+          loadTasks();
+        });
 
     // Play a type-writer effect on the title and the hello label when the screen starts
     try {
@@ -570,6 +583,12 @@ public class MainSceneController extends UiScreenController {
         });
   }
 
+  @EventListener
+  public void onProjectCreated(ProjectCreatedEvent event) {
+    if (event == null || event.entity() == null) return;
+    Platform.runLater(() -> loadProjects(event.entity().getId()));
+  }
+
   private void showTaskNotification(Task task, String prefix) {
 
     if (task == null) return;
@@ -625,6 +644,24 @@ public class MainSceneController extends UiScreenController {
         Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
             .thenComparing(Task::getCreatedAt, Comparator.reverseOrder()));
     populateTaskerPanel(orderedTasks, preserveTaskId);
+  }
+
+  private void loadProjects(Long selectProjectId) {
+    if (cbxProject == null) return;
+    cbxProject
+        .getItems()
+        .setAll(taskService.getProjectsByUserId(userService.getSelectedUser().getId()));
+    if (cbxProject.getItems().isEmpty()) {
+      return;
+    }
+    if (selectProjectId != null) {
+      cbxProject.getItems().stream()
+          .filter(project -> selectProjectId.equals(project.getId()))
+          .findFirst()
+          .ifPresent(project -> cbxProject.getSelectionModel().select(project));
+    } else {
+      cbxProject.getSelectionModel().selectFirst();
+    }
   }
 
   private void populateTaskerPanel(List<Task> orderedTasks) {

@@ -10,4 +10,6 @@ public interface ProjectRepository {
   Optional<Project> findById(Long id);
 
   List<Project> findByUserId(Long userId);
+
+  Project save(Project project);
 }

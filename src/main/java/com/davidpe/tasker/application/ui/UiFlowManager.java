@@ -7,8 +7,10 @@ import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
 import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowMenuTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
+import com.davidpe.tasker.application.ui.events.WindowNewProjectOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowOpenedEvent;
 import com.davidpe.tasker.application.ui.menu.MenuTaskData;
+import com.davidpe.tasker.application.ui.project.NewProjectPanelData;
 import com.davidpe.tasker.application.ui.tasks.NewTaskPanelData;
 import javafx.application.Platform;
 import org.springframework.context.annotation.Lazy;
@@ -72,6 +74,16 @@ public class UiFlowManager {
     // Point MENU_POSITION = new Point(120, 110);
     // newTaskDialog.showAtPosition(MENU_POSITION);
     newTaskDialog.show();
+  }
+
+  @EventListener
+  private void onNewProjectOpened(WindowNewProjectOpenedEvent ev) {
+
+    UiScreen newProjectDialog = screenFactory.create(UiScreenId.NEW_PROJECT_DIALOG);
+    newProjectDialog.reset();
+    newProjectDialog.setData(
+        new NewProjectPanelData(NewProjectPanelData.OperationType.CREATE, null));
+    newProjectDialog.show();
   }
 
   @EventListener
