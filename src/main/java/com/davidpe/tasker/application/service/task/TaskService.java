@@ -50,12 +50,18 @@ public class TaskService {
     return tagRepository.findByProjectId(projectId);
   }
 
-  public List<Task> getTasks() {
-    return taskRepository.findAll();
+  public List<Task> getTasks(Long projectId) {
+    if (projectId == null) {
+      return taskRepository.findAll();
+    }
+    return taskRepository.findAllByProjectId(projectId);
   }
 
-  public List<Task> getTasksNotDone() {
-    return taskRepository.findAllNotDone();
+  public List<Task> getTasksNotDone(Long projectId) {
+    if (projectId == null) {
+      return taskRepository.findAllNotDone();
+    }
+    return taskRepository.findAllNotDoneByProjectId(projectId);
   }
 
   public Optional<Priority> getPriorityById(Long priorityId) {

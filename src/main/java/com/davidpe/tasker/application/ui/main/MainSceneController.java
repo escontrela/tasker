@@ -638,7 +638,9 @@ public class MainSceneController extends UiScreenController {
   private void loadTasks(Long preserveTaskId) {
 
     // Populate the Tasker table panel with tasks.
-    List<Task> tasks = filterOn ? taskService.getTasksNotDone() : taskService.getTasks();
+    Long projectId = selectedProjectId();
+    List<Task> tasks =
+        filterOn ? taskService.getTasksNotDone(projectId) : taskService.getTasks(projectId);
     List<Task> orderedTasks = new ArrayList<>(tasks);
     orderedTasks.sort(
         Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
@@ -662,6 +664,12 @@ public class MainSceneController extends UiScreenController {
     } else {
       cbxProject.getSelectionModel().selectFirst();
     }
+  }
+
+  private Long selectedProjectId() {
+    if (cbxProject == null) return null;
+    Project project = cbxProject.getSelectionModel().getSelectedItem();
+    return project != null ? project.getId() : null;
   }
 
   private void populateTaskerPanel(List<Task> orderedTasks) {
@@ -733,5 +741,7 @@ public class MainSceneController extends UiScreenController {
   }
 
   @FXML
-  void onProjectChanged(ActionEvent event) {}
+  void onProjectChanged(ActionEvent event) {
+    loadTasks();
+  }
 }
