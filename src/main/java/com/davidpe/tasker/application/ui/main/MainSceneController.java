@@ -1,6 +1,7 @@
 package com.davidpe.tasker.application.ui.main;
 
 import com.davidpe.tasker.application.service.task.TaskService;
+import com.davidpe.tasker.application.service.user.UserService;
 import com.davidpe.tasker.application.task.DeleteTaskCommand;
 import com.davidpe.tasker.application.task.DeleteTaskUseCase;
 import com.davidpe.tasker.application.task.SetDoneTaskCommand;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -144,6 +146,8 @@ public class MainSceneController extends UiScreenController {
   private PendingTaskAction pendingTaskAction;
   private TaskerRowPanelController hoveredRow;
   private TaskerRowPanelController selectedRow;
+  private Logger logger;
+  private UserService userService;
 
   private enum PendingTaskAction {
     DELETE,
@@ -157,7 +161,9 @@ public class MainSceneController extends UiScreenController {
       TaskService taskService,
       DeleteTaskUseCase deleteTaskUseCase,
       SetDoneTaskUseCase setDoneTaskUseCase,
-      UpdateTaskSequenceUseCase updateTaskSequenceUseCase) {
+      UpdateTaskSequenceUseCase updateTaskSequenceUseCase,
+      UserService userService,
+      Logger logger) {
 
     this.screenFactory = screenFactory;
     this.eventPublisher = eventPublisher;
@@ -165,6 +171,10 @@ public class MainSceneController extends UiScreenController {
     this.deleteTaskUseCase = deleteTaskUseCase;
     this.setDoneTaskUseCase = setDoneTaskUseCase;
     this.updateTaskSequenceUseCase = updateTaskSequenceUseCase;
+    this.userService = userService;
+    this.logger = logger;
+
+    logger.info("The selected userId is: " + userService.getSelectedUser().getId());
   }
 
   @FXML

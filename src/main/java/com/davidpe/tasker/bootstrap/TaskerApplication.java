@@ -7,9 +7,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication(scanBasePackages = "com.davidpe.tasker")
+@EnableCaching
 public class TaskerApplication extends Application {
 
   private ConfigurableApplicationContext applicationContext;

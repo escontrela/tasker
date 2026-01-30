@@ -296,4 +296,10 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
       dpEndDate.setValue(null);
     }
   }
+
+  @Override
+  public void populateProjectOnSubtitle(String projectName) {
+
+    lblSubtitle.setText(projectName);
+  }
 }

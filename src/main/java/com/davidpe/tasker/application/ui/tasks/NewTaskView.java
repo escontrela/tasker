@@ -5,49 +5,50 @@ import com.davidpe.tasker.domain.project.Project;
 import com.davidpe.tasker.domain.task.Priority;
 import com.davidpe.tasker.domain.task.Tag;
 import com.davidpe.tasker.domain.task.Task;
-
 import java.time.LocalDate;
 import java.util.List;
 
 /**
  * View contract for the New Task dialog.
  *
- * <p>Extends {@link UiControllerDataAware} so presenters can inspect the incoming
- * {@link NewTaskPanelData} (CREATE or EDIT) when deciding how to save.</p>
+ * <p>Extends {@link UiControllerDataAware} so presenters can inspect the incoming {@link
+ * NewTaskPanelData} (CREATE or EDIT) when deciding how to save.
  */
 public interface NewTaskView extends UiControllerDataAware<NewTaskPanelData> {
 
-    void showProjects(List<Project> projects);
+  void showProjects(List<Project> projects);
 
-    void showPriorities(List<Priority> priorities);
+  void showPriorities(List<Priority> priorities);
 
-    void showTags(List<Tag> tags);
+  void showTags(List<Tag> tags);
 
-    Long selectedProjectId();
+  Long selectedProjectId();
 
-    Long selectedPriorityId();
+  Long selectedPriorityId();
 
-    Long selectedTagId();
+  Long selectedTagId();
 
-    String titleInput();
+  String titleInput();
 
-    String descriptionInput();
+  String descriptionInput();
 
-    String externalCodeInput();
+  String externalCodeInput();
 
-    LocalDate startDate();
+  LocalDate startDate();
 
-    LocalDate endDate();
+  LocalDate endDate();
 
-    void showError(String message);
+  void showError(String message);
 
-    void close();
+  void close();
 
-    void populateTaskData(Task task);
+  void populateTaskData(Task task);
 
-    void selectTag(Long tagId);
+  void selectTag(Long tagId);
 
-    void selectPriority(Long priorityId);
+  void selectPriority(Long priorityId);
 
-    void selectProject(Long projectId);
+  void selectProject(Long projectId);
+
+  void populateProjectOnSubtitle(String projectName);
 }
