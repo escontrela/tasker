@@ -55,9 +55,21 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
+    public List<Task> findAllByProjectId(Long projectId) {
+        String sql = "SELECT id, project_id, priority_id, tag_id, external_code, title, description, start_at, end_at, sequence, done, created_at, updated_at FROM tasks WHERE project_id = ? ORDER BY created_at DESC";
+        return jdbcTemplate.query(sql, mapper, projectId);
+    }
+
+    @Override
     public List<Task> findAllNotDone() {
         String sql = "SELECT id, project_id, priority_id, tag_id, external_code, title, description, start_at, end_at, sequence, done, created_at, updated_at FROM tasks WHERE done IS NULL OR done = 0 ORDER BY created_at DESC";
         return jdbcTemplate.query(sql, mapper);
+    }
+
+    @Override
+    public List<Task> findAllNotDoneByProjectId(Long projectId) {
+        String sql = "SELECT id, project_id, priority_id, tag_id, external_code, title, description, start_at, end_at, sequence, done, created_at, updated_at FROM tasks WHERE project_id = ? AND (done IS NULL OR done = 0) ORDER BY created_at DESC";
+        return jdbcTemplate.query(sql, mapper, projectId);
     }
 
     private Task insert(Task task) {

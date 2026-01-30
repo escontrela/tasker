@@ -1,8 +1,11 @@
 package com.davidpe.tasker.application.ui.project;
 
+import com.davidpe.tasker.application.project.AddProjectCommand;
+import com.davidpe.tasker.application.project.AddProjectUseCase;
 import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.application.service.user.UserService;
-import org.springframework.context.ApplicationEventPublisher;
+import com.davidpe.tasker.domain.project.Project;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,12 +14,8 @@ import org.springframework.stereotype.Component;
  * <p>Coordinates between the view and application/domain layers to:
  *
  * <ul>
- *   <li>Load and present lookup data (projects, priorities, tags) to the view.
- *   <li>React to project selection changes by filtering and presenting project-specific tags.
- *   <li>Collect user input, build an AddTaskCommand and delegate task creation to the
- *       AddTaskUseCase.
- *   <li>Publish a TaskCreatedEvent when a task is successfully created and instruct the view to
- *       close.
+ *   <li>Load and present project data to the view when editing.
+ *   <li>Collect user input and delegate project creation to the AddProjectUseCase.
  *   <li>Surface creation errors to the view.
  * </ul>
  */
@@ -24,15 +23,15 @@ import org.springframework.stereotype.Component;
 public class NewProjectPresenter {
 
   private final TaskService taskService;
-  private final ApplicationEventPublisher eventPublisher;
+  private final AddProjectUseCase addProjectUseCase;
   private UserService userService;
   private NewProjectView view;
 
   public NewProjectPresenter(
-      TaskService taskService, UserService userService, ApplicationEventPublisher eventPublisher) {
+      TaskService taskService, AddProjectUseCase addProjectUseCase, UserService userService) {
     this.taskService = taskService;
+    this.addProjectUseCase = addProjectUseCase;
     this.userService = userService;
-    this.eventPublisher = eventPublisher;
   }
 
   public void attach(NewProjectView view) {
@@ -40,7 +39,10 @@ public class NewProjectPresenter {
     this.view = view;
   }
 
-  public void loadInitialData() {}
+  public void loadInitialData() {
+    if (view == null) return;
+    view.showError("");
+  }
 
   private boolean isEditing() {
 
@@ -52,7 +54,33 @@ public class NewProjectPresenter {
     return true;
   }
 
-  public void onSaveRequested() {}
+  public void onSaveRequested() {
+    if (view == null) return;
 
-  public void loadProjectData() {}
+    try {
+      if (isEditing()) {
+        return;
+      }
+      Long userId = userService.getSelectedUser().getId();
+      Project project =
+          addProjectUseCase.addProject(new AddProjectCommand(userId, view.titleInput()));
+      if (project != null) {
+        view.close();
+      }
+    } catch (IllegalArgumentException ex) {
+      view.showError(ex.getMessage());
+    } catch (Exception ex) {
+      view.showError("Error creating project");
+    }
+  }
+
+  public void loadProjectData() {
+    if (!isEditing() || view == null) return;
+    Long projectId = view.getData().getProjectId();
+    Optional<Project> project =
+        taskService.getProjectsByUserId(userService.getSelectedUser().getId()).stream()
+            .filter(p -> p.getId().equals(projectId))
+            .findFirst();
+    project.ifPresent(view::populateProjectData);
+  }
 }

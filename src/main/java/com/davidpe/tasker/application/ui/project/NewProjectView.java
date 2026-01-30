@@ -13,5 +13,9 @@ public interface NewProjectView extends UiControllerDataAware<NewProjectPanelDat
 
   void close();
 
+  String titleInput();
+
+  void showError(String message);
+
   void populateProjectData(Project project);
 }

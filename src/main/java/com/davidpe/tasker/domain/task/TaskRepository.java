@@ -9,7 +9,11 @@ public interface TaskRepository {
 
     List<Task> findAll();
 
+    List<Task> findAllByProjectId(Long projectId);
+
     List<Task> findAllNotDone();
+
+    List<Task> findAllNotDoneByProjectId(Long projectId);
 
     Optional<Task> findById(Long taskId);
 
