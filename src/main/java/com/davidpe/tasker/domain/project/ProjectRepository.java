@@ -5,7 +5,9 @@ import java.util.Optional;
 
 public interface ProjectRepository {
 
-    List<Project> findAll();
+  List<Project> findAll();
 
-    Optional<Project> findById(Long id);
+  Optional<Project> findById(Long id);
+
+  List<Project> findByUserId(Long userId);
 }

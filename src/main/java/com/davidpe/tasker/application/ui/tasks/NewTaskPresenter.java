@@ -1,12 +1,14 @@
 package com.davidpe.tasker.application.ui.tasks;
 
 import com.davidpe.tasker.application.service.task.TaskService;
+import com.davidpe.tasker.application.service.user.UserService;
 import com.davidpe.tasker.application.task.AddTaskCommand;
 import com.davidpe.tasker.application.task.AddTaskUseCase;
 import com.davidpe.tasker.application.task.GetTaskCommand;
 import com.davidpe.tasker.application.task.GetTaskUseCase;
 import com.davidpe.tasker.application.task.UpdateTaskCommand;
 import com.davidpe.tasker.application.task.UpdateTaskUseCase;
+import com.davidpe.tasker.domain.project.Project;
 import com.davidpe.tasker.domain.task.Task;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -35,6 +37,7 @@ public class NewTaskPresenter {
   private final TaskService taskService;
   private final ApplicationEventPublisher eventPublisher;
   private NewTaskView view;
+  private UserService userService;
   private Task originalTask = null;
 
   public NewTaskPresenter(
@@ -42,11 +45,13 @@ public class NewTaskPresenter {
       GetTaskUseCase getTaskUseCase,
       UpdateTaskUseCase updateTaskUseCase,
       TaskService taskService,
+      UserService userService,
       ApplicationEventPublisher eventPublisher) {
     this.addTaskUseCase = addTaskUseCase;
     this.getTaskUseCase = getTaskUseCase;
     this.updateTaskUseCase = updateTaskUseCase;
     this.taskService = taskService;
+    this.userService = userService;
     this.eventPublisher = eventPublisher;
   }
 
@@ -56,7 +61,7 @@ public class NewTaskPresenter {
 
   public void loadInitialData() {
 
-    view.showProjects(taskService.getProjects());
+    view.showProjects(taskService.getProjectsByUserId(userService.getSelectedUser().getId()));
     view.showPriorities(taskService.getPriorities());
     Long projectId = view.selectedProjectId();
     if (projectId != null) {
@@ -148,5 +153,14 @@ public class NewTaskPresenter {
     view.selectPriority(task.getPriorityId());
     view.selectProject(task.getProjectId());
     view.selectTag(task.getTagId());
+    view.populateProjectOnSubtitle(selectProjectById(task.getProjectId()).getName());
+  }
+
+  private Project selectProjectById(Long projectId) {
+
+    return taskService.getProjectsByUserId(userService.getSelectedUser().getId()).stream()
+        .filter(p -> p.getId().equals(projectId))
+        .findFirst()
+        .orElse(null);
   }
 }

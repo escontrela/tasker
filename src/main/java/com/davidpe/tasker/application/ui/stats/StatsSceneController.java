@@ -1,11 +1,11 @@
 package com.davidpe.tasker.application.ui.stats;
 
 import com.davidpe.tasker.application.service.task.TaskService;
+import com.davidpe.tasker.application.service.user.UserService;
 import com.davidpe.tasker.application.stats.GetTaskMetricTimeSeriesDatasetRequest;
 import com.davidpe.tasker.application.stats.GetTaskMetricTimeSeriesDatasetUseCase;
 import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
-import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
 import com.davidpe.tasker.application.ui.controls.Chart2DController;
 import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
@@ -75,22 +75,22 @@ public class StatsSceneController extends UiScreenController
 
   @FXML private Chart2DController grhStats;
 
-  private final UiScreenFactory screenFactory;
   private final TaskService taskService;
+  private final UserService userService;
   private final GetTaskMetricTimeSeriesDatasetUseCase getTaskMetricTimeSeriesDatasetUseCase;
 
   private ApplicationEventPublisher eventPublisher;
 
   @Lazy
   public StatsSceneController(
-      UiScreenFactory screenFactory,
       ApplicationEventPublisher eventPublisher,
       TaskService taskService,
+      UserService userService,
       GetTaskMetricTimeSeriesDatasetUseCase getTaskMetricTimeSeriesDatasetUseCase) {
 
     this.eventPublisher = eventPublisher;
-    this.screenFactory = screenFactory;
     this.taskService = taskService;
+    this.userService = userService;
     this.getTaskMetricTimeSeriesDatasetUseCase = getTaskMetricTimeSeriesDatasetUseCase;
   }
 
@@ -166,7 +166,9 @@ public class StatsSceneController extends UiScreenController
           }
         });
 
-    cbxProject.getItems().setAll(taskService.getProjects());
+    cbxProject
+        .getItems()
+        .setAll(taskService.getProjectsByUserId(userService.getSelectedUser().getId()));
     if (!cbxProject.getItems().isEmpty()) {
       cbxProject.getSelectionModel().selectFirst();
     }
