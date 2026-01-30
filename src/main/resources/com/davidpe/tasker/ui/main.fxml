@@ -160,7 +160,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Label layoutX="957.0" layoutY="162.0" styleClass="note-label" text="Proyecto" />
-      <ComboBox fx:id="cbxProject" layoutX="1028.0" layoutY="149.0" onAction="#onProjectChanged" prefHeight="19.0" prefWidth="200" styleClass="popup-text-field" />
+      <Label layoutX="877.0" layoutY="162.0" styleClass="note-label" text="Proyecto" />
+      <ComboBox fx:id="cbxProject" layoutX="952.0" layoutY="149.0" onAction="#onProjectChanged" prefHeight="41.0" prefWidth="276.0" styleClass="popup-text-field" />
    </children>
 </Pane>
