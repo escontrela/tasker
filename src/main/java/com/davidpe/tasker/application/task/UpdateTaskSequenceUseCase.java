@@ -80,7 +80,7 @@ public class UpdateTaskSequenceUseCase {
             existing.getStartAt(),
             existing.getEndAt(),
             newSequence,
-            existing.getDone(),
+            existing.getTaskStatus(),
             existing.getCreatedAt(),
             Instant.now());
     Task saved = taskRepository.save(updated);

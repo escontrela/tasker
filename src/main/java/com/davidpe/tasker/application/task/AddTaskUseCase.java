@@ -6,6 +6,8 @@ import com.davidpe.tasker.domain.task.TagRepository;
 import com.davidpe.tasker.domain.task.Task;
 import com.davidpe.tasker.domain.task.TaskCreatedEvent;
 import com.davidpe.tasker.domain.task.TaskRepository;
+import com.davidpe.tasker.domain.task.TaskStatus;
+import com.davidpe.tasker.domain.task.TaskStatusRepository;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -24,6 +26,7 @@ public class AddTaskUseCase {
   private final ProjectRepository projectRepository;
   private final PriorityRepository priorityRepository;
   private final TagRepository tagRepository;
+  private final TaskStatusRepository taskStatusRepository;
   private final ApplicationEventPublisher eventPublisher;
 
   public AddTaskUseCase(
@@ -31,11 +34,13 @@ public class AddTaskUseCase {
       ProjectRepository projectRepository,
       PriorityRepository priorityRepository,
       TagRepository tagRepository,
+      TaskStatusRepository taskStatusRepository,
       ApplicationEventPublisher eventPublisher) {
     this.taskRepository = taskRepository;
     this.projectRepository = projectRepository;
     this.priorityRepository = priorityRepository;
     this.tagRepository = tagRepository;
+    this.taskStatusRepository = taskStatusRepository;
     this.eventPublisher = eventPublisher;
   }
 
@@ -45,6 +50,10 @@ public class AddTaskUseCase {
     validateDependencies(command);
     Instant startAt = toInstant(command.startDate());
     Instant endAt = toInstant(command.endDate());
+    TaskStatus defaultStatus =
+        taskStatusRepository
+            .findByCode(TaskStatus.BACKLOG)
+            .orElseThrow(() -> new IllegalStateException("Task status backlog not configured"));
     Task task =
         Task.newTask(
             command.projectId(),
@@ -54,7 +63,8 @@ public class AddTaskUseCase {
             command.title(),
             command.description(),
             startAt,
-            endAt);
+            endAt,
+            defaultStatus);
 
     Task toReturn = taskRepository.save(task);
     eventPublisher.publishEvent(new TaskCreatedEvent(toReturn));

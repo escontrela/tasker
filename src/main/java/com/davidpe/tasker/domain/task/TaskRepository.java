@@ -11,13 +11,9 @@ public interface TaskRepository {
 
     List<Task> findAllByProjectId(Long projectId);
 
-    List<Task> findAllNotDone();
+    List<Task> findAllByStatusCode(String statusCode);
 
-    List<Task> findAllNotDoneByProjectId(Long projectId);
-
-    List<Task> findAllDone();
-
-    List<Task> findAllDoneByProjectId(Long projectId);
+    List<Task> findAllByProjectIdAndStatusCode(Long projectId, String statusCode);
 
     Optional<Task> findById(Long taskId);
 

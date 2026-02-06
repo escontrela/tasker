@@ -1,6 +1,7 @@
 package com.davidpe.tasker.application.ui.controls;
 
 import com.davidpe.tasker.domain.task.Task;
+import com.davidpe.tasker.domain.task.TaskStatus;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -54,7 +55,7 @@ public class TaskerRowPanelController extends Pane {
 
   // Optional attached task id to identify the row externally
   private Long taskId;
-  private boolean done;
+  private String taskStatusCode = TaskStatus.BACKLOG;
   private boolean selected;
   // whether we currently have a real date set
   private boolean hasDate = false;
@@ -139,7 +140,7 @@ public class TaskerRowPanelController extends Pane {
       String dateText = fmt.format(ldt);
       updateDatePartsFromDateText(dateText);
     }
-    setDone(Boolean.TRUE.equals(task.getDone()));
+    setTaskStatus(task.getTaskStatus().getCode());
   }
 
   // Individual setters for external controllers
@@ -153,14 +154,13 @@ public class TaskerRowPanelController extends Pane {
   }
 
   public void setOpen(String openText) {
-    // Delegate to setDone so visibility of btDone is handled consistently
-    boolean isDone = "Done".equalsIgnoreCase(openText);
-    setDone(isDone);
+    setTaskStatus("Done".equalsIgnoreCase(openText) ? TaskStatus.DONE : TaskStatus.BACKLOG);
   }
 
-  public void setDone(boolean done) {
-    this.done = done;
-    String text = done ? "Done" : "Open";
+  public void setTaskStatus(String taskStatusCode) {
+    this.taskStatusCode = taskStatusCode != null ? taskStatusCode : TaskStatus.BACKLOG;
+    boolean done = TaskStatus.DONE.equalsIgnoreCase(this.taskStatusCode);
+    String text = done ? "Done" : this.taskStatusCode.replace('_', ' ');
     // Update status label
     if (lblOpen != null) lblOpen.setText(text);
     // The visible button should only appear when the task is Open (done == false)
@@ -180,7 +180,7 @@ public class TaskerRowPanelController extends Pane {
   }
 
   public boolean isDone() {
-    return done;
+    return TaskStatus.DONE.equalsIgnoreCase(taskStatusCode);
   }
 
   public void setSelected(boolean selected) {

@@ -10,7 +10,10 @@ public final class WindowMenuTaskSelectedEvent extends WindowEvent {
     DELETE,
     PRIORITY_UP,
     PRIORITY_DOWN,
-    DONE
+    SET_BACKLOG,
+    SET_PLANNED,
+    SET_IN_PROGRESS,
+    SET_DONE
   }
 
   private final Long taskId;

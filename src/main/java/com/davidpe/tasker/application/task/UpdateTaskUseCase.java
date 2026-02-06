@@ -55,7 +55,7 @@ public class UpdateTaskUseCase {
             startAt,
             endAt,
             existing.getSequence(),
-            existing.getDone(),
+            existing.getTaskStatus(),
             existing.getCreatedAt(),
             now);
     Task toReturn = taskRepository.save(updated);

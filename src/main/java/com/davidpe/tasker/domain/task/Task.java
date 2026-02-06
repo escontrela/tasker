@@ -15,7 +15,7 @@ public class Task {
     private final Instant startAt;
     private final Instant endAt;
     private final java.math.BigDecimal sequence;
-    private final Boolean done;
+    private final TaskStatus taskStatus;
     private final Instant createdAt;
     private final Instant updatedAt;
 
@@ -29,7 +29,7 @@ public class Task {
                 Instant startAt,
                 Instant endAt,
                 java.math.BigDecimal sequence,
-                Boolean done,
+                TaskStatus taskStatus,
                 Instant createdAt,
                 Instant updatedAt) {
         this.id = id;
@@ -42,7 +42,7 @@ public class Task {
         this.startAt = startAt;
         this.endAt = endAt;
         this.sequence = sequence;
-        this.done = done;
+        this.taskStatus = Objects.requireNonNull(taskStatus, "taskStatus");
         this.createdAt = Objects.requireNonNull(createdAt, "createdAt");
         this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt");
     }
@@ -54,7 +54,8 @@ public class Task {
                                String title,
                                String description,
                                Instant startAt,
-                               Instant endAt) {
+                               Instant endAt,
+                               TaskStatus taskStatus) {
         Instant now = Instant.now();
         return new Task(
             null,
@@ -67,7 +68,7 @@ public class Task {
             startAt,
             endAt,
             null,
-            null,
+            taskStatus,
             now,
             now);
     }
@@ -112,8 +113,8 @@ public class Task {
         return sequence;
     }
 
-    public Boolean getDone() {
-        return done;
+    public TaskStatus getTaskStatus() {
+        return taskStatus;
     }
 
     public Instant getCreatedAt() {

@@ -4,8 +4,8 @@ import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.application.service.user.UserService;
 import com.davidpe.tasker.application.task.DeleteTaskCommand;
 import com.davidpe.tasker.application.task.DeleteTaskUseCase;
-import com.davidpe.tasker.application.task.SetDoneTaskCommand;
-import com.davidpe.tasker.application.task.SetDoneTaskUseCase;
+import com.davidpe.tasker.application.task.SetTaskStatusCommand;
+import com.davidpe.tasker.application.task.SetTaskStatusUseCase;
 import com.davidpe.tasker.application.task.TaskSequenceDirection;
 import com.davidpe.tasker.application.task.UpdateTaskSequenceCommand;
 import com.davidpe.tasker.application.task.UpdateTaskSequenceUseCase;
@@ -28,7 +28,8 @@ import com.davidpe.tasker.domain.task.Tag;
 import com.davidpe.tasker.domain.task.Task;
 import com.davidpe.tasker.domain.task.TaskCreatedEvent;
 import com.davidpe.tasker.domain.task.TaskDeletedEvent;
-import com.davidpe.tasker.domain.task.TaskDoneUpdatedEvent;
+import com.davidpe.tasker.domain.task.TaskStatus;
+import com.davidpe.tasker.domain.task.TaskStatusUpdatedEvent;
 import com.davidpe.tasker.domain.task.TaskSequenceUpdatedEvent;
 import com.davidpe.tasker.domain.task.TaskUpdatedEvent;
 import java.awt.Point;
@@ -92,9 +93,13 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private StackPane taskOption_all;
 
-  @FXML private StackPane taskOption_done;
+  @FXML private StackPane taskOption_backlog;
 
-  @FXML private StackPane taskOption_todo;
+  @FXML private StackPane taskOption_planned;
+
+  @FXML private StackPane taskOption_inProgress;
+
+  @FXML private StackPane taskOption_done;
 
   @FXML private Label lblNewAll;
 
@@ -130,7 +135,11 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private ComboBox<Project> cbxProject;
 
-  @FXML private Label lblTodo;
+  @FXML private Label lblBacklog;
+
+  @FXML private Label lblPlanned;
+
+  @FXML private Label lblInProgress;
 
   @FXML private Label lblDone;
 
@@ -149,7 +158,7 @@ public class MainSceneController extends UiScreenController {
   private final ApplicationEventPublisher eventPublisher;
   private final TaskService taskService;
   private final DeleteTaskUseCase deleteTaskUseCase;
-  private final SetDoneTaskUseCase setDoneTaskUseCase;
+  private final SetTaskStatusUseCase setTaskStatusUseCase;
   private final UpdateTaskSequenceUseCase updateTaskSequenceUseCase;
 
   private Long pendingTaskId;
@@ -160,13 +169,14 @@ public class MainSceneController extends UiScreenController {
   private UserService userService;
 
   private enum PendingTaskAction {
-    DELETE,
-    CLOSE
+    DELETE
   }
 
   private enum TaskStatusFilter {
     ALL,
-    TODO,
+    BACKLOG,
+    PLANNED,
+    IN_PROGRESS,
     DONE
   }
 
@@ -176,7 +186,7 @@ public class MainSceneController extends UiScreenController {
       ApplicationEventPublisher eventPublisher,
       TaskService taskService,
       DeleteTaskUseCase deleteTaskUseCase,
-      SetDoneTaskUseCase setDoneTaskUseCase,
+      SetTaskStatusUseCase setTaskStatusUseCase,
       UpdateTaskSequenceUseCase updateTaskSequenceUseCase,
       UserService userService,
       Logger logger) {
@@ -185,7 +195,7 @@ public class MainSceneController extends UiScreenController {
     this.eventPublisher = eventPublisher;
     this.taskService = taskService;
     this.deleteTaskUseCase = deleteTaskUseCase;
-    this.setDoneTaskUseCase = setDoneTaskUseCase;
+    this.setTaskStatusUseCase = setTaskStatusUseCase;
     this.updateTaskSequenceUseCase = updateTaskSequenceUseCase;
     this.userService = userService;
     this.logger = logger;
@@ -233,9 +243,7 @@ public class MainSceneController extends UiScreenController {
     }
 
     if (isButtonFilterClicked(event)) {
-      TaskStatusFilter nextFilter =
-          taskStatusFilter == TaskStatusFilter.TODO ? TaskStatusFilter.ALL : TaskStatusFilter.TODO;
-      applyTaskFilter(nextFilter);
+      applyTaskFilter(TaskStatusFilter.ALL);
       return;
     }
   }
@@ -249,8 +257,12 @@ public class MainSceneController extends UiScreenController {
     Object source = event.getSource();
     if (source == taskOption_all) {
       applyTaskFilter(TaskStatusFilter.ALL);
-    } else if (source == taskOption_todo) {
-      applyTaskFilter(TaskStatusFilter.TODO);
+    } else if (source == taskOption_backlog) {
+      applyTaskFilter(TaskStatusFilter.BACKLOG);
+    } else if (source == taskOption_planned) {
+      applyTaskFilter(TaskStatusFilter.PLANNED);
+    } else if (source == taskOption_inProgress) {
+      applyTaskFilter(TaskStatusFilter.IN_PROGRESS);
     } else if (source == taskOption_done) {
       applyTaskFilter(TaskStatusFilter.DONE);
     }
@@ -328,8 +340,6 @@ public class MainSceneController extends UiScreenController {
             if (pendingTaskId != null && pendingTaskAction != null) {
               if (pendingTaskAction == PendingTaskAction.DELETE) {
                 deleteTaskUseCase.deleteTask(new DeleteTaskCommand(pendingTaskId));
-              } else if (pendingTaskAction == PendingTaskAction.CLOSE) {
-                setDoneTaskUseCase.toggleDone(new SetDoneTaskCommand(pendingTaskId));
               }
             }
             pendingTaskId = null;
@@ -415,10 +425,8 @@ public class MainSceneController extends UiScreenController {
           @Override
           public void onRowOpenClicked(TaskerRowPanelController row) {
             if (row == null || row.getTaskId() == null || row.isDone()) return;
-            pendingTaskId = row.getTaskId();
-            pendingTaskAction = PendingTaskAction.CLOSE;
-            pnlMessage.setMessage("Do you really want to close this task?");
-            showDeletePanel(pnlMessage);
+            setTaskStatusUseCase.setStatus(
+                new SetTaskStatusCommand(row.getTaskId(), TaskStatus.DONE));
           }
 
           @Override
@@ -501,12 +509,18 @@ public class MainSceneController extends UiScreenController {
             case PRIORITY_DOWN ->
                 updateTaskSequenceUseCase.updateSequence(
                     new UpdateTaskSequenceCommand(event.getTaskId(), TaskSequenceDirection.DOWN));
-            case DONE -> {
-              pendingTaskId = event.getTaskId();
-              pendingTaskAction = PendingTaskAction.CLOSE;
-              pnlMessage.setMessage("Do you really want to close this task?");
-              showDeletePanel(pnlMessage);
-            }
+            case SET_BACKLOG ->
+                setTaskStatusUseCase.setStatus(
+                    new SetTaskStatusCommand(event.getTaskId(), TaskStatus.BACKLOG));
+            case SET_PLANNED ->
+                setTaskStatusUseCase.setStatus(
+                    new SetTaskStatusCommand(event.getTaskId(), TaskStatus.PLANNED));
+            case SET_IN_PROGRESS ->
+                setTaskStatusUseCase.setStatus(
+                    new SetTaskStatusCommand(event.getTaskId(), TaskStatus.IN_PROGRESS));
+            case SET_DONE ->
+                setTaskStatusUseCase.setStatus(
+                    new SetTaskStatusCommand(event.getTaskId(), TaskStatus.DONE));
             default -> {}
           }
         });
@@ -566,14 +580,14 @@ public class MainSceneController extends UiScreenController {
   }
 
   @EventListener
-  public void onTaskDoneUpdated(TaskDoneUpdatedEvent event) {
+  public void onTaskStatusUpdated(TaskStatusUpdatedEvent event) {
     Platform.runLater(
         () -> {
           loadTasks();
           String prefix =
-              Boolean.TRUE.equals(event.entity().getDone())
-                  ? "Se ha marcado como done la tarea #"
-                  : "Se ha marcado como pendiente la tarea #";
+              "Se ha actualizado el estado a "
+                  + event.entity().getTaskStatus().getCode()
+                  + " de la tarea #";
           showTaskNotification(event.entity(), prefix);
         });
   }
@@ -655,9 +669,11 @@ public class MainSceneController extends UiScreenController {
 
   private List<Task> getFilteredTasks(Long projectId) {
     return switch (taskStatusFilter) {
-      case TODO -> taskService.getTasksNotDone(projectId);
-      case DONE -> taskService.getTasksDone(projectId);
       case ALL -> taskService.getTasks(projectId);
+      case BACKLOG -> taskService.getTasksByStatus(projectId, TaskStatus.BACKLOG);
+      case PLANNED -> taskService.getTasksByStatus(projectId, TaskStatus.PLANNED);
+      case IN_PROGRESS -> taskService.getTasksByStatus(projectId, TaskStatus.IN_PROGRESS);
+      case DONE -> taskService.getTasksByStatus(projectId, TaskStatus.DONE);
     };
   }
 
@@ -672,7 +688,9 @@ public class MainSceneController extends UiScreenController {
 
   private void updateTaskFilterStyles() {
     setTaskOptionSelected(taskOption_all, taskStatusFilter == TaskStatusFilter.ALL);
-    setTaskOptionSelected(taskOption_todo, taskStatusFilter == TaskStatusFilter.TODO);
+    setTaskOptionSelected(taskOption_backlog, taskStatusFilter == TaskStatusFilter.BACKLOG);
+    setTaskOptionSelected(taskOption_planned, taskStatusFilter == TaskStatusFilter.PLANNED);
+    setTaskOptionSelected(taskOption_inProgress, taskStatusFilter == TaskStatusFilter.IN_PROGRESS);
     setTaskOptionSelected(taskOption_done, taskStatusFilter == TaskStatusFilter.DONE);
   }
 
@@ -688,7 +706,7 @@ public class MainSceneController extends UiScreenController {
   }
 
   private void updateFilterIcon() {
-    filterOn = taskStatusFilter == TaskStatusFilter.TODO;
+    filterOn = taskStatusFilter != TaskStatusFilter.ALL;
     if (imgFilter == null) return;
     if (filterOn && imgFilterImageOn != null) {
       imgFilter.setImage(imgFilterImageOn);
@@ -755,7 +773,7 @@ public class MainSceneController extends UiScreenController {
       } else {
         row.setDate("");
       }
-      row.setDone(Boolean.TRUE.equals(task.getDone()));
+      row.setTaskStatus(task.getTaskStatus().getCode());
       String tagText =
           task.getTagId() != null
               ? taskService.getTagById(task.getTagId()).map(Tag::getName).orElse("")

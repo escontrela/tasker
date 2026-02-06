@@ -29,6 +29,12 @@ public class MenuTaskController extends UiScreenController implements MenuTaskVi
 
   @FXML private ImageView imgDelete;
 
+  @FXML private ImageView imgBacklog;
+
+  @FXML private ImageView imgPlanned;
+
+  @FXML private ImageView imgInProgress;
+
   @FXML private ImageView imgDone;
 
   @FXML private ImageView imgEdit;
@@ -39,6 +45,12 @@ public class MenuTaskController extends UiScreenController implements MenuTaskVi
 
   @FXML private Label lblDelete;
 
+  @FXML private Label lblBacklog;
+
+  @FXML private Label lblPlanned;
+
+  @FXML private Label lblInProgress;
+
   @FXML private Label lblDone;
 
   @FXML private Label lblEdit;
@@ -48,6 +60,12 @@ public class MenuTaskController extends UiScreenController implements MenuTaskVi
   @FXML private Label lblPriorityUp;
 
   @FXML private Pane paneDelete;
+
+  @FXML private Pane paneBacklog;
+
+  @FXML private Pane panePlanned;
+
+  @FXML private Pane paneInProgress;
 
   @FXML private Pane paneDone;
 
@@ -95,8 +113,14 @@ public class MenuTaskController extends UiScreenController implements MenuTaskVi
       action = WindowMenuTaskSelectedEvent.Action.PRIORITY_UP;
     } else if (src == panePriorityDown || src == lblPriorityDown || src == imgPriorityDown) {
       action = WindowMenuTaskSelectedEvent.Action.PRIORITY_DOWN;
+    } else if (src == paneBacklog || src == lblBacklog || src == imgBacklog) {
+      action = WindowMenuTaskSelectedEvent.Action.SET_BACKLOG;
+    } else if (src == panePlanned || src == lblPlanned || src == imgPlanned) {
+      action = WindowMenuTaskSelectedEvent.Action.SET_PLANNED;
+    } else if (src == paneInProgress || src == lblInProgress || src == imgInProgress) {
+      action = WindowMenuTaskSelectedEvent.Action.SET_IN_PROGRESS;
     } else if (src == paneDone || src == lblDone || src == imgDone) {
-      action = WindowMenuTaskSelectedEvent.Action.DONE;
+      action = WindowMenuTaskSelectedEvent.Action.SET_DONE;
     }
 
     if (action != null) {

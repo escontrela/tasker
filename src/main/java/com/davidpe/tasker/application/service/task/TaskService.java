@@ -57,18 +57,11 @@ public class TaskService {
     return taskRepository.findAllByProjectId(projectId);
   }
 
-  public List<Task> getTasksNotDone(Long projectId) {
+  public List<Task> getTasksByStatus(Long projectId, String statusCode) {
     if (projectId == null) {
-      return taskRepository.findAllNotDone();
+      return taskRepository.findAllByStatusCode(statusCode);
     }
-    return taskRepository.findAllNotDoneByProjectId(projectId);
-  }
-
-  public List<Task> getTasksDone(Long projectId) {
-    if (projectId == null) {
-      return taskRepository.findAllDone();
-    }
-    return taskRepository.findAllDoneByProjectId(projectId);
+    return taskRepository.findAllByProjectIdAndStatusCode(projectId, statusCode);
   }
 
   public Optional<Priority> getPriorityById(Long priorityId) {
