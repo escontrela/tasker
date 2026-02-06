@@ -721,10 +721,6 @@ public class MainSceneController extends UiScreenController {
     return project != null ? project.getId() : null;
   }
 
-  private void populateTaskerPanel(List<Task> orderedTasks) {
-    populateTaskerPanel(orderedTasks, null);
-  }
-
   private void populateTaskerPanel(List<Task> orderedTasks, Long preserveTaskId) {
     if (pnlTaskerTable == null) return;
 
