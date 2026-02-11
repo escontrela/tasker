@@ -16,16 +16,26 @@
 <Pane fx:id="mainPane" onMouseClicked="#handleButtonClick" prefHeight="830.0" prefWidth="1290.0" styleClass="root-gemini-style" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.main.MainSceneController">
    <children>
       <TaskerTablePanelController fx:id="pnlTaskerTable" layoutX="87.0" layoutY="205.0" />
-      <HBox fx:id="taskBar" alignment="CENTER" layoutX="635.0" layoutY="43.0" prefHeight="37.0" prefWidth="459.0" spacing="40.0" styleClass="task-bar">
+      <HBox fx:id="taskBar" alignment="CENTER" layoutX="560.0" layoutY="43.0" prefHeight="37.0" prefWidth="620.0" spacing="22.0" styleClass="task-bar">
          <children>
             <StackPane fx:id="taskOption_all" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="97.0" styleClass="task-item">
                <children>
                   <Label fx:id="lblNewAll" prefHeight="15.0" prefWidth="34.0" text="All" />
                </children>
             </StackPane>
-            <StackPane fx:id="taskOption_todo" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="103.0" styleClass="task-item">
+            <StackPane fx:id="taskOption_backlog" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="103.0" styleClass="task-item">
                <children>
-                  <Label fx:id="lblTodo" text="To Do" />
+                  <Label fx:id="lblBacklog" text="Backlog" />
+               </children>
+            </StackPane>
+            <StackPane fx:id="taskOption_planned" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="103.0" styleClass="task-item">
+               <children>
+                  <Label fx:id="lblPlanned" text="Planned" />
+               </children>
+            </StackPane>
+            <StackPane fx:id="taskOption_inProgress" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="116.0" styleClass="task-item">
+               <children>
+                  <Label fx:id="lblInProgress" text="In Progress" />
                </children>
             </StackPane>
             <StackPane fx:id="taskOption_done" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="96.0" styleClass="task-item">
