@@ -80,6 +80,27 @@ public class TaskRepositoryImpl implements TaskRepository {
     return jdbcTemplate.query(sql, mapper, projectId, statusCode);
   }
 
+  @Override
+  public List<Task> findAllByProjectIdAndStatusCodeOrderByStartAtAsc(
+      Long projectId, String statusCode) {
+    String sql =
+        SELECT_TASK_FIELDS
+            + "WHERE t.project_id = ? AND ts.code = ? "
+            + "ORDER BY CASE WHEN t.start_at IS NULL THEN 1 ELSE 0 END, t.start_at ASC, t.id ASC";
+    return jdbcTemplate.query(sql, mapper, projectId, statusCode);
+  }
+
+  @Override
+  public List<Task> findAllByProjectIdAndStatusCodeAndUserIdOrderByStartAtAsc(
+      Long projectId, String statusCode, Long userId) {
+    String sql =
+        SELECT_TASK_FIELDS
+            + "JOIN projects p ON p.id = t.project_id "
+            + "WHERE t.project_id = ? AND ts.code = ? AND p.user_id = ? "
+            + "ORDER BY CASE WHEN t.start_at IS NULL THEN 1 ELSE 0 END, t.start_at ASC, t.id ASC";
+    return jdbcTemplate.query(sql, mapper, projectId, statusCode, userId);
+  }
+
   private Task insert(Task task) {
     String sql =
         "INSERT INTO tasks (project_id, priority_id, tag_id, external_code, title, description, start_at, end_at, sequence, task_status_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -165,6 +186,21 @@ public class TaskRepositoryImpl implements TaskRepository {
       return Optional.empty();
     }
     return Optional.of(tasks.getFirst());
+  }
+
+  @Override
+  public Optional<Task> findByIdAndProjectId(Long taskId, Long projectId) {
+    String sql = SELECT_TASK_FIELDS + "WHERE t.id = ? AND t.project_id = ?";
+    return jdbcTemplate.query(sql, mapper, taskId, projectId).stream().findFirst();
+  }
+
+  @Override
+  public Optional<Task> findByIdAndProjectIdAndUserId(Long taskId, Long projectId, Long userId) {
+    String sql =
+        SELECT_TASK_FIELDS
+            + "JOIN projects p ON p.id = t.project_id "
+            + "WHERE t.id = ? AND t.project_id = ? AND p.user_id = ?";
+    return jdbcTemplate.query(sql, mapper, taskId, projectId, userId).stream().findFirst();
   }
 
   @Override

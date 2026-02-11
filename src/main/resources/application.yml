@@ -12,6 +12,13 @@ spring:
     enabled: true
     locations: classpath:db/migration
     validate-on-migrate: false
+  ai:
+    mcp:
+      server:
+        enabled: true
+        name: tasker-mcp
+        version: 1.0.0
+        type: SYNC
 server:
   port: 8080
 application:
