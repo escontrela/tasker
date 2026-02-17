@@ -19,7 +19,7 @@
         <java.version>22</java.version>
         <javafx.version>21.0.9</javafx.version>
         <caffeine.version>3.1.8</caffeine.version>
-        <spring-ai.version>1.0.0</spring-ai.version>
+        <spring-ai.version>1.1.2</spring-ai.version>
         <jvm.add-opens>--add-opens=java.logging/java.util.logging=ALL-UNNAMED</jvm.add-opens>
     </properties>
 
