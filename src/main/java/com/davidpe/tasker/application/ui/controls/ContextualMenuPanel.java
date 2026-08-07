@@ -35,6 +35,10 @@ public class ContextualMenuPanel extends StackPane {
     header.setAlignment(Pos.CENTER_RIGHT);
     menuCard.getChildren().setAll(header, content);
     menuCard.setPadding(new Insets(6));
+    // A StackPane otherwise stretches a resizable child to the whole workspace.
+    // Keep the menu a compact, content-sized panel regardless of its host screen.
+    menuCard.setPrefWidth(230);
+    menuCard.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     menuCard.getStyleClass().add("context-menu-card");
     getChildren().add(menuCard);
     addEventFilter(MouseEvent.MOUSE_PRESSED, event -> { if (event.getTarget() == this) hide(); });

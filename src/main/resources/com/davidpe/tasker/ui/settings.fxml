@@ -8,11 +8,12 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane fx:id="rootPane" prefHeight="760.0" prefWidth="1180.0" styleClass="app-shell" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.settings.SettingsSceneController">
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="workspace-header">
+        <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="workspace-header header-bar">
             <VBox spacing="6.0">
                 <Label styleClass="eyebrow-label" text="Application preferences" />
                 <Label styleClass="app-title" text="Settings" />
@@ -26,7 +27,7 @@
         </HBox>
     </top>
     <center>
-        <VBox alignment="TOP_LEFT" spacing="24.0" styleClass="settings-content">
+        <StackPane alignment="TOP_CENTER" styleClass="settings-content">
             <padding><Insets bottom="64.0" left="80.0" right="80.0" top="56.0" /></padding>
             <VBox maxWidth="680.0" spacing="16.0" styleClass="settings-card">
                 <padding><Insets bottom="32.0" left="32.0" right="32.0" top="32.0" /></padding>
@@ -35,6 +36,6 @@
                 <Label styleClass="card-copy" text="Use the dark Tasker workspace across every screen. The preference is stored locally for your next session." wrapText="true" />
                 <CheckBox fx:id="nightModeCheckBox" mnemonicParsing="false" styleClass="settings-check-box" text="Enable night mode" />
             </VBox>
-        </VBox>
+        </StackPane>
     </center>
 </BorderPane>

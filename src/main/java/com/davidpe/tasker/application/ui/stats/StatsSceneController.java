@@ -31,7 +31,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -51,12 +50,6 @@ public class StatsSceneController extends UiScreenController
   @FXML private Button btRight;
 
   @FXML private Button btSettings;
-
-  @FXML private ImageView imgClose;
-
-  @FXML private ImageView imgMinimize12222;
-
-  @FXML private ImageView imgMinimize12223;
 
   @FXML private Text lblChessboard;
 
@@ -130,12 +123,12 @@ public class StatsSceneController extends UiScreenController
 
   private boolean isButtonCloseClicked(ActionEvent event) {
 
-    return event.getSource() == btClose || event.getSource() == imgClose;
+    return event.getSource() == btClose;
   }
 
   private boolean isButtonLeftClicked(ActionEvent event) {
 
-    return event.getSource() == btLeft || event.getSource() == imgMinimize12222;
+    return event.getSource() == btLeft;
   }
 
   private boolean isButtonFilterClicked(ActionEvent event) {
