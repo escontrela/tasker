@@ -1,9 +1,8 @@
 package com.davidpe.tasker.application.ui.settings;
 
-import com.davidpe.tasker.application.ui.UiFlowManager;
 import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
-import com.davidpe.tasker.application.ui.common.UiScreenId;
+import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
 import com.davidpe.tasker.application.ui.theme.ApplicationThemeService;
 import com.davidpe.tasker.application.ui.theme.TaskerPreferences;
 import java.net.URL;
@@ -11,6 +10,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class SettingsSceneController extends UiScreenController
     implements UiControllerDataAware<SettingsSceneData> {
 
-  private final UiFlowManager uiFlowManager;
+  private final ApplicationEventPublisher eventPublisher;
   private final TaskerPreferences preferences;
   private final ApplicationThemeService themeService;
   private boolean loading;
@@ -30,10 +30,10 @@ public class SettingsSceneController extends UiScreenController
 
   @Lazy
   public SettingsSceneController(
-      UiFlowManager uiFlowManager,
+      ApplicationEventPublisher eventPublisher,
       TaskerPreferences preferences,
       ApplicationThemeService themeService) {
-    this.uiFlowManager = uiFlowManager;
+    this.eventPublisher = eventPublisher;
     this.preferences = preferences;
     this.themeService = themeService;
   }
@@ -59,7 +59,7 @@ public class SettingsSceneController extends UiScreenController
 
   @FXML
   void backToMain() {
-    uiFlowManager.show(UiScreenId.MAIN);
+    eventPublisher.publishEvent(new WindowClosedEvent(UiScreenId.SETTINGS));
   }
 
   @Override

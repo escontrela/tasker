@@ -13,18 +13,20 @@
 
 <BorderPane fx:id="rootPane" prefHeight="760.0" prefWidth="1180.0" styleClass="app-shell" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.settings.SettingsSceneController">
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="workspace-header header-bar">
-            <VBox spacing="6.0">
-                <Label styleClass="eyebrow-label" text="Application preferences" />
-                <Label styleClass="app-title" text="Settings" />
-                <Label styleClass="hero-support" text="Choose how Tasker looks while you plan and complete your work." wrapText="true" />
-            </VBox>
-            <Region HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER_RIGHT" spacing="8.0">
-                <Button fx:id="applyButton" managed="false" mnemonicParsing="false" onAction="#applySettings" styleClass="primary-button" text="Apply" visible="false" />
-                <ToolbarIconButton accessibleText="Back to tasks" darkIconResource="/com/davidpe/tasker/ui/images/chevron_left_18dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/chevron_left_18dp_white.png" onAction="#backToMain" tooltipText="Back to tasks" />
+        <VBox styleClass="workspace-header">
+            <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="header-bar">
+                <VBox spacing="6.0">
+                    <Label styleClass="eyebrow-label" text="Application preferences" />
+                    <Label styleClass="app-title" text="Settings" />
+                    <Label styleClass="hero-support" text="Choose how Tasker looks while you plan and complete your work." wrapText="true" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <HBox alignment="CENTER_RIGHT" spacing="8.0">
+                    <Button fx:id="applyButton" managed="false" mnemonicParsing="false" onAction="#applySettings" styleClass="primary-button" text="Apply" visible="false" />
+                    <ToolbarIconButton accessibleText="Back to tasks" darkIconResource="/com/davidpe/tasker/ui/images/chevron_left_18dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/chevron_left_18dp_white.png" onAction="#backToMain" tooltipText="Back to tasks" />
+                </HBox>
             </HBox>
-        </HBox>
+        </VBox>
     </top>
     <center>
         <StackPane alignment="TOP_CENTER" styleClass="settings-content">

@@ -103,9 +103,16 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
   @Override
   public void initialize(URL location, ResourceBundle resources) {
 
+    configureDialogButtons();
     presenter.attach(this);
     resetData();
     presenter.loadInitialData();
+  }
+
+  private void configureDialogButtons() {
+    btnCancel.getStyleClass().setAll("button", "message-box-button", "message-box-cancel-button");
+    btnOk.getStyleClass().setAll("button", "message-box-button", "message-box-accept-button");
+    btnClose.getStyleClass().setAll("button", "message-box-close-button");
   }
 
   @Override

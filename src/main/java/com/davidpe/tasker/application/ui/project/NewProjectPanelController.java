@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -24,8 +23,6 @@ public class NewProjectPanelController extends UiScreenController implements New
   @FXML private Button btnClose;
 
   @FXML private Button btnOk;
-
-  @FXML private ImageView imgClose;
 
   @FXML private Label lblError;
 
@@ -71,15 +68,22 @@ public class NewProjectPanelController extends UiScreenController implements New
 
   private boolean isButtonCloseClicked(ActionEvent event) {
 
-    return event.getSource() == btnClose || event.getSource() == imgClose;
+    return event.getSource() == btnClose;
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
 
+    configureDialogButtons();
     presenter.attach(this);
     resetData();
     presenter.loadInitialData();
+  }
+
+  private void configureDialogButtons() {
+    btnCancel.getStyleClass().setAll("button", "message-box-button", "message-box-cancel-button");
+    btnOk.getStyleClass().setAll("button", "message-box-button", "message-box-accept-button");
+    btnClose.getStyleClass().setAll("button", "message-box-close-button");
   }
 
   @Override

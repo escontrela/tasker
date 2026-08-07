@@ -1043,6 +1043,10 @@
     -fx-background-color: #ffffff;
     -fx-border-color: #d8dde3;
     -fx-border-width: 1;
+    -fx-pref-width: 680px;
+    -fx-max-width: 680px;
+    -fx-pref-height: 230px;
+    -fx-max-height: 230px;
 }
 .card-title { -fx-text-fill: #262626; -fx-font-size: 22px; -fx-font-weight: 700; }
 .settings-check-box { -fx-text-fill: #262626; -fx-font-size: 14px; -fx-font-weight: 700; }
