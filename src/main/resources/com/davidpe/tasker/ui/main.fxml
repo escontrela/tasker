@@ -3,6 +3,7 @@
 <?import com.davidpe.tasker.application.ui.controls.ContextualMenuPanel?>
 <?import com.davidpe.tasker.application.ui.controls.MessageBox?>
 <?import com.davidpe.tasker.application.ui.controls.TaskerTablePanelController?>
+<?import com.davidpe.tasker.application.ui.controls.TaskOutlinePanel?>
 <?import com.davidpe.tasker.application.ui.controls.ToolbarIconButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -32,6 +33,7 @@
                             <Button fx:id="btnNewTask" mnemonicParsing="false" onAction="#buttonAction" styleClass="primary-button" text="New task" />
                             <Button fx:id="btnNewProject" mnemonicParsing="false" onAction="#buttonAction" styleClass="secondary-button" text="New project" />
                             <Button fx:id="btnShowStats" mnemonicParsing="false" onAction="#buttonAction" styleClass="secondary-button" text="Statistics" />
+                            <ToolbarIconButton fx:id="outlineButton" accessibleText="Toggle task outline" darkIconResource="/com/davidpe/tasker/ui/images/view_column_2_24dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/view_column_2_24dp_white.png" toggleMode="true" tooltipText="Outline" />
                             <ToolbarIconButton fx:id="btSettings" accessibleText="Open settings" darkIconResource="/com/davidpe/tasker/ui/images/settings_18dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/settings_18dp_white.png" onAction="#buttonAction" tooltipText="Settings" />
                         </HBox>
                     </HBox>
@@ -51,13 +53,16 @@
                 </VBox>
             </top>
             <center>
-                <VBox spacing="16.0" styleClass="main-content-shell">
+                <HBox spacing="0.0" styleClass="main-workspace">
+                <VBox spacing="16.0" styleClass="main-content-shell" HBox.hgrow="ALWAYS">
                     <padding><Insets bottom="28.0" left="56.0" right="56.0" top="28.0" /></padding>
                     <HBox alignment="CENTER_LEFT">
                         <VBox spacing="4.0"><Label styleClass="section-title" text="Tasks" /><Label styleClass="section-support" text="Select a card to inspect it, double-click to edit, or right-click for more actions." /></VBox>
                     </HBox>
                     <TaskerTablePanelController fx:id="pnlTaskerTable" VBox.vgrow="ALWAYS" />
                 </VBox>
+                <TaskOutlinePanel fx:id="taskOutlinePanel" managed="false" visible="false" />
+                </HBox>
             </center>
             <bottom>
                 <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="status-rail"><Label styleClass="eyebrow-label" text="Status" /><Label styleClass="status-text" text="Ready to organise your work" /></HBox>

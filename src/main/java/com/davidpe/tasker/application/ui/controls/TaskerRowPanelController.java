@@ -41,6 +41,7 @@ public class TaskerRowPanelController extends VBox {
   private final Button completeButton = new Button("Complete");
   private final Button editButton = new Button("Edit");
   private Long taskId;
+  private Task task;
   private String taskStatusCode = TaskStatus.BACKLOG;
   private boolean selected;
   private RowActionListener rowActionListener;
@@ -80,9 +81,11 @@ public class TaskerRowPanelController extends VBox {
   public void setRowActionListener(RowActionListener listener) { this.rowActionListener = listener; }
   public void setTaskId(Long id) { taskId = id; }
   public Long getTaskId() { return taskId; }
+  public Task getTask() { return task; }
 
   public void setTask(Task task) {
     if (task == null) return;
+    this.task = task;
     setTaskId(task.getId());
     setName(task.getTitle());
     if (task.getStartAt() != null) {

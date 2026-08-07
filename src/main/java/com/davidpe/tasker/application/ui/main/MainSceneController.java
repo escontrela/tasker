@@ -17,6 +17,8 @@ import com.davidpe.tasker.application.ui.controls.MessageBox;
 import com.davidpe.tasker.application.ui.controls.ContextualMenuPanel;
 import com.davidpe.tasker.application.ui.controls.TaskerRowPanelController;
 import com.davidpe.tasker.application.ui.controls.TaskerTablePanelController;
+import com.davidpe.tasker.application.ui.controls.TaskOutlinePanel;
+import com.davidpe.tasker.application.ui.controls.ToolbarIconButton;
 import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowMenuTaskSelectedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewProjectOpenedEvent;
@@ -102,6 +104,10 @@ public class MainSceneController extends UiScreenController {
   @FXML private ContextualMenuPanel taskContextMenu;
 
   @FXML private TaskerTablePanelController pnlTaskerTable;
+
+  @FXML private TaskOutlinePanel taskOutlinePanel;
+
+  @FXML private ToolbarIconButton outlineButton;
 
   @FXML private Button btFilter;
 
@@ -314,6 +320,7 @@ public class MainSceneController extends UiScreenController {
 
     taskMessage.setOnCancel(this::clearPendingTaskAction);
     configureTaskContextMenu();
+    configureTaskOutline();
 
     pnlTaskerTable.setTableActionListener(
         new TaskerTablePanelController.TableActionListener() {
@@ -469,6 +476,49 @@ public class MainSceneController extends UiScreenController {
     }
     selectedRow = row;
     selectedRow.setSelected(true);
+    refreshTaskOutline();
+  }
+
+  private void configureTaskOutline() {
+    outlineButton.selectedProperty().addListener((ignored, oldValue, visible) -> setTaskOutlineVisible(visible));
+    taskOutlinePanel.setOnEdit(
+        () -> {
+          if (selectedRow != null && selectedRow.getTaskId() != null) {
+            eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(selectedRow.getTaskId()));
+          }
+        });
+    taskOutlinePanel.setOnAccept(
+        () -> {
+          if (selectedRow != null && selectedRow.getTaskId() != null && !selectedRow.isDone()) {
+            setTaskStatusUseCase.setStatus(
+                new SetTaskStatusCommand(selectedRow.getTaskId(), TaskStatus.DONE));
+          }
+        });
+    setTaskOutlineVisible(outlineButton.isSelected());
+  }
+
+  private void setTaskOutlineVisible(boolean visible) {
+    taskOutlinePanel.setVisible(visible);
+    taskOutlinePanel.setManaged(visible);
+    if (visible) refreshTaskOutline();
+  }
+
+  private void refreshTaskOutline() {
+    if (taskOutlinePanel == null) return;
+    if (selectedRow == null || selectedRow.getTask() == null) {
+      taskOutlinePanel.showEmpty();
+      return;
+    }
+    Task task = selectedRow.getTask();
+    String projectName = taskService.getProjectsByUserId(userService.getSelectedUser().getId()).stream()
+        .filter(project -> task.getProjectId().equals(project.getId()))
+        .map(Project::getName)
+        .findFirst().orElse("");
+    String priorityName = task.getPriorityId() == null ? "" : taskService.getPriorityById(task.getPriorityId())
+        .map(priority -> priority.getDescription()).orElse("");
+    String tagName = task.getTagId() == null ? "" : taskService.getTagById(task.getTagId())
+        .map(Tag::getName).orElse("");
+    taskOutlinePanel.showTask(task, projectName, priorityName, tagName);
   }
 
   private void configureTaskContextMenu() {
@@ -774,6 +824,7 @@ public class MainSceneController extends UiScreenController {
       } else if (selectedRow != null) {
         selectedRow.setSelected(false);
         selectedRow = null;
+        refreshTaskOutline();
       }
     }
   }
