@@ -1789,3 +1789,23 @@
 /******************************************/
 /** END: NEW SYSTEM DESIGN  10-01-2025 **/
 /******************************************
+
+/* ComboBox popups are rendered in a separate popup scene, so they need explicit
+   light-theme rules instead of inheriting the legacy dark list defaults. */
+.combo-box-popup > .list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(20, 31, 43, 0.16), 16, 0.14, 0, 5);
+}
+.combo-box-popup > .list-view .list-cell {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #262626;
+    -fx-font-size: 14px;
+    -fx-padding: 8 10 8 10;
+}
+.combo-box-popup > .list-view .list-cell:filled:hover,
+.combo-box-popup > .list-view .list-cell:filled:selected {
+    -fx-background-color: #eaf1fa;
+    -fx-text-fill: #262626;
+}

@@ -61,14 +61,26 @@ public class ContextualMenuPanel extends StackPane {
   public void showAtScene(double sceneX, double sceneY) {
     Point2D point = sceneToLocal(sceneX, sceneY);
     setVisible(true); setManaged(true); toFront();
-    Platform.runLater(() -> {
-      menuCard.applyCss();
-      double width = menuCard.prefWidth(-1);
-      double height = menuCard.prefHeight(width);
-      menuCard.setTranslateX(clamp(point.getX(), MARGIN, Math.max(MARGIN, getWidth() - width - MARGIN)));
-      menuCard.setTranslateY(clamp(point.getY(), MARGIN, Math.max(MARGIN, getHeight() - height - MARGIN)));
-      requestFocus();
-    });
+    Platform.runLater(() -> positionMenu(point, true));
+  }
+
+  private void positionMenu(Point2D point, boolean retryAfterLayout) {
+    if (getParent() != null) {
+      getParent().applyCss();
+      getParent().layout();
+    }
+    // During its first display the anchored overlay has not always received its bounds yet.
+    // Wait for that layout pulse instead of clamping everything to the top-left corner.
+    if (retryAfterLayout && (getWidth() <= 0 || getHeight() <= 0)) {
+      Platform.runLater(() -> positionMenu(point, false));
+      return;
+    }
+    menuCard.applyCss();
+    double width = menuCard.prefWidth(-1);
+    double height = menuCard.prefHeight(width);
+    menuCard.setTranslateX(clamp(point.getX(), MARGIN, Math.max(MARGIN, getWidth() - width - MARGIN)));
+    menuCard.setTranslateY(clamp(point.getY(), MARGIN, Math.max(MARGIN, getHeight() - height - MARGIN)));
+    requestFocus();
   }
   public void hide() { setVisible(false); setManaged(false); }
   private double clamp(double value, double min, double max) { return Math.max(min, Math.min(value, max)); }
