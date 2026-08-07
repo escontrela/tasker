@@ -28,11 +28,13 @@ public final class UiPrimaryScreen extends AbstractUiScreen {
 
     @Override
     public void show() {
+        // Cache this screen's FXML root before any other primary screen replaces it in the
+        // shared Scene. Otherwise MAIN would later resolve to the currently displayed root.
+        Parent nextRoot = root();
         Scene activeScene = primaryStage.getScene();
         if (activeScene == null) {
             primaryStage.setScene(scene());
         } else {
-            Parent nextRoot = root();
             if (activeScene.getRoot() != nextRoot) {
             Scene owningScene = nextRoot.getScene();
             if (owningScene != null && owningScene != activeScene) {
