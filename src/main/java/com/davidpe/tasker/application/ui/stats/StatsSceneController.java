@@ -217,8 +217,13 @@ public class StatsSceneController extends UiScreenController
 
     ChartData chartData = convertToChartData(dataset);
     System.out.println("ChartData: " + chartData.dataPoints().size() + " series");
+    if (chartData.dataPoints().isEmpty() || chartData.labels().isEmpty()) {
+      grhStats.resetDataset();
+      grhStats.setChartTitle("Tasks created for " + project.getName());
+      return;
+    }
 
-    chartData.dataPoints.getFirst().forEach(point -> System.out.println("DataPoint: " + point));
+    chartData.dataPoints().getFirst().forEach(point -> System.out.println("DataPoint: " + point));
     System.out.println("ChartLabels: " + chartData.labels());
 
     grhStats.setChartTitle("Tasks created for " + project.getName());

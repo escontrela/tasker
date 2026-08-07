@@ -19,6 +19,9 @@ spring:
         name: tasker-mcp
         version: 1.0.0
         type: SYNC
+        protocol: STREAMABLE
+        streamable-http:
+          mcp-endpoint: /tasker/mcp
 server:
   port: 8080
 application:
