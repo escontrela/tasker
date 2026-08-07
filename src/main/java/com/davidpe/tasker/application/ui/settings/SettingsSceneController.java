@@ -2,6 +2,7 @@ package com.davidpe.tasker.application.ui.settings;
 
 import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
+import com.davidpe.tasker.application.ui.common.UiScreenId;
 import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
 import com.davidpe.tasker.application.ui.theme.ApplicationThemeService;
 import com.davidpe.tasker.application.ui.theme.TaskerPreferences;
