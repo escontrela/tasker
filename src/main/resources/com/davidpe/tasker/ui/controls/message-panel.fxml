@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<fx:root prefHeight="75.0" prefWidth="502.0" styleClass="note-panel" stylesheets="@../styles.css" type="Pane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root prefHeight="75.0" prefWidth="502.0" styleClass="note-panel" stylesheets="@../styles.css" type="Pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label fx:id="lblMessage" layoutX="70.0" layoutY="30.0" styleClass="note-label" text="This is a note that you have to confirm, or not?" textFill="#8389de">
          <font>

@@ -6,7 +6,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane fx:id="paneMenuTask" prefHeight="405.0" prefWidth="172.0" styleClass="note-panel" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.menu.MenuTaskController">
+<Pane fx:id="paneMenuTask" prefHeight="405.0" prefWidth="172.0" styleClass="note-panel" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.menu.MenuTaskController">
    <children>
       <Pane fx:id="paneEdit" layoutX="16.0" layoutY="27.0" onMouseClicked="#onMouseClicked" prefHeight="38.0" prefWidth="140.0" styleClass="menu-task-item">
          <children>

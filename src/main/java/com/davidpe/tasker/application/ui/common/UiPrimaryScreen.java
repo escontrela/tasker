@@ -2,6 +2,8 @@ package com.davidpe.tasker.application.ui.common;
 
  
 import javafx.scene.Scene;
+import javafx.scene.Parent;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.util.function.Supplier;
@@ -13,6 +15,7 @@ import java.util.function.Supplier;
 public final class UiPrimaryScreen extends AbstractUiScreen {
 
     private final Stage primaryStage;
+    private Parent screenRoot;
 
     public UiPrimaryScreen(UiScreenId id,
                          Stage primaryStage,
@@ -30,10 +33,22 @@ public final class UiPrimaryScreen extends AbstractUiScreen {
         if (activeScene == null) {
             primaryStage.setScene(nextScene);
         } else if (activeScene != nextScene) {
-            activeScene.setRoot(nextScene.getRoot());
+            Parent nextRoot = root();
+            Scene owningScene = nextRoot.getScene();
+            if (owningScene != null && owningScene != activeScene) {
+                owningScene.setRoot(new Pane());
+            }
+            activeScene.setRoot(nextRoot);
         }
         controller().onShow();
         primaryStage.show();
+    }
+
+    private Parent root() {
+        if (screenRoot == null) {
+            screenRoot = scene().getRoot();
+        }
+        return screenRoot;
     }
 
     @Override
