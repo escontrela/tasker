@@ -25,8 +25,14 @@ public final class UiPrimaryScreen extends AbstractUiScreen {
 
     @Override
     public void show() {
-
-        primaryStage.setScene(scene());
+        Scene nextScene = scene();
+        Scene activeScene = primaryStage.getScene();
+        if (activeScene == null) {
+            primaryStage.setScene(nextScene);
+        } else if (activeScene != nextScene) {
+            activeScene.setRoot(nextScene.getRoot());
+        }
+        controller().onShow();
         primaryStage.show();
     }
 

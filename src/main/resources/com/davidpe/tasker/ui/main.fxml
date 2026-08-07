@@ -1,176 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.davidpe.tasker.application.ui.controls.MessagePanelController?>
+<?import com.davidpe.tasker.application.ui.controls.ContextualMenuPanel?>
+<?import com.davidpe.tasker.application.ui.controls.MessageBox?>
 <?import com.davidpe.tasker.application.ui.controls.TaskerTablePanelController?>
+<?import com.davidpe.tasker.application.ui.controls.ToolbarIconButton?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
 
-<Pane fx:id="mainPane" onMouseClicked="#handleButtonClick" prefHeight="830.0" prefWidth="1290.0" styleClass="root-gemini-style" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.main.MainSceneController">
-   <children>
-      <TaskerTablePanelController fx:id="pnlTaskerTable" layoutX="87.0" layoutY="205.0" />
-      <HBox fx:id="taskBar" alignment="CENTER" layoutX="560.0" layoutY="43.0" prefHeight="37.0" prefWidth="620.0" spacing="22.0" styleClass="task-bar">
-         <children>
-            <StackPane fx:id="taskOption_all" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="97.0" styleClass="task-item">
-               <children>
-                  <Label fx:id="lblNewAll" prefHeight="15.0" prefWidth="34.0" text="All" />
-               </children>
-            </StackPane>
-            <StackPane fx:id="taskOption_backlog" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="103.0" styleClass="task-item">
-               <children>
-                  <Label fx:id="lblBacklog" text="Backlog" />
-               </children>
-            </StackPane>
-            <StackPane fx:id="taskOption_planned" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="103.0" styleClass="task-item">
-               <children>
-                  <Label fx:id="lblPlanned" text="Planned" />
-               </children>
-            </StackPane>
-            <StackPane fx:id="taskOption_inProgress" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="116.0" styleClass="task-item">
-               <children>
-                  <Label fx:id="lblInProgress" text="In Progress" />
-               </children>
-            </StackPane>
-            <StackPane fx:id="taskOption_done" onMouseClicked="#onTaskFilterClicked" prefHeight="40.0" prefWidth="96.0" styleClass="task-item">
-               <children>
-                  <Label fx:id="lblDone" text="Done" />
-               </children>
-            </StackPane>
-         </children>
-      </HBox>
-      <Text fx:id="lblHello" fill="#e55c45" layoutX="87.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-blue-gradient-medium" text="Tasker" wrappingWidth="740.072021484375">
-         <font>
-            <Font name="Alatsi Regular" size="27.0" />
-         </font>
-      </Text>
-      <StackPane fx:id="pnlMenu" layoutX="1192.0" layoutY="51.0" onMouseClicked="#handleButtonClick" prefHeight="37.0" prefWidth="39.0" styleClass="avatar-frame" stylesheets="@styles.css">
-         <children>
-            <StackPane prefHeight="37.0" prefWidth="39.0" styleClass="avatar-circle" stylesheets="@styles.css">
-               <children>
-                  <Label fx:id="lbUserInitials" styleClass="avatar-text" text="AP">
-                     <font>
-                        <Font name="Alatsi Regular" size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </StackPane>
-         </children>
-      </StackPane>
-      <Button fx:id="btClose" alignment="BASELINE_CENTER" layoutX="1242.0" layoutY="14.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-simple" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgClose" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/close_18dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Button fx:id="btSettings" alignment="BASELINE_CENTER" layoutX="1128.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgSettings" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/settings_18dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Button fx:id="btFilter" alignment="BASELINE_CENTER" layoutX="580.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgFilter" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/filter_alt_18dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-       <MessagePanelController fx:id="pnlMessage" layoutX="700.0" layoutY="720.0" prefWidth="536.0" visible="false" />
-      <Button fx:id="btMenu" alignment="BASELINE_CENTER" layoutX="14.0" layoutY="19.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgMenu" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/menu_24dp_manu-hamburger.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Text fx:id="lbTitle" fill="WHITE" layoutX="115.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-blue-gradient-small" text="| tasker" wrappingWidth="123.0">
-         <font>
-            <Font name="Alatsi Regular" size="16.0" />
-         </font>
-      </Text>
-      <ImageView fitHeight="64.0" fitWidth="114.0" layoutX="39.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@images/tk-logo.png" />
-         </image>
-      </ImageView>
-      <Button fx:id="btnNewTask" alignment="BASELINE_CENTER" layoutX="350.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgNewTask" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/post_add_24dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Button fx:id="btnNewProject" alignment="BASELINE_CENTER" layoutX="400.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgNewProject" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/rocket_launch_24dp_red.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Button fx:id="btnShowStats" alignment="BASELINE_CENTER" layoutX="450.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgShowStats" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/bar_chart_4_bars_24dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Button fx:id="btnSearch" alignment="BASELINE_CENTER" layoutX="530.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgSearch" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/search_18dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Label layoutX="877.0" layoutY="162.0" styleClass="note-label" text="Proyecto" />
-      <ComboBox fx:id="cbxProject" layoutX="952.0" layoutY="149.0" onAction="#onProjectChanged" prefHeight="41.0" prefWidth="276.0" styleClass="popup-text-field" />
-   </children>
-</Pane>
+<AnchorPane fx:id="mainPane" prefHeight="760.0" prefWidth="1180.0" styleClass="app-shell" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.main.MainSceneController">
+    <children>
+        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" styleClass="app-shell">
+            <top>
+                <VBox spacing="0.0" styleClass="workspace-header">
+                    <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="header-bar">
+                        <VBox spacing="6.0">
+                            <Label styleClass="eyebrow-label" text="Task workspace" />
+                            <Label styleClass="app-title" text="Tasker" />
+                            <Label fx:id="lblHello" styleClass="hero-support" text="Plan the work that matters today." />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0">
+                            <Button fx:id="btnNewTask" mnemonicParsing="false" onAction="#buttonAction" styleClass="primary-button" text="New task" />
+                            <Button fx:id="btnNewProject" mnemonicParsing="false" onAction="#buttonAction" styleClass="secondary-button" text="New project" />
+                            <Button fx:id="btnShowStats" mnemonicParsing="false" onAction="#buttonAction" styleClass="secondary-button" text="Statistics" />
+                            <ToolbarIconButton fx:id="btSettings" accessibleText="Open settings" darkIconResource="/com/davidpe/tasker/ui/images/settings_18dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/settings_18dp_white.png" onAction="#buttonAction" tooltipText="Settings" />
+                        </HBox>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="task-filter-bar">
+                        <Label styleClass="filter-caption" text="Show" />
+                        <HBox fx:id="taskBar" spacing="8.0">
+                            <StackPane fx:id="taskOption_all" onMouseClicked="#onTaskFilterClicked" styleClass="task-filter-option"><Label fx:id="lblNewAll" text="All" /></StackPane>
+                            <StackPane fx:id="taskOption_backlog" onMouseClicked="#onTaskFilterClicked" styleClass="task-filter-option"><Label fx:id="lblBacklog" text="Backlog" /></StackPane>
+                            <StackPane fx:id="taskOption_planned" onMouseClicked="#onTaskFilterClicked" styleClass="task-filter-option"><Label fx:id="lblPlanned" text="Planned" /></StackPane>
+                            <StackPane fx:id="taskOption_inProgress" onMouseClicked="#onTaskFilterClicked" styleClass="task-filter-option"><Label fx:id="lblInProgress" text="In progress" /></StackPane>
+                            <StackPane fx:id="taskOption_done" onMouseClicked="#onTaskFilterClicked" styleClass="task-filter-option"><Label fx:id="lblDone" text="Done" /></StackPane>
+                        </HBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label styleClass="filter-caption" text="Project" />
+                        <ComboBox fx:id="cbxProject" onAction="#onProjectChanged" prefWidth="230.0" styleClass="project-combo" />
+                    </HBox>
+                </VBox>
+            </top>
+            <center>
+                <VBox spacing="16.0" styleClass="main-content-shell">
+                    <padding><Insets bottom="28.0" left="56.0" right="56.0" top="28.0" /></padding>
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="4.0"><Label styleClass="section-title" text="Tasks" /><Label styleClass="section-support" text="Select a card to inspect it, double-click to edit, or right-click for more actions." /></VBox>
+                    </HBox>
+                    <TaskerTablePanelController fx:id="pnlTaskerTable" VBox.vgrow="ALWAYS" />
+                </VBox>
+            </center>
+            <bottom>
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="status-rail"><Label styleClass="eyebrow-label" text="Status" /><Label styleClass="status-text" text="Ready to organise your work" /></HBox>
+            </bottom>
+        </BorderPane>
+        <MessageBox fx:id="taskMessage" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <ContextualMenuPanel fx:id="taskContextMenu" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    </children>
+</AnchorPane>

@@ -2,6 +2,7 @@ package com.davidpe.tasker.bootstrap;
 
 import com.davidpe.tasker.application.ui.common.UiViewLoader;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
+import com.davidpe.tasker.application.ui.theme.ApplicationThemeService;
 
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +17,15 @@ public class ApplicationConfig {
 
     private final UiViewLoader fxmlLoader;
     private final String applicationTitle;
+    private final ApplicationThemeService applicationThemeService;
 
-    public ApplicationConfig(UiViewLoader fxmlLoader, @Value("${application.title}") String applicationTitle) {
+    public ApplicationConfig(
+        UiViewLoader fxmlLoader,
+        ApplicationThemeService applicationThemeService,
+        @Value("${application.title}") String applicationTitle) {
 
         this.fxmlLoader = fxmlLoader;
+        this.applicationThemeService = applicationThemeService;
         this.applicationTitle = applicationTitle;
     }
 
@@ -27,7 +33,7 @@ public class ApplicationConfig {
     @Lazy
     public UiScreenFactory screenFactory(Stage stage) throws IOException {
 
-        return new UiScreenFactory(stage, fxmlLoader);
+        return new UiScreenFactory(stage, fxmlLoader, applicationThemeService);
     }
 
     @Bean

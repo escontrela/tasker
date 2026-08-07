@@ -2,361 +2,136 @@ package com.davidpe.tasker.application.ui.controls;
 
 import com.davidpe.tasker.domain.task.Task;
 import com.davidpe.tasker.domain.task.TaskStatus;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.TextStyle;
 import java.util.Locale;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
-public class TaskerRowPanelController extends Pane {
+/** Responsive task card used by the task grid. It emits actions but contains no application logic. */
+public class TaskerRowPanelController extends VBox {
 
-  private static final String SELECTED_STYLE_CLASS = "selected";
-
-  @FXML private ImageView imgDelete;
-
-  @FXML private ImageView imgDown;
-
-  @FXML private ImageView imgEdit;
-
-  @FXML private ImageView imgUp;
-
-  @FXML private Label lblName;
-
-  @FXML private Label lblOpen;
-
-  // lblDate and lblPriority removed from UI; keep date parts and paneDate styling instead
-
-  @FXML private Label lblTags1;
-
-  @FXML private Label lblTags2;
-
-  @FXML private Pane paneRow;
-
-  @FXML private Button btDone;
-
-  @FXML private Label lbDonebutton;
-
-  @FXML private Label lblDayNumber;
-
-  @FXML private Label lblMonthAbbrev;
-
-  @FXML private Pane paneDate;
-
-  // Optional attached task id to identify the row externally
-  private Long taskId;
-  private String taskStatusCode = TaskStatus.BACKLOG;
-  private boolean selected;
-  // whether we currently have a real date set
-  private boolean hasDate = false;
-
-  // Listener to handle row actions from outside
   public interface RowActionListener {
     void onDeleteClicked(TaskerRowPanelController source);
-
     void onEditClicked(TaskerRowPanelController source);
-
     void onMoveUpClicked(TaskerRowPanelController source);
-
     void onMoveDownClicked(TaskerRowPanelController source);
-
     void onOpenClicked(TaskerRowPanelController source);
-
     void onRowClicked(TaskerRowPanelController source);
-
     void onRowHovered(TaskerRowPanelController source);
-
     void onRowExited(TaskerRowPanelController source);
-
     void onRowDoubleClicked(TaskerRowPanelController source);
-
     void onRowContextMenuRequested(TaskerRowPanelController source, double screenX, double screenY);
   }
 
+  private final Label titleLabel = new Label();
+  private final Label dateLabel = new Label();
+  private final Label statusLabel = new Label();
+  private final Label tagLabel = new Label();
+  private final Label priorityLabel = new Label();
+  private final Button completeButton = new Button("Complete");
+  private final Button editButton = new Button("Edit");
+  private Long taskId;
+  private String taskStatusCode = TaskStatus.BACKLOG;
+  private boolean selected;
   private RowActionListener rowActionListener;
 
   public TaskerRowPanelController() {
-    FXMLLoader fxmlLoader =
-        new FXMLLoader(
-            getClass().getResource("/com/davidpe/tasker/ui/controls/tasker-row-control.fxml"));
-    fxmlLoader.setRoot(this);
-    fxmlLoader.setController(this);
+    getStyleClass().add("task-card");
+    setSpacing(14);
+    setPadding(new Insets(20));
+    setPrefWidth(380);
+    setMinHeight(188);
 
-    try {
-      fxmlLoader.load();
-    } catch (IOException e) {
-      throw new RuntimeException(
-          "No se pudo cargar el FXML: /com/davidpe/tasker/ui/controls/tasker-row-control.fxml", e);
-    }
+    titleLabel.getStyleClass().add("task-card-title");
+    titleLabel.setWrapText(true);
+    titleLabel.setMaxWidth(Double.MAX_VALUE);
+    dateLabel.getStyleClass().add("task-card-meta");
+    statusLabel.getStyleClass().add("task-status-pill");
+    tagLabel.getStyleClass().add("task-card-tag");
+    priorityLabel.getStyleClass().add("task-card-meta");
+    HBox metadata = new HBox(8, statusLabel, tagLabel, priorityLabel);
+    metadata.setAlignment(Pos.CENTER_LEFT);
+
+    completeButton.getStyleClass().addAll("task-card-action", "primary-button");
+    completeButton.setOnAction(event -> { if (rowActionListener != null) rowActionListener.onOpenClicked(this); });
+    editButton.getStyleClass().addAll("task-card-action", "secondary-button");
+    editButton.setOnAction(event -> { if (rowActionListener != null) rowActionListener.onEditClicked(this); });
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    HBox actions = new HBox(8, spacer, editButton, completeButton);
+    actions.setAlignment(Pos.CENTER_RIGHT);
+    getChildren().addAll(titleLabel, dateLabel, metadata, actions);
+
+    addEventHandler(MouseEvent.MOUSE_ENTERED, event -> notifyHover());
+    addEventHandler(MouseEvent.MOUSE_EXITED, event -> notifyExit());
+    addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseClick);
   }
 
-  @FXML
-  private void initialize() {
-    if (paneRow != null) {
-      if (!paneRow.getStyleClass().contains("task-item")) {
-        paneRow.getStyleClass().add("task-item");
-      }
-      paneRow.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onRowMouseClicked);
-      paneRow.addEventHandler(MouseEvent.MOUSE_ENTERED, this::onRowMouseEntered);
-      paneRow.addEventHandler(MouseEvent.MOUSE_EXITED, this::onRowMouseExited);
-    }
-  }
+  public void setRowActionListener(RowActionListener listener) { this.rowActionListener = listener; }
+  public void setTaskId(Long id) { taskId = id; }
+  public Long getTaskId() { return taskId; }
 
-  /** Set the listener that will be notified when images or the row are clicked. */
-  public void setRowActionListener(RowActionListener listener) {
-    this.rowActionListener = listener;
-  }
-
-  public void setTaskId(Long id) {
-    this.taskId = id;
-  }
-
-  public Long getTaskId() {
-    return taskId;
-  }
-
-  // Convenience: set all visible fields from a domain Task
   public void setTask(Task task) {
     if (task == null) return;
     setTaskId(task.getId());
-    lblName.setText(task.getTitle());
-    // apply priority styling based on priority id/description from caller
-    // callers (e.g. MainSceneController) should call setPriority(description) if available
-    lblTags1.setText("");
-    lblTags2.setText("");
+    setName(task.getTitle());
     if (task.getStartAt() != null) {
-      LocalDateTime ldt = LocalDateTime.ofInstant(task.getStartAt(), ZoneId.systemDefault());
-      DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-      String dateText = fmt.format(ldt);
-      updateDatePartsFromDateText(dateText);
-    }
+      setDate(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(
+          LocalDateTime.ofInstant(task.getStartAt(), ZoneId.systemDefault())));
+    } else setDate("");
     setTaskStatus(task.getTaskStatus().getCode());
   }
 
-  // Individual setters for external controllers
-  public void setDate(String dateText) {
-    // lblDate was removed from the UI; keep date parts updated
-    updateDatePartsFromDateText(dateText);
+  public void setDate(String value) {
+    dateLabel.setText(value == null || value.isBlank() ? "No scheduled date" : value);
   }
+  public void setName(String value) { titleLabel.setText(value == null || value.isBlank() ? "Untitled task" : value); }
+  public void setOpen(String value) { setTaskStatus("Done".equalsIgnoreCase(value) ? TaskStatus.DONE : TaskStatus.BACKLOG); }
 
-  public void setName(String name) {
-    lblName.setText(name);
+  public void setTaskStatus(String value) {
+    taskStatusCode = value == null ? TaskStatus.BACKLOG : value;
+    boolean done = isDone();
+    statusLabel.setText(taskStatusCode.replace('_', ' '));
+    statusLabel.getStyleClass().removeAll("status-backlog", "status-planned", "status-in-progress", "status-done");
+    statusLabel.getStyleClass().add("status-" + taskStatusCode.toLowerCase(Locale.ROOT).replace('_', '-'));
+    completeButton.setVisible(!done);
+    completeButton.setManaged(!done);
   }
+  public boolean isDone() { return TaskStatus.DONE.equalsIgnoreCase(taskStatusCode); }
 
-  public void setOpen(String openText) {
-    setTaskStatus("Done".equalsIgnoreCase(openText) ? TaskStatus.DONE : TaskStatus.BACKLOG);
+  public void setSelected(boolean value) {
+    selected = value;
+    if (value && !getStyleClass().contains("selected")) getStyleClass().add("selected");
+    if (!value) getStyleClass().remove("selected");
   }
-
-  public void setTaskStatus(String taskStatusCode) {
-    this.taskStatusCode = taskStatusCode != null ? taskStatusCode : TaskStatus.BACKLOG;
-    boolean done = TaskStatus.DONE.equalsIgnoreCase(this.taskStatusCode);
-    String text = done ? "Done" : this.taskStatusCode.replace('_', ' ');
-    // Update status label
-    if (lblOpen != null) lblOpen.setText(text);
-    // The visible button should only appear when the task is Open (done == false)
-    boolean showButton = !done;
-    if (btDone != null) {
-      btDone.setVisible(showButton);
-      btDone.setManaged(showButton);
-      if (showButton) {
-        // The button's visible label must read "Done"
-        // btDone.setText("Done");
-      }
-    }
-    // Also update the label inside the button if present
-    if (lbDonebutton != null) {
-      lbDonebutton.setText(showButton ? "Done" : "");
-    }
-  }
-
-  public boolean isDone() {
-    return TaskStatus.DONE.equalsIgnoreCase(taskStatusCode);
-  }
-
-  public void setSelected(boolean selected) {
-    this.selected = selected;
-    if (selected) {
-      if (!paneRow.getStyleClass().contains(SELECTED_STYLE_CLASS)) {
-        paneRow.getStyleClass().add(SELECTED_STYLE_CLASS);
-      }
-    } else {
-      paneRow.getStyleClass().remove(SELECTED_STYLE_CLASS);
-    }
-  }
-
-  public boolean isSelected() {
-    return selected;
-  }
-
-  public void setPriority(String priorityText) {
-    // lblPriority was removed from the UI; only apply paneDate styling based on priority
-    applyPriorityStyle(priorityText);
-  }
-
+  public boolean isSelected() { return selected; }
+  public void setPriority(String value) { priorityLabel.setText(value == null || value.isBlank() ? "" : value); }
   public void setTags(String tag1, String tag2) {
-    lblTags1.setText(tag1);
-    lblTags2.setText(tag2);
+    String value = tag1 == null ? "" : tag1;
+    if (tag2 != null && !tag2.isBlank()) value = value.isBlank() ? tag2 : value + " · " + tag2;
+    tagLabel.setText(value);
+    tagLabel.setVisible(!value.isBlank());
+    tagLabel.setManaged(!value.isBlank());
   }
 
-  private void applyPriorityStyle(String priorityText) {
-    if (priorityText == null) return;
-    String normalized = priorityText.toLowerCase();
-    // paneDate should show low-priority color when there's no date; otherwise follow priority
-    if (paneDate != null) {
-      paneDate
-          .getStyleClass()
-          .removeAll("date-priority-high", "date-priority-medium", "date-priority-low");
-      if (!hasDate) {
-        paneDate.getStyleClass().add("date-priority-low");
-      } else if (normalized.contains("high")) {
-        paneDate.getStyleClass().add("date-priority-high");
-      } else if (normalized.contains("medium")) {
-        paneDate.getStyleClass().add("date-priority-medium");
-      } else {
-        paneDate.getStyleClass().add("date-priority-low");
-      }
-    }
-  }
-
-  /**
-   * Try to extract day number and month abbreviation from the same date text shown in lblDate.
-   * Expected format (by default): yyyy-MM-dd HH:mm. If parsing fails, clear the labels.
-   */
-  private void updateDatePartsFromDateText(String dateText) {
-    if (dateText == null || dateText.isEmpty()) {
-      hasDate = false;
-      if (lblDayNumber != null) lblDayNumber.setText("?");
-      if (lblMonthAbbrev != null) lblMonthAbbrev.setText("");
-      if (paneDate != null) {
-        paneDate
-            .getStyleClass()
-            .removeAll("date-priority-high", "date-priority-medium", "date-priority-low");
-        paneDate.getStyleClass().add("date-priority-low");
-      }
-      return;
-    }
-    try {
-      DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-      LocalDateTime ldt = LocalDateTime.parse(dateText, fmt);
-      hasDate = true;
-      if (lblDayNumber != null) lblDayNumber.setText(String.valueOf(ldt.getDayOfMonth()));
-      if (lblMonthAbbrev != null)
-        lblMonthAbbrev.setText(ldt.getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault()));
-    } catch (DateTimeParseException ex) {
-      // If parsing fails, try to extract simple numbers safely (fallback)
-      try {
-        // attempt to parse yyyy-MM-dd prefix
-        String[] parts = dateText.split(" ")[0].split("-");
-        if (parts.length >= 3) {
-          hasDate = true;
-          if (lblDayNumber != null)
-            lblDayNumber.setText(String.valueOf(Integer.parseInt(parts[2])));
-          if (lblMonthAbbrev != null) {
-            int month = Integer.parseInt(parts[1]);
-            lblMonthAbbrev.setText(
-                java.time.Month.of(month).getDisplayName(TextStyle.SHORT, Locale.getDefault()));
-          }
-          return;
-        }
-      } catch (Exception e) {
-        // ignore fallback errors
-      }
-      hasDate = false;
-      if (lblDayNumber != null) lblDayNumber.setText("?");
-      if (lblMonthAbbrev != null) lblMonthAbbrev.setText("");
-      if (paneDate != null) {
-        paneDate
-            .getStyleClass()
-            .removeAll("date-priority-high", "date-priority-medium", "date-priority-low");
-        paneDate.getStyleClass().add("date-priority-low");
-      }
-    }
-  }
-
-  private boolean isButtonDoneClicked(ActionEvent event) {
-    return event.getSource() == btDone
-        || event.getTarget() == btDone
-        || event.getTarget() == lbDonebutton;
-  }
-
-  private boolean isImageDownClicked(MouseEvent event) {
-    return event.getSource() == imgDown;
-  }
-
-  private boolean isImageUpClicked(MouseEvent event) {
-    return event.getSource() == imgUp;
-  }
-
-  private boolean isImageEditClicked(MouseEvent event) {
-    return event.getSource() == imgEdit;
-  }
-
-  private boolean isImageDeleteClicked(MouseEvent event) {
-    return event.getSource() == imgDelete;
-  }
-
-  private boolean isLabelOpenClicked(MouseEvent event) {
-    return event.getSource() == lblOpen;
-  }
-
-  private void onRowMouseEntered(MouseEvent event) {
-    if (rowActionListener != null) rowActionListener.onRowHovered(this);
-  }
-
-  private void onRowMouseExited(MouseEvent event) {
-    if (rowActionListener != null) rowActionListener.onRowExited(this);
-  }
-
-  private void onRowMouseClicked(MouseEvent event) {
+  private void handleMouseClick(MouseEvent event) {
     if (event.getButton() == MouseButton.SECONDARY) {
-      if (rowActionListener != null) {
-        rowActionListener.onRowContextMenuRequested(this, event.getScreenX(), event.getScreenY());
-      }
+      if (rowActionListener != null) rowActionListener.onRowContextMenuRequested(this, event.getScreenX(), event.getScreenY());
       event.consume();
-      return;
-    }
-    if (event.getTarget() instanceof ImageView || event.getTarget() == lblOpen) {
-      return;
-    }
-    if (event.getClickCount() == 2) {
+    } else if (event.getClickCount() == 2) {
       if (rowActionListener != null) rowActionListener.onRowDoubleClicked(this);
-    } else {
-      if (rowActionListener != null) rowActionListener.onRowClicked(this);
-    }
+    } else if (rowActionListener != null) rowActionListener.onRowClicked(this);
   }
-
-  @FXML
-  void onMouseClicked(MouseEvent event) {
-    if (isImageDeleteClicked(event)) {
-      if (rowActionListener != null) rowActionListener.onDeleteClicked(this);
-    } else if (isImageEditClicked(event)) {
-      if (rowActionListener != null) rowActionListener.onEditClicked(this);
-    } else if (isImageUpClicked(event)) {
-      if (rowActionListener != null) rowActionListener.onMoveUpClicked(this);
-    } else if (isImageDownClicked(event)) {
-      if (rowActionListener != null) rowActionListener.onMoveDownClicked(this);
-    } else if (isLabelOpenClicked(event)) {
-      // clicking the open label or the done button/label should produce the same action
-      if (rowActionListener != null) rowActionListener.onOpenClicked(this);
-    } else if (event.getSource() == paneRow) {
-      if (rowActionListener != null) rowActionListener.onRowClicked(this);
-    }
-  }
-
-  @FXML
-  void buttonAction(ActionEvent event) {
-    if (isButtonDoneClicked(event)) {
-      if (rowActionListener != null) rowActionListener.onOpenClicked(this);
-    }
-  }
+  private void notifyHover() { if (rowActionListener != null) rowActionListener.onRowHovered(this); }
+  private void notifyExit() { if (rowActionListener != null) rowActionListener.onRowExited(this); }
 }

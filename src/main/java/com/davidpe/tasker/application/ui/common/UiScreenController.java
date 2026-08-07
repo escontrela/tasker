@@ -18,6 +18,10 @@ public abstract class UiScreenController implements Initializable {
         public abstract void initialize(URL location, ResourceBundle resources) ;
         public abstract void resetData();
 
+        /** Called immediately before a primary screen becomes visible. */
+        public void onShow() {
+        }
+
         public void setRootStage(Stage stage) {
 
             this.rootStage = stage;

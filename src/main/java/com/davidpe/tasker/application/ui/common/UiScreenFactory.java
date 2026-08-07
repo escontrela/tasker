@@ -5,6 +5,7 @@ import com.davidpe.tasker.application.ui.project.NewProjectPanelController;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneController;
 import com.davidpe.tasker.application.ui.stats.StatsSceneController;
 import com.davidpe.tasker.application.ui.tasks.NewTaskPanelController;
+import com.davidpe.tasker.application.ui.theme.ApplicationThemeService;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
@@ -69,12 +70,15 @@ public class UiScreenFactory {
 
   private final UiViewLoader fxmlLoader;
   private final Stage primaryStage;
+  private final ApplicationThemeService applicationThemeService;
   private final Map<UiScreenId, UiScreen> cache = new EnumMap<>(UiScreenId.class);
 
-  public UiScreenFactory(Stage primaryStage, UiViewLoader fxmlLoader) {
+  public UiScreenFactory(
+      Stage primaryStage, UiViewLoader fxmlLoader, ApplicationThemeService applicationThemeService) {
 
     this.primaryStage = primaryStage;
     this.fxmlLoader = fxmlLoader;
+    this.applicationThemeService = applicationThemeService;
   }
 
   public UiScreen create(UiScreenId id) {
@@ -92,10 +96,18 @@ public class UiScreenFactory {
     try {
 
       UiViewContext root = fxmlLoader.load(descriptor.fxml());
+      applicationThemeService.register(root.root());
       Supplier<Scene> supplier =
           () -> {
             Scene scene = new Scene(root.root());
             scene.setFill(Color.TRANSPARENT);
+            String stylesheet =
+                UiScreenFactory.class
+                    .getResource("/com/davidpe/tasker/ui/styles.css")
+                    .toExternalForm();
+            if (!scene.getStylesheets().contains(stylesheet)) {
+              scene.getStylesheets().add(stylesheet);
+            }
             return scene;
           };
 

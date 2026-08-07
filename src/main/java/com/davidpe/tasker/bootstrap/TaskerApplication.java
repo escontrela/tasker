@@ -2,9 +2,9 @@ package com.davidpe.tasker.bootstrap;
 
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
+import com.davidpe.tasker.application.ui.UiFlowManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cache.annotation.EnableCaching;
@@ -42,17 +42,16 @@ public class TaskerApplication extends Application {
 
   @Override
   public void start(Stage primaryStage) {
-
-    primaryStage.initStyle(StageStyle.TRANSPARENT);
-
     String appTitle = applicationContext.getBean("applicationTitle", String.class);
     primaryStage.setTitle(appTitle);
+    primaryStage.setMinWidth(1024);
+    primaryStage.setMinHeight(700);
+    primaryStage.setWidth(1180);
+    primaryStage.setHeight(760);
 
     applicationContext.getBeanFactory().registerSingleton("primaryStage", primaryStage);
 
     screenFactory = applicationContext.getBean(UiScreenFactory.class);
-    // screenFactory = applicationContext.getBean(UiScreenFactory.class,primaryStage);
-
-    screenFactory.create(UiScreenId.MAIN).show();
+    applicationContext.getBean(UiFlowManager.class).show(UiScreenId.MAIN);
   }
 }
