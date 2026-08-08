@@ -31,9 +31,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
@@ -43,19 +40,6 @@ import org.springframework.stereotype.Component;
 public class StatsSceneController extends UiScreenController
     implements UiControllerDataAware<StatsSceneData> {
 
-  @FXML private Button btClose;
-
-  @FXML private Button btLeft;
-
-  @FXML private Button btRight;
-
-  @FXML private Button btSettings;
-
-  @FXML private Text lblChessboard;
-
-  @FXML private Text lblPractice;
-
-  @FXML private Pane mainPane;
   @FXML private Button btnFilter;
 
   @FXML private ComboBox<StatsAggregationLevel> cbxGroupBy;
@@ -90,22 +74,14 @@ public class StatsSceneController extends UiScreenController
   @FXML
   void buttonAction(ActionEvent event) {
 
-    if (isButtonCloseClicked(event)) {
-
-      lblPractice.setText("Bye.");
-      eventPublisher.publishEvent(new WindowClosedEvent(UiScreenId.STATS));
-
-      return;
-    }
-
-    if (isButtonLeftClicked(event)) {
-
-      return;
-    }
-
     if (isButtonFilterClicked(event)) {
       refreshChart();
     }
+  }
+
+  @FXML
+  void backToMain() {
+    eventPublisher.publishEvent(new WindowClosedEvent(UiScreenId.STATS));
   }
 
   @FXML
@@ -116,19 +92,6 @@ public class StatsSceneController extends UiScreenController
   @FXML
   void onProjectChanged(ActionEvent event) {
     refreshChart();
-  }
-
-  @FXML
-  void handleButtonClick(MouseEvent event) {}
-
-  private boolean isButtonCloseClicked(ActionEvent event) {
-
-    return event.getSource() == btClose;
-  }
-
-  private boolean isButtonLeftClicked(ActionEvent event) {
-
-    return event.getSource() == btLeft;
   }
 
   private boolean isButtonFilterClicked(ActionEvent event) {
@@ -175,14 +138,12 @@ public class StatsSceneController extends UiScreenController
 
   @Override
   public void resetData() {
-
-    lblPractice.setText("reseted to init state!");
+    refreshChart();
   }
 
   @Override
   public void setData(StatsSceneData data) {
-    // setea campos en la UI antes de show()
-    lblPractice.setText(data.ninghtModeEnabled().toString());
+    // Appearance is resolved by ApplicationThemeService at the screen root.
   }
 
   @Override

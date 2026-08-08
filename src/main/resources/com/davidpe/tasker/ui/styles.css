@@ -1827,3 +1827,32 @@
 .night-mode .outline-title, .night-mode .outline-detail-value { -fx-text-fill: #f1f3f5; }
 .night-mode .outline-eyebrow, .night-mode .outline-detail-caption, .night-mode .outline-description { -fx-text-fill: #b8c5d3; }
 .night-mode .outline-status { -fx-text-fill: #79aeef; }
+
+.stats-content { -fx-background-color: #ffffff; }
+.stats-filter-panel {
+    -fx-background-color: #f7f9fc;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-padding: 14 16 14 16;
+}
+.date-picker.stats-input, .combo-box.stats-input {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-pref-height: 36px;
+}
+.date-picker.stats-input .text-field, .combo-box.stats-input .list-cell { -fx-background-color: #ffffff; -fx-text-fill: #262626; }
+.stats-chart-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-padding: 20;
+}
+.chart-2d { -fx-background-color: #f7f9fc; -fx-background-radius: 10; -fx-border-color: #e1e6ec; -fx-border-radius: 10; -fx-border-width: 1; -fx-effect: null; }
+.night-mode .stats-content { -fx-background-color: #1a2129; }
+.night-mode .stats-filter-panel, .night-mode .stats-chart-card { -fx-background-color: #1c2430; -fx-border-color: #334151; }
+.night-mode .date-picker.stats-input, .night-mode .combo-box.stats-input { -fx-background-color: #1a2129; -fx-border-color: #465465; }
+.night-mode .date-picker.stats-input .text-field, .night-mode .combo-box.stats-input .list-cell { -fx-background-color: #1a2129; -fx-text-fill: #f1f3f5; }
+.night-mode .chart-2d { -fx-background-color: #1a2129; -fx-border-color: #334151; }
