@@ -1189,6 +1189,7 @@
 .button.context-menu-item { -fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-padding: 9 12 9 12; -fx-cursor: hand; }
 .button.context-menu-item:hover { -fx-background-color: #eaf1fa; }
 .context-menu-item-text { -fx-text-fill: #262626; -fx-font-size: 14px; -fx-font-weight: 700; }
+.context-menu-submenu-title { -fx-text-fill: #66727f; -fx-font-size: 12px; -fx-font-weight: 700; -fx-padding: 5 10 7 10; }
 .context-menu-card .separator .line { -fx-border-color: #e6e6e6 transparent transparent transparent; }
 
 .task-modal-card {
@@ -1273,6 +1274,7 @@
 .night-mode .message-box-overlay { -fx-background-color: rgba(0, 0, 0, 0.48); }
 .night-mode .message-box-card, .night-mode .context-menu-card { -fx-background-color: #1c2430; -fx-border-color: #465465; }
 .night-mode .message-box-title, .night-mode .context-menu-item-text { -fx-text-fill: #f1f3f5; }
+.night-mode .context-menu-submenu-title { -fx-text-fill: #b8c5d3; }
 .night-mode .message-box-message { -fx-text-fill: #b8c5d3; }
 .night-mode .button.message-box-cancel-button { -fx-background-color: #1c2430; -fx-border-color: #465465; -fx-text-fill: #f1f3f5; }
 .night-mode .button.message-box-cancel-button:hover, .night-mode .button.context-menu-item:hover { -fx-background-color: #2b3b4d; }
@@ -2145,3 +2147,32 @@
 .night-mode .agent-code-pill { -fx-background-color: #253e5e; -fx-text-fill: #9fc7ff; }
 .night-mode .agent-role-pill { -fx-background-color: #244b35; -fx-text-fill: #9eddb6; }
 .night-mode .agent-row-title { -fx-text-fill: #f1f3f5; }
+
+/* ComboBox popup is rendered in its own scene; style its cells explicitly instead of relying on
+   the owner scene's night-mode selector. */
+.list-cell.agent-combo-cell-light {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #262626;
+    -fx-padding: 9 14 9 14;
+}
+.list-cell.agent-combo-cell-light:filled:hover,
+.list-cell.agent-combo-cell-light:filled:selected {
+    -fx-background-color: #eaf1fa;
+    -fx-text-fill: #262626;
+}
+.list-cell.agent-combo-cell-night {
+    -fx-background-color: #1a2129;
+    -fx-text-fill: #f1f3f5;
+    -fx-padding: 9 14 9 14;
+}
+.list-cell.agent-combo-cell-night:filled:hover,
+.list-cell.agent-combo-cell-night:filled:selected {
+    -fx-background-color: #2b3b4d;
+    -fx-text-fill: #ffffff;
+}
+.combo-box-popup .list-view {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0 0 12 12;
+    -fx-border-color: #c7ced7;
+    -fx-border-radius: 0 0 12 12;
+}

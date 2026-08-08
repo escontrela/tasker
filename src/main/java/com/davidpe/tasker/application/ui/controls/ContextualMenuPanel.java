@@ -18,8 +18,14 @@ import javafx.scene.layout.VBox;
 /** Theme-aware contextual menu rendered inside the current workspace rather than in a Stage. */
 public class ContextualMenuPanel extends StackPane {
   private static final double MARGIN = 12;
+  private static final double SUBMENU_GAP = 8;
   private final VBox menuCard = new VBox(2);
   private final VBox content = new VBox(2);
+  private final VBox submenuCard = new VBox(2);
+  private final VBox submenuContent = new VBox(2);
+
+  /** A selectable item displayed in a contextual submenu. */
+  public record MenuItem(String text, Runnable action) {}
 
   public ContextualMenuPanel() {
     getStyleClass().add("context-menu-panel");
@@ -40,26 +46,47 @@ public class ContextualMenuPanel extends StackPane {
     menuCard.setPrefWidth(230);
     menuCard.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     menuCard.getStyleClass().add("context-menu-card");
-    getChildren().add(menuCard);
+    submenuCard.setPadding(new Insets(6));
+    submenuCard.setPrefWidth(240);
+    submenuCard.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    submenuCard.getStyleClass().addAll("context-menu-card", "context-submenu-card");
+    getChildren().addAll(menuCard, submenuCard);
     addEventFilter(MouseEvent.MOUSE_PRESSED, event -> { if (event.getTarget() == this) hide(); });
     setOnKeyPressed(event -> { if (event.getCode() == KeyCode.ESCAPE) hide(); });
     hide();
   }
 
-  public void clearItems() { content.getChildren().clear(); }
-  public void addItem(String text, Runnable action) {
-    Button item = new Button();
-    item.getStyleClass().add("context-menu-item");
-    item.setMaxWidth(Double.MAX_VALUE);
-    Label label = new Label(text);
-    label.getStyleClass().add("context-menu-item-text");
-    item.setGraphic(label);
-    item.setOnAction(event -> { hide(); if (action != null) action.run(); });
-    content.getChildren().add(item);
+  public void clearItems() {
+    content.getChildren().clear();
+    hideSubmenu();
   }
+
+  public void addItem(String text, Runnable action) {
+    content.getChildren().add(createItem(text, action, true));
+  }
+
+  public void addSubmenu(String text, Runnable action) {
+    content.getChildren().add(createItem(text + "  ›", action, false));
+  }
+
+  public void showSubmenu(String title, java.util.List<MenuItem> items) {
+    submenuContent.getChildren().clear();
+    Label heading = new Label(title);
+    heading.getStyleClass().add("context-menu-submenu-title");
+    submenuContent.getChildren().add(heading);
+    for (MenuItem item : items) {
+      submenuContent.getChildren().add(createItem(item.text(), item.action(), true));
+    }
+    submenuCard.getChildren().setAll(submenuContent);
+    submenuCard.setVisible(true);
+    submenuCard.setManaged(true);
+    Platform.runLater(this::positionSubmenu);
+  }
+
   public void addSeparator() { content.getChildren().add(new Separator()); }
   public void showAtScene(double sceneX, double sceneY) {
     Point2D point = sceneToLocal(sceneX, sceneY);
+    hideSubmenu();
     setVisible(true); setManaged(true); toFront();
     Platform.runLater(() -> positionMenu(point, true));
   }
@@ -82,6 +109,45 @@ public class ContextualMenuPanel extends StackPane {
     menuCard.setTranslateY(clamp(point.getY(), MARGIN, Math.max(MARGIN, getHeight() - height - MARGIN)));
     requestFocus();
   }
-  public void hide() { setVisible(false); setManaged(false); }
+
+  private Button createItem(String text, Runnable action, boolean closeOnAction) {
+    Button item = new Button();
+    item.getStyleClass().add("context-menu-item");
+    item.setMaxWidth(Double.MAX_VALUE);
+    Label label = new Label(text);
+    label.getStyleClass().add("context-menu-item-text");
+    item.setGraphic(label);
+    item.setOnAction(
+        event -> {
+          if (closeOnAction) hide();
+          if (action != null) action.run();
+        });
+    return item;
+  }
+
+  private void positionSubmenu() {
+    if (!submenuCard.isVisible()) return;
+    submenuCard.applyCss();
+    double width = submenuCard.prefWidth(-1);
+    double height = submenuCard.prefHeight(width);
+    double preferredX = menuCard.getTranslateX() + menuCard.prefWidth(-1) + SUBMENU_GAP;
+    if (preferredX + width + MARGIN > getWidth()) {
+      preferredX = menuCard.getTranslateX() - width - SUBMENU_GAP;
+    }
+    submenuCard.setTranslateX(clamp(preferredX, MARGIN, Math.max(MARGIN, getWidth() - width - MARGIN)));
+    submenuCard.setTranslateY(
+        clamp(menuCard.getTranslateY() + 30, MARGIN, Math.max(MARGIN, getHeight() - height - MARGIN)));
+  }
+
+  private void hideSubmenu() {
+    submenuCard.setVisible(false);
+    submenuCard.setManaged(false);
+  }
+
+  public void hide() {
+    hideSubmenu();
+    setVisible(false);
+    setManaged(false);
+  }
   private double clamp(double value, double min, double max) { return Math.max(min, Math.min(value, max)); }
 }

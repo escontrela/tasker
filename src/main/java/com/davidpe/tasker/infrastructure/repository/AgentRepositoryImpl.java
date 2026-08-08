@@ -50,6 +50,11 @@ public class AgentRepositoryImpl implements AgentRepository {
   }
 
   @Override
+  public Optional<Agent> findById(Long id) {
+    return jdbcTemplate.query(AGENT_SELECT + " WHERE a.id = ?", mapper, id).stream().findFirst();
+  }
+
+  @Override
   public Optional<Agent> findByCode(String code) {
     return jdbcTemplate.query(AGENT_SELECT + " WHERE a.code = ?", mapper, code).stream().findFirst();
   }

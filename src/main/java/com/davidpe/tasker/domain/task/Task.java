@@ -18,6 +18,7 @@ public class Task {
     private final TaskStatus taskStatus;
     private final Instant createdAt;
     private final Instant updatedAt;
+    private final Long agentId;
 
     public Task(Long id,
                 Long projectId,
@@ -32,6 +33,37 @@ public class Task {
                 TaskStatus taskStatus,
                 Instant createdAt,
                 Instant updatedAt) {
+        this(
+            id,
+            projectId,
+            priorityId,
+            tagId,
+            externalCode,
+            title,
+            description,
+            startAt,
+            endAt,
+            sequence,
+            taskStatus,
+            createdAt,
+            updatedAt,
+            null);
+    }
+
+    public Task(Long id,
+                Long projectId,
+                Long priorityId,
+                Long tagId,
+                String externalCode,
+                String title,
+                String description,
+                Instant startAt,
+                Instant endAt,
+                java.math.BigDecimal sequence,
+                TaskStatus taskStatus,
+                Instant createdAt,
+                Instant updatedAt,
+                Long agentId) {
         this.id = id;
         this.projectId = Objects.requireNonNull(projectId, "projectId");
         this.priorityId = Objects.requireNonNull(priorityId, "priorityId");
@@ -45,6 +77,7 @@ public class Task {
         this.taskStatus = Objects.requireNonNull(taskStatus, "taskStatus");
         this.createdAt = Objects.requireNonNull(createdAt, "createdAt");
         this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt");
+        this.agentId = agentId;
     }
 
     public static Task newTask(Long projectId,
@@ -123,5 +156,27 @@ public class Task {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public Long getAgentId() {
+        return agentId;
+    }
+
+    public Task withAgent(Long newAgentId, Instant updatedAt) {
+        return new Task(
+            id,
+            projectId,
+            priorityId,
+            tagId,
+            externalCode,
+            title,
+            description,
+            startAt,
+            endAt,
+            sequence,
+            taskStatus,
+            createdAt,
+            updatedAt,
+            newAgentId);
     }
 }

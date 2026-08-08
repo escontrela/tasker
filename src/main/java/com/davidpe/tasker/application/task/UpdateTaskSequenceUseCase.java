@@ -82,7 +82,8 @@ public class UpdateTaskSequenceUseCase {
             newSequence,
             existing.getTaskStatus(),
             existing.getCreatedAt(),
-            Instant.now());
+            Instant.now(),
+            existing.getAgentId());
     Task saved = taskRepository.save(updated);
     eventPublisher.publishEvent(new TaskSequenceUpdatedEvent(saved));
     return saved;

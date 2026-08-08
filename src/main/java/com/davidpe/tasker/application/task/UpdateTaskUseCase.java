@@ -57,7 +57,8 @@ public class UpdateTaskUseCase {
             existing.getSequence(),
             existing.getTaskStatus(),
             existing.getCreatedAt(),
-            now);
+            now,
+            existing.getAgentId());
     Task toReturn = taskRepository.save(updated);
     eventPublisher.publishEvent(new TaskUpdatedEvent(toReturn));
     return toReturn;

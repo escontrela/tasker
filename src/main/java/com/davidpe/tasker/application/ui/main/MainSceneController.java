@@ -2,6 +2,9 @@ package com.davidpe.tasker.application.ui.main;
 
 import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.application.service.user.UserService;
+import com.davidpe.tasker.application.agents.AgentManagementService;
+import com.davidpe.tasker.application.task.AssignTaskAgentCommand;
+import com.davidpe.tasker.application.task.AssignTaskAgentUseCase;
 import com.davidpe.tasker.application.task.DeleteTaskCommand;
 import com.davidpe.tasker.application.task.DeleteTaskUseCase;
 import com.davidpe.tasker.application.task.SetTaskStatusCommand;
@@ -24,6 +27,7 @@ import com.davidpe.tasker.application.ui.events.WindowMenuTaskSelectedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewProjectOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
 import com.davidpe.tasker.domain.project.Project;
+import com.davidpe.tasker.domain.agents.Agent;
 import com.davidpe.tasker.domain.project.ProjectCreatedEvent;
 import com.davidpe.tasker.domain.task.Tag;
 import com.davidpe.tasker.domain.task.Task;
@@ -174,6 +178,8 @@ public class MainSceneController extends UiScreenController {
   private final DeleteTaskUseCase deleteTaskUseCase;
   private final SetTaskStatusUseCase setTaskStatusUseCase;
   private final UpdateTaskSequenceUseCase updateTaskSequenceUseCase;
+  private final AssignTaskAgentUseCase assignTaskAgentUseCase;
+  private final AgentManagementService agentManagementService;
 
   private Long pendingTaskId;
   private PendingTaskAction pendingTaskAction;
@@ -202,6 +208,8 @@ public class MainSceneController extends UiScreenController {
       DeleteTaskUseCase deleteTaskUseCase,
       SetTaskStatusUseCase setTaskStatusUseCase,
       UpdateTaskSequenceUseCase updateTaskSequenceUseCase,
+      AssignTaskAgentUseCase assignTaskAgentUseCase,
+      AgentManagementService agentManagementService,
       UserService userService,
       Logger logger) {
 
@@ -211,6 +219,8 @@ public class MainSceneController extends UiScreenController {
     this.deleteTaskUseCase = deleteTaskUseCase;
     this.setTaskStatusUseCase = setTaskStatusUseCase;
     this.updateTaskSequenceUseCase = updateTaskSequenceUseCase;
+    this.assignTaskAgentUseCase = assignTaskAgentUseCase;
+    this.agentManagementService = agentManagementService;
     this.userService = userService;
     this.logger = logger;
 
@@ -557,7 +567,11 @@ public class MainSceneController extends UiScreenController {
         .map(priority -> priority.getDescription()).orElse("");
     String tagName = task.getTagId() == null ? "" : taskService.getTagById(task.getTagId())
         .map(Tag::getName).orElse("");
-    taskOutlinePanel.showTask(task, projectName, priorityName, tagName);
+    String agentName = task.getAgentId() == null ? "" : agentManagementService.getAgents().stream()
+        .filter(agent -> task.getAgentId().equals(agent.getId()))
+        .map(Agent::getName)
+        .findFirst().orElse("");
+    taskOutlinePanel.showTask(task, projectName, priorityName, tagName, agentName);
   }
 
   private void configureTaskContextMenu() {
@@ -577,6 +591,7 @@ public class MainSceneController extends UiScreenController {
                 new SetTaskStatusCommand(selectedRow.getTaskId(), TaskStatus.DONE));
           }
         });
+    taskContextMenu.addSubmenu("Assign agent", this::showAgentAssignmentMenu);
     taskContextMenu.addSeparator();
     taskContextMenu.addItem(
         "Move priority up",
@@ -594,6 +609,36 @@ public class MainSceneController extends UiScreenController {
             showDeleteConfirmation();
           }
         });
+  }
+
+  private void showAgentAssignmentMenu() {
+    if (selectedRow == null || selectedRow.getTaskId() == null) {
+      return;
+    }
+    Long assignedAgentId = selectedRow.getTask().getAgentId();
+    List<ContextualMenuPanel.MenuItem> items = new ArrayList<>();
+    items.add(
+        new ContextualMenuPanel.MenuItem(
+            assignedAgentId == null ? "✓  No agent" : "No agent",
+            () -> assignAgentToSelectedTask(null)));
+    for (Agent agent : agentManagementService.getAgents()) {
+      String label = (agent.getId().equals(assignedAgentId) ? "✓  " : "")
+          + agent.getName()
+          + "  ·  "
+          + agent.getRole().getName();
+      items.add(new ContextualMenuPanel.MenuItem(label, () -> assignAgentToSelectedTask(agent.getId())));
+    }
+    if (items.size() == 1) {
+      items.add(new ContextualMenuPanel.MenuItem("No agents available", null));
+    }
+    taskContextMenu.showSubmenu("Assign agent", items);
+  }
+
+  private void assignAgentToSelectedTask(Long agentId) {
+    if (selectedRow == null || selectedRow.getTaskId() == null) {
+      return;
+    }
+    assignTaskAgentUseCase.assign(new AssignTaskAgentCommand(selectedRow.getTaskId(), agentId));
   }
 
   private void showTaskContextMenu(double screenX, double screenY) {

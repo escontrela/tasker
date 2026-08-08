@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -57,6 +58,7 @@ public class AgentsSceneController extends UiScreenController {
         BreadcrumbItem.link("Tasker", this::backToMain),
         BreadcrumbItem.current("Agents"),
         BreadcrumbItem.current("Directory"));
+    configureRoleCombo();
     refreshDirectory();
   }
 
@@ -115,6 +117,29 @@ public class AgentsSceneController extends UiScreenController {
   private Long selectedRoleId() {
     AgentRole role = agentRoleCombo.getValue();
     return role == null ? null : role.getId();
+  }
+
+  private void configureRoleCombo() {
+    agentRoleCombo.setCellFactory(ignored -> roleCell());
+    agentRoleCombo.setButtonCell(roleCell());
+  }
+
+  private ListCell<AgentRole> roleCell() {
+    return new ListCell<>() {
+      @Override
+      protected void updateItem(AgentRole role, boolean empty) {
+        super.updateItem(role, empty);
+        setText(empty || role == null ? null : role.getName());
+        getStyleClass().removeAll("agent-combo-cell-light", "agent-combo-cell-night");
+        getStyleClass().add(isNightMode() ? "agent-combo-cell-night" : "agent-combo-cell-light");
+      }
+    };
+  }
+
+  private boolean isNightMode() {
+    return getRootStage() != null
+        && getRootStage().getScene() != null
+        && getRootStage().getScene().getRoot().getStyleClass().contains("night-mode");
   }
 
   private void refreshDirectory() {

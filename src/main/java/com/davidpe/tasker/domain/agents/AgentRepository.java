@@ -7,6 +7,8 @@ public interface AgentRepository {
 
   List<Agent> findAll();
 
+  Optional<Agent> findById(Long id);
+
   Optional<Agent> findByCode(String code);
 
   Agent save(Agent agent);
