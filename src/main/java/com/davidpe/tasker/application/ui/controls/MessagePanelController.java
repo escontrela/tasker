@@ -5,27 +5,23 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
 /**
- * This controller is responsible for the message panel control that allows users to display
- * notification messages with OK and Cancel buttons.
+ * Compact, reusable in-window notification that can be placed in any layout.
  */
 public class MessagePanelController extends Pane {
 
-    @FXML private Pane rootPane;
+    @FXML private Label lblTitle;
     @FXML private Label lblMessage;
-    @FXML private ImageView imgIcon;
-    @FXML private Button btOk;
-    @FXML private Button btCancel;
+    @FXML private Button btClose;
 
     private MessagePanelActionListener actionListener;
 
     /**
-     * Interface for handling message panel button actions.
+     * Listener retained for compatibility with existing callers.
      */
     public interface MessagePanelActionListener {
         void onOkButtonClicked();
@@ -46,9 +42,8 @@ public class MessagePanelController extends Pane {
 
     @FXML
     private void initialize() {
-        // Initialize with default message if needed
         if (lblMessage.getText() == null || lblMessage.getText().isEmpty()) {
-            lblMessage.setText("This is a note that you have to confirm, or not?");
+            lblMessage.setText("Your workspace has been updated.");
         }
     }
 
@@ -70,6 +65,11 @@ public class MessagePanelController extends Pane {
         return lblMessage.getText();
     }
 
+    /** Sets the short heading displayed above the notification message. */
+    public void setTitle(String title) {
+        lblTitle.setText(title);
+    }
+
     /**
      * Sets the action listener for button events.
      *
@@ -82,19 +82,9 @@ public class MessagePanelController extends Pane {
     @FXML
     void buttonAction(ActionEvent event) {
         if (actionListener != null) {
-            if (isOkButtonClicked(event)) {
-                actionListener.onOkButtonClicked();
-            } else if (isCancelButtonClicked(event)) {
+            if (event.getSource() == btClose) {
                 actionListener.onCancelButtonClicked();
             }
         }
-    }
-
-    private boolean isOkButtonClicked(ActionEvent event) {
-        return event.getSource() == btOk;
-    }
-
-    private boolean isCancelButtonClicked(ActionEvent event) {
-        return event.getSource() == btCancel;
     }
 }

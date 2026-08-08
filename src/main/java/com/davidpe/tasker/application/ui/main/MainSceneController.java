@@ -62,6 +62,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.springframework.context.ApplicationEventPublisher;
@@ -737,6 +738,7 @@ public class MainSceneController extends UiScreenController {
     String title = task.getTitle() != null ? " : " + task.getTitle() : "";
     String message = prefix + task.getId() + title;
 
+    pnlNotification.setTitle("Task updated");
     pnlNotification.setMessage(message);
     pnlNotification.setVisible(true);
   }
@@ -748,7 +750,7 @@ public class MainSceneController extends UiScreenController {
     pnlNotification = new MessagePanelController();
     pnlNotification.setVisible(false);
 
-    // Hide the notification when user clicks any button
+    // The notification is dismissible and remains independent from confirmation dialogs.
     pnlNotification.setMessagePanelActionListener(
         new MessagePanelController.MessagePanelActionListener() {
           @Override
@@ -763,11 +765,8 @@ public class MainSceneController extends UiScreenController {
         });
 
     mainPane.getChildren().add(pnlNotification);
-
-    pnlNotification.setLayoutX(20);
-    pnlNotification
-        .layoutYProperty()
-        .bind(mainPane.heightProperty().subtract(pnlNotification.heightProperty()).subtract(20));
+    AnchorPane.setLeftAnchor(pnlNotification, 20.0);
+    AnchorPane.setBottomAnchor(pnlNotification, 20.0);
   }
 
   private void loadTasks() {

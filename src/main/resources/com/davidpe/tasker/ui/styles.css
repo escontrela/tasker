@@ -2176,3 +2176,52 @@
     -fx-border-color: #c7ced7;
     -fx-border-radius: 0 0 12 12;
 }
+
+/* Compact workspace notification ------------------------------------------------ */
+.notification-panel {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(25, 35, 48, 0.18), 18, 0.22, 0, 7);
+}
+.notification-title {
+    -fx-text-fill: #202a35;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+.notification-message {
+    -fx-text-fill: #66727f;
+    -fx-font-size: 13px;
+    -fx-line-spacing: 1px;
+}
+.button.notification-close-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 14;
+    -fx-border-color: transparent;
+    -fx-border-radius: 14;
+    -fx-text-fill: #66727f;
+    -fx-font-size: 22px;
+    -fx-font-weight: 400;
+    -fx-padding: -2 0 2 0;
+    -fx-cursor: hand;
+}
+.button.notification-close-button:hover {
+    -fx-background-color: #f4f7fb;
+    -fx-text-fill: #202a35;
+}
+.button.notification-close-button:pressed { -fx-background-color: #eaf1fa; }
+.night-mode .notification-panel {
+    -fx-background-color: #1c2430;
+    -fx-border-color: #465465;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.42), 18, 0.24, 0, 7);
+}
+.night-mode .notification-title { -fx-text-fill: #f1f3f5; }
+.night-mode .notification-message { -fx-text-fill: #b8c5d3; }
+.night-mode .button.notification-close-button { -fx-text-fill: #b8c5d3; }
+.night-mode .button.notification-close-button:hover {
+    -fx-background-color: #243243;
+    -fx-text-fill: #f1f3f5;
+}
+.night-mode .button.notification-close-button:pressed { -fx-background-color: #2b3b4d; }
