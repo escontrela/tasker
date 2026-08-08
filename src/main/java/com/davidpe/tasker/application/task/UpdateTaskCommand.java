@@ -10,5 +10,6 @@ public record UpdateTaskCommand(Long taskId,
                                 String title,
                                 String description,
                                 LocalDate startDate,
-                                LocalDate endDate) {
+                                LocalDate endDate,
+                                Long agentId) {
 }

@@ -2,6 +2,7 @@ package com.davidpe.tasker.application.ui.tasks;
 
 import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.application.service.user.UserService;
+import com.davidpe.tasker.application.agents.AgentManagementService;
 import com.davidpe.tasker.application.task.AddTaskCommand;
 import com.davidpe.tasker.application.task.AddTaskUseCase;
 import com.davidpe.tasker.application.task.GetTaskCommand;
@@ -36,6 +37,7 @@ public class NewTaskPresenter {
   private final UpdateTaskUseCase updateTaskUseCase;
   private final TaskService taskService;
   private final ApplicationEventPublisher eventPublisher;
+  private final AgentManagementService agentManagementService;
   private NewTaskView view;
   private UserService userService;
   private Task originalTask = null;
@@ -46,12 +48,14 @@ public class NewTaskPresenter {
       UpdateTaskUseCase updateTaskUseCase,
       TaskService taskService,
       UserService userService,
+      AgentManagementService agentManagementService,
       ApplicationEventPublisher eventPublisher) {
     this.addTaskUseCase = addTaskUseCase;
     this.getTaskUseCase = getTaskUseCase;
     this.updateTaskUseCase = updateTaskUseCase;
     this.taskService = taskService;
     this.userService = userService;
+    this.agentManagementService = agentManagementService;
     this.eventPublisher = eventPublisher;
   }
 
@@ -63,6 +67,7 @@ public class NewTaskPresenter {
 
     view.showProjects(taskService.getProjectsByUserId(userService.getSelectedUser().getId()));
     view.showPriorities(taskService.getPriorities());
+    view.showAgents(agentManagementService.getAgents());
     Long projectId = view.selectedProjectId();
     if (projectId != null) {
 
@@ -120,7 +125,8 @@ public class NewTaskPresenter {
                 command.title(),
                 command.description(),
                 command.startDate(),
-                command.endDate());
+                command.endDate(),
+                view.selectedAgentId());
         updateTaskUseCase.updateTask(updateCommand);
         view.close();
 
@@ -153,6 +159,7 @@ public class NewTaskPresenter {
     view.selectPriority(task.getPriorityId());
     view.selectProject(task.getProjectId());
     view.selectTag(task.getTagId());
+    view.selectAgent(task.getAgentId());
     view.populateProjectOnSubtitle(selectProjectById(task.getProjectId()).getName());
   }
 

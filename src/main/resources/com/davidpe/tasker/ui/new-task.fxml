@@ -37,6 +37,9 @@
              <Label fx:id="lblTag" layoutX="73.0" layoutY="264.0" styleClass="modal-field-label" text="Tag" />
              <ComboBox fx:id="cbxTag" layoutX="73.0" layoutY="289.0" prefHeight="36.0" prefWidth="200" styleClass="task-modal-input" />
 
+             <Label fx:id="lblAgent" layoutX="327.0" layoutY="264.0" styleClass="modal-field-label" text="Agent" />
+             <ComboBox fx:id="cbxAgent" layoutX="327.0" layoutY="289.0" prefHeight="36.0" prefWidth="200" styleClass="task-modal-input" />
+
              <Label fx:id="lblStartDate" layoutX="74.0" layoutY="340.0" styleClass="modal-field-label" text="Inicio" />
              <DatePicker fx:id="dpStartDate" layoutX="73.0" layoutY="366.0" styleClass="task-modal-input" />
 

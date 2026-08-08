@@ -1,6 +1,7 @@
 package com.davidpe.tasker.application.ui.tasks;
 
 import com.davidpe.tasker.application.ui.common.UiScreenController;
+import com.davidpe.tasker.domain.agents.Agent;
 import com.davidpe.tasker.domain.project.Project;
 import com.davidpe.tasker.domain.task.Priority;
 import com.davidpe.tasker.domain.task.Tag;
@@ -46,6 +47,8 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
 
   @FXML private ComboBox<Tag> cbxTag;
 
+  @FXML private ComboBox<Agent> cbxAgent;
+
   @FXML private DatePicker dpEndDate;
 
   @FXML private DatePicker dpStartDate;
@@ -61,6 +64,8 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
   @FXML private Label lblPriority;
 
   @FXML private Label lblTag;
+
+  @FXML private Label lblAgent;
 
   @FXML private Label lblStartDate;
 
@@ -126,6 +131,7 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
 
     configureDialogButtons();
     configureDescriptionExpansion();
+    configureAgentCombo();
     presenter.attach(this);
     resetData();
     presenter.loadInitialData();
@@ -166,6 +172,8 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
         cbxPriority,
         lblTag,
         cbxTag,
+        lblAgent,
+        cbxAgent,
         lblStartDate,
         dpStartDate,
         lblEndDate,
@@ -184,6 +192,7 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
     dpStartDate.setValue(null);
     dpEndDate.setValue(null);
     taskData = null;
+    setAgentSelectorVisible(false);
   }
 
   private boolean isEditing() {
@@ -199,11 +208,10 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
     this.taskData = data;
 
     if (isEditing()) {
-
+      setAgentSelectorVisible(true);
       presenter.loadTaskData();
-
     } else {
-
+      setAgentSelectorVisible(false);
     }
   }
 
@@ -270,6 +278,13 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
   }
 
   @Override
+  public void showAgents(List<Agent> agents) {
+    cbxAgent.getItems().setAll(agents == null ? List.of() : agents);
+    cbxAgent.getItems().add(0, null);
+    cbxAgent.getSelectionModel().clearSelection();
+  }
+
+  @Override
   public void selectTag(Long tagId) {
 
     if (tagId == null) return;
@@ -299,6 +314,12 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
 
     Tag tag = cbxTag.getSelectionModel().getSelectedItem();
     return tag != null ? tag.getId() : null;
+  }
+
+  @Override
+  public Long selectedAgentId() {
+    Agent agent = cbxAgent.getSelectionModel().getSelectedItem();
+    return agent != null ? agent.getId() : null;
   }
 
   @Override
@@ -344,6 +365,7 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
     lblSubtitle.setText(t.getProjectId().toString());
     txtExtCode.setText(t.getExternalCode());
     taDescription.setText(t.getDescription());
+    selectAgent(t.getAgentId());
     if (t.getStartAt() != null) {
 
       dpStartDate.setValue(
@@ -366,5 +388,40 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
   public void populateProjectOnSubtitle(String projectName) {
 
     lblSubtitle.setText(projectName);
+  }
+
+  @Override
+  public void selectAgent(Long agentId) {
+    if (agentId == null) {
+      cbxAgent.getSelectionModel().clearSelection();
+      return;
+    }
+    cbxAgent.getItems().stream()
+        .filter(agent -> agent != null && agentId.equals(agent.getId()))
+        .findFirst()
+        .ifPresent(agent -> cbxAgent.getSelectionModel().select(agent));
+  }
+
+  private void configureAgentCombo() {
+    cbxAgent.setPromptText("No agent");
+    cbxAgent.setCellFactory(ignored -> agentCell());
+    cbxAgent.setButtonCell(agentCell());
+  }
+
+  private javafx.scene.control.ListCell<Agent> agentCell() {
+    return new javafx.scene.control.ListCell<>() {
+      @Override
+      protected void updateItem(Agent agent, boolean empty) {
+        super.updateItem(agent, empty);
+        setText(empty ? null : agent == null ? "No agent" : agent.getName());
+      }
+    };
+  }
+
+  private void setAgentSelectorVisible(boolean visible) {
+    lblAgent.setVisible(visible);
+    lblAgent.setManaged(visible);
+    cbxAgent.setVisible(visible);
+    cbxAgent.setManaged(visible);
   }
 }

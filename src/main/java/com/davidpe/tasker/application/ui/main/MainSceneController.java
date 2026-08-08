@@ -998,6 +998,15 @@ public class MainSceneController extends UiScreenController {
               ? taskService.getTagById(task.getTagId()).map(Tag::getName).orElse("")
               : "";
       row.setTags(tagText, "");
+      String agentName =
+          task.getAgentId() != null
+              ? agentManagementService.getAgents().stream()
+                  .filter(agent -> task.getAgentId().equals(agent.getId()))
+                  .map(Agent::getName)
+                  .findFirst()
+                  .orElse("")
+              : "";
+      row.setAgent(agentName);
     }
 
     if (preserveTaskId != null) {

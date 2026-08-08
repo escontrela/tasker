@@ -38,6 +38,7 @@ public class TaskerRowPanelController extends VBox {
   private final Label statusLabel = new Label();
   private final Label tagLabel = new Label();
   private final Label priorityLabel = new Label();
+  private final Label agentLabel = new Label();
   private final Button completeButton = new Button("Complete");
   private final Button editButton = new Button("Edit");
   private Long taskId;
@@ -60,7 +61,8 @@ public class TaskerRowPanelController extends VBox {
     statusLabel.getStyleClass().add("task-status-pill");
     tagLabel.getStyleClass().add("task-card-tag");
     priorityLabel.getStyleClass().add("task-card-meta");
-    HBox metadata = new HBox(8, statusLabel, tagLabel, priorityLabel);
+    agentLabel.getStyleClass().add("task-card-meta");
+    HBox metadata = new HBox(8, statusLabel, tagLabel, priorityLabel, agentLabel);
     metadata.setAlignment(Pos.CENTER_LEFT);
 
     completeButton.getStyleClass().addAll("task-card-action", "primary-button");
@@ -119,6 +121,12 @@ public class TaskerRowPanelController extends VBox {
   }
   public boolean isSelected() { return selected; }
   public void setPriority(String value) { priorityLabel.setText(value == null || value.isBlank() ? "" : value); }
+  public void setAgent(String value) {
+    String text = value == null || value.isBlank() ? "" : "Agent: " + value;
+    agentLabel.setText(text);
+    agentLabel.setVisible(!text.isBlank());
+    agentLabel.setManaged(!text.isBlank());
+  }
   public void setTags(String tag1, String tag2) {
     String value = tag1 == null ? "" : tag1;
     if (tag2 != null && !tag2.isBlank()) value = value.isBlank() ? tag2 : value + " · " + tag2;
