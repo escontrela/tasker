@@ -2,10 +2,14 @@ package com.davidpe.tasker.application.ui.common;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 /**
  * This class represents a modal screen in the application using javafx framework to create a modal
@@ -15,6 +19,8 @@ public final class UiModalScreen extends AbstractUiScreen {
 
   private final Stage primaryStage;
   private Stage cachedStage;
+  private Effect ownerEffectBeforeModal;
+  private boolean ownerDimmed;
 
   public UiModalScreen(
       UiScreenId id,
@@ -42,6 +48,7 @@ public final class UiModalScreen extends AbstractUiScreen {
   public void showAtPosition(java.awt.Point menuPosition) {
 
     Stage modalStage = ensureStage(menuPosition);
+    dimOwner();
 
     modalStage
         .focusedProperty()
@@ -83,6 +90,7 @@ public final class UiModalScreen extends AbstractUiScreen {
       bindControllerStage(cachedStage);
 
       cachedStage.setScene(scene());
+      cachedStage.addEventHandler(WindowEvent.WINDOW_HIDDEN, ignored -> restoreOwner());
     }
 
     if (Objects.nonNull(menuPosition)) {
@@ -93,5 +101,36 @@ public final class UiModalScreen extends AbstractUiScreen {
     }
 
     return cachedStage;
+  }
+
+  /**
+   * Separates a transparent modal window from its owner. JavaFX blocks a WINDOW_MODAL owner but
+   * does not dim it automatically, which makes dialogs blend into the workspace.
+   */
+  private void dimOwner() {
+
+    Scene ownerScene = primaryStage.getScene();
+    if (ownerScene == null || ownerDimmed) {
+      return;
+    }
+
+    Node ownerRoot = ownerScene.getRoot();
+    ownerEffectBeforeModal = ownerRoot.getEffect();
+    ownerRoot.setEffect(new ColorAdjust(0, 0, -0.24, 0));
+    ownerDimmed = true;
+  }
+
+  private void restoreOwner() {
+
+    if (!ownerDimmed) {
+      return;
+    }
+
+    Scene ownerScene = primaryStage.getScene();
+    if (ownerScene != null) {
+      ownerScene.getRoot().setEffect(ownerEffectBeforeModal);
+    }
+    ownerEffectBeforeModal = null;
+    ownerDimmed = false;
   }
 }
