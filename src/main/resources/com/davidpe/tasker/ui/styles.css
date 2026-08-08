@@ -923,6 +923,34 @@
 }
 
 .header-bar { -fx-padding: 30 40 26 40; }
+.breadcrumb-bar {
+    -fx-padding: 0 0 2 0;
+}
+.breadcrumb-item,
+.breadcrumb-current,
+.breadcrumb-separator {
+    -fx-font-size: 12px;
+}
+.breadcrumb-item {
+    -fx-text-fill: #66727f;
+    -fx-font-weight: 600;
+}
+.breadcrumb-link {
+    -fx-cursor: hand;
+}
+.breadcrumb-link:hover,
+.breadcrumb-link:focused {
+    -fx-text-fill: #1c69d4;
+    -fx-underline: true;
+}
+.breadcrumb-current {
+    -fx-text-fill: #262626;
+    -fx-font-weight: 700;
+}
+.breadcrumb-separator {
+    -fx-text-fill: #9aa4af;
+    -fx-font-weight: 700;
+}
 .task-filter-bar {
     -fx-padding: 14 40 14 40;
     -fx-background-color: #f7f7f7;
@@ -1145,6 +1173,11 @@
 .night-mode .stats-shell { -fx-background-color: #1a2129; }
 .night-mode .workspace-header { -fx-background-color: #1c2430; -fx-border-color: transparent transparent #334151 transparent; }
 .night-mode .header-bar { -fx-background-color: #1c2430; }
+.night-mode .breadcrumb-item { -fx-text-fill: #9fadb9; }
+.night-mode .breadcrumb-link:hover,
+.night-mode .breadcrumb-link:focused { -fx-text-fill: #79aeef; }
+.night-mode .breadcrumb-current { -fx-text-fill: #f1f3f5; }
+.night-mode .breadcrumb-separator { -fx-text-fill: #607080; }
 .night-mode .task-filter-bar, .night-mode .status-rail { -fx-background-color: #1c2430; -fx-border-color: #334151; }
 .night-mode .main-content-shell, .night-mode .settings-content, .night-mode .task-grid, .night-mode .task-grid-shell { -fx-background-color: #1a2129; }
 .night-mode .app-title, .night-mode .section-title, .night-mode .card-title, .night-mode .task-card-title { -fx-text-fill: #f1f3f5; }

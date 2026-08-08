@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.davidpe.tasker.application.ui.controls.ToolbarIconButton?>
+<?import com.davidpe.tasker.application.ui.controls.BreadcrumbBar?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -16,7 +17,7 @@
         <VBox styleClass="workspace-header">
             <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="header-bar">
                 <VBox spacing="6.0">
-                    <Label styleClass="eyebrow-label" text="Application preferences" />
+                    <BreadcrumbBar fx:id="breadcrumbBar" />
                     <Label styleClass="app-title" text="Settings" />
                     <Label styleClass="hero-support" text="Choose how Tasker looks while you plan and complete your work." wrapText="true" />
                 </VBox>

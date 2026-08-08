@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.davidpe.tasker.application.ui.controls.Chart2DController?>
+<?import com.davidpe.tasker.application.ui.controls.BreadcrumbBar?>
 <?import com.davidpe.tasker.application.ui.controls.ToolbarIconButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -18,7 +19,7 @@
         <VBox styleClass="workspace-header">
             <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="header-bar">
                 <VBox spacing="6.0">
-                    <Label styleClass="eyebrow-label" text="Task insights" />
+                    <BreadcrumbBar fx:id="breadcrumbBar" />
                     <Label styleClass="app-title" text="Statistics" />
                     <Label styleClass="hero-support" text="Understand how work evolves across your projects." />
                 </VBox>

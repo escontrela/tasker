@@ -3,6 +3,8 @@ package com.davidpe.tasker.application.ui.settings;
 import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
+import com.davidpe.tasker.application.ui.controls.BreadcrumbBar;
+import com.davidpe.tasker.application.ui.controls.BreadcrumbBar.BreadcrumbItem;
 import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
 import com.davidpe.tasker.application.ui.theme.ApplicationThemeService;
 import com.davidpe.tasker.application.ui.theme.TaskerPreferences;
@@ -28,6 +30,7 @@ public class SettingsSceneController extends UiScreenController
 
   @FXML private CheckBox nightModeCheckBox;
   @FXML private Button applyButton;
+  @FXML private BreadcrumbBar breadcrumbBar;
 
   @Lazy
   public SettingsSceneController(
@@ -41,6 +44,10 @@ public class SettingsSceneController extends UiScreenController
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    breadcrumbBar.setItems(
+        BreadcrumbItem.link("Tasker", this::backToMain),
+        BreadcrumbItem.current("Settings"),
+        BreadcrumbItem.current("Appearance"));
     nightModeCheckBox.selectedProperty().addListener((ignored, oldValue, value) -> refreshDirtyState());
   }
 
