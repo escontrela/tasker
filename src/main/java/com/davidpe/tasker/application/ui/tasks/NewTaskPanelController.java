@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -26,6 +27,14 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NewTaskPanelController extends UiScreenController implements NewTaskView {
+
+  private static final double NORMAL_DESCRIPTION_LABEL_Y = 420;
+  private static final double NORMAL_DESCRIPTION_Y = 445;
+  private static final double NORMAL_DESCRIPTION_HEIGHT = 123;
+  private static final double DESCRIPTION_WIDTH = 653;
+  private static final double EXPANDED_DESCRIPTION_LABEL_Y = 188;
+  private static final double EXPANDED_DESCRIPTION_Y = 213;
+  private static final double EXPANDED_DESCRIPTION_HEIGHT = 355;
 
   @FXML private Button btnCancel;
 
@@ -46,6 +55,18 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
   @FXML private Label lblSubtitle;
 
   @FXML private Label lblError;
+
+  @FXML private Label lblProject;
+
+  @FXML private Label lblPriority;
+
+  @FXML private Label lblTag;
+
+  @FXML private Label lblStartDate;
+
+  @FXML private Label lblEndDate;
+
+  @FXML private Label lblDescription;
 
   @FXML private TextArea taDescription;
 
@@ -104,6 +125,7 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
   public void initialize(URL location, ResourceBundle resources) {
 
     configureDialogButtons();
+    configureDescriptionExpansion();
     presenter.attach(this);
     resetData();
     presenter.loadInitialData();
@@ -115,9 +137,45 @@ public class NewTaskPanelController extends UiScreenController implements NewTas
     btnClose.getStyleClass().setAll("button", "message-box-close-button");
   }
 
+  private void configureDescriptionExpansion() {
+    taDescription
+        .focusedProperty()
+        .addListener(
+            (ignored, wasFocused, isFocused) -> setDescriptionExpanded(isFocused));
+  }
+
+  private void setDescriptionExpanded(boolean expanded) {
+    metadataNodes().forEach(node -> node.setVisible(!expanded));
+    lblDescription.setLayoutY(
+        expanded ? EXPANDED_DESCRIPTION_LABEL_Y : NORMAL_DESCRIPTION_LABEL_Y);
+    double y = expanded ? EXPANDED_DESCRIPTION_Y : NORMAL_DESCRIPTION_Y;
+    double height = expanded ? EXPANDED_DESCRIPTION_HEIGHT : NORMAL_DESCRIPTION_HEIGHT;
+    taDescription.setPrefHeight(height);
+    taDescription.setMinHeight(height);
+    taDescription.setMaxHeight(height);
+    // Pane does not lay out children after their preferred size changes, so resize explicitly.
+    taDescription.resizeRelocate(taDescription.getLayoutX(), y, DESCRIPTION_WIDTH, height);
+    taDescription.requestLayout();
+  }
+
+  private List<Node> metadataNodes() {
+    return List.of(
+        lblProject,
+        cbxProject,
+        lblPriority,
+        cbxPriority,
+        lblTag,
+        cbxTag,
+        lblStartDate,
+        dpStartDate,
+        lblEndDate,
+        dpEndDate);
+  }
+
   @Override
   public void resetData() {
 
+    setDescriptionExpanded(false);
     lblError.setText("");
     lblSubtitle.setText("");
     txtTitle.clear();
