@@ -9,19 +9,20 @@ import com.davidpe.tasker.application.task.SetTaskStatusUseCase;
 import com.davidpe.tasker.application.task.TaskSequenceDirection;
 import com.davidpe.tasker.application.task.UpdateTaskSequenceCommand;
 import com.davidpe.tasker.application.task.UpdateTaskSequenceUseCase;
-import com.davidpe.tasker.application.ui.common.UiScreen;
+import com.davidpe.tasker.application.ui.UiFlowManager;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
-import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
 import com.davidpe.tasker.application.ui.controls.MessagePanelController;
+import com.davidpe.tasker.application.ui.controls.MessageBox;
+import com.davidpe.tasker.application.ui.controls.ContextualMenuPanel;
 import com.davidpe.tasker.application.ui.controls.TaskerRowPanelController;
 import com.davidpe.tasker.application.ui.controls.TaskerTablePanelController;
+import com.davidpe.tasker.application.ui.controls.TaskOutlinePanel;
+import com.davidpe.tasker.application.ui.controls.ToolbarIconButton;
 import com.davidpe.tasker.application.ui.events.WindowEditTaskOpenedEvent;
-import com.davidpe.tasker.application.ui.events.WindowMenuTaskOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowMenuTaskSelectedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewProjectOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
-import com.davidpe.tasker.application.ui.settings.SettingsSceneData;
 import com.davidpe.tasker.domain.project.Project;
 import com.davidpe.tasker.domain.project.ProjectCreatedEvent;
 import com.davidpe.tasker.domain.task.Tag;
@@ -32,13 +33,10 @@ import com.davidpe.tasker.domain.task.TaskStatus;
 import com.davidpe.tasker.domain.task.TaskStatusUpdatedEvent;
 import com.davidpe.tasker.domain.task.TaskSequenceUpdatedEvent;
 import com.davidpe.tasker.domain.task.TaskUpdatedEvent;
-import java.awt.Point;
 import java.net.URL;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -47,19 +45,18 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.geometry.Point2D;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
@@ -81,7 +78,7 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Label lbUserInitials;
 
-  @FXML private Text lblHello;
+  @FXML private Label lblHello;
 
   @FXML private Pane mainPane;
 
@@ -103,9 +100,15 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Label lblNewAll;
 
-  @FXML private MessagePanelController pnlMessage;
+  @FXML private MessageBox taskMessage;
+
+  @FXML private ContextualMenuPanel taskContextMenu;
 
   @FXML private TaskerTablePanelController pnlTaskerTable;
+
+  @FXML private TaskOutlinePanel taskOutlinePanel;
+
+  @FXML private ToolbarIconButton outlineButton;
 
   @FXML private Button btFilter;
 
@@ -114,8 +117,6 @@ public class MainSceneController extends UiScreenController {
   @FXML private Button btMenu;
 
   @FXML private ImageView imgMenu;
-
-  @FXML private Text lbTitle;
 
   @FXML private Button btnNewProject;
 
@@ -153,7 +154,7 @@ public class MainSceneController extends UiScreenController {
   // Reusable notification panel (separate from pnlMessage which is used for delete confirmation)
   private MessagePanelController pnlNotification;
 
-  private final UiScreenFactory screenFactory;
+  private final UiFlowManager uiFlowManager;
 
   private final ApplicationEventPublisher eventPublisher;
   private final TaskService taskService;
@@ -182,7 +183,7 @@ public class MainSceneController extends UiScreenController {
 
   @Lazy
   public MainSceneController(
-      UiScreenFactory screenFactory,
+      UiFlowManager uiFlowManager,
       ApplicationEventPublisher eventPublisher,
       TaskService taskService,
       DeleteTaskUseCase deleteTaskUseCase,
@@ -191,7 +192,7 @@ public class MainSceneController extends UiScreenController {
       UserService userService,
       Logger logger) {
 
-    this.screenFactory = screenFactory;
+    this.uiFlowManager = uiFlowManager;
     this.eventPublisher = eventPublisher;
     this.taskService = taskService;
     this.deleteTaskUseCase = deleteTaskUseCase;
@@ -227,18 +228,13 @@ public class MainSceneController extends UiScreenController {
 
     if (isButtonSettingsClicked(event)) {
 
-      UiScreen settings = screenFactory.create(UiScreenId.SETTINGS);
-      settings.reset();
-      settings.setData(new SettingsSceneData(Boolean.TRUE));
-      settings.show();
+      uiFlowManager.show(UiScreenId.SETTINGS);
       return;
     }
 
     if (isButtonShowStatsClicked(event)) {
 
-      UiScreen stats = screenFactory.create(UiScreenId.STATS);
-      stats.reset();
-      stats.show();
+      uiFlowManager.show(UiScreenId.STATS);
       return;
     }
 
@@ -303,19 +299,10 @@ public class MainSceneController extends UiScreenController {
     return event.getSource() == btnSearch || event.getSource() == imgSearch;
   }
 
-  private void showDeletePanel(Pane panel) {
-
-    panel.setVisible(!panel.isVisible());
-  }
-
   @Override
   public void initialize(URL location, ResourceBundle resources) {
 
-    moveMainWindowsSetUp();
-
-    // Mostrar la fecha de hoy en formato largo en lblHello
-    DateTimeFormatter longDateFmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
-    lblHello.setText(LocalDate.now().format(longDateFmt));
+    lblHello.setText("Plan, prioritise and complete your work.");
 
     // Load filter icons (fallback quietly if missing)
     try {
@@ -329,32 +316,13 @@ public class MainSceneController extends UiScreenController {
     }
 
     taskStatusFilter = TaskStatusFilter.ALL;
+    configureProjectComboCells();
     updateTaskFilterStyles();
     updateFilterIcon();
 
-    pnlMessage.setMessagePanelActionListener(
-        new MessagePanelController.MessagePanelActionListener() {
-          @Override
-          public void onOkButtonClicked() {
-
-            if (pendingTaskId != null && pendingTaskAction != null) {
-              if (pendingTaskAction == PendingTaskAction.DELETE) {
-                deleteTaskUseCase.deleteTask(new DeleteTaskCommand(pendingTaskId));
-              }
-            }
-            pendingTaskId = null;
-            pendingTaskAction = null;
-            pnlMessage.setVisible(false);
-          }
-
-          @Override
-          public void onCancelButtonClicked() {
-
-            pendingTaskId = null;
-            pendingTaskAction = null;
-            pnlMessage.setVisible(false);
-          }
-        });
+    taskMessage.setOnCancel(this::clearPendingTaskAction);
+    configureTaskContextMenu();
+    configureTaskOutline();
 
     pnlTaskerTable.setTableActionListener(
         new TaskerTablePanelController.TableActionListener() {
@@ -398,8 +366,7 @@ public class MainSceneController extends UiScreenController {
             if (row == null || row.getTaskId() == null) return;
             pendingTaskId = row.getTaskId();
             pendingTaskAction = PendingTaskAction.DELETE;
-            pnlMessage.setMessage("Do you really want to delete this task?");
-            showDeletePanel(pnlMessage);
+            showDeleteConfirmation();
           }
 
           @Override
@@ -434,9 +401,7 @@ public class MainSceneController extends UiScreenController {
               TaskerRowPanelController row, double screenX, double screenY) {
             if (row == null || row.getTaskId() == null) return;
             selectRow(row);
-            eventPublisher.publishEvent(
-                new WindowMenuTaskOpenedEvent(
-                    row.getTaskId(), new Point((int) screenX, (int) screenY)));
+            showTaskContextMenu(screenX, screenY);
           }
 
           @Override
@@ -451,10 +416,7 @@ public class MainSceneController extends UiScreenController {
         event -> {
           if (event.getButton() != MouseButton.SECONDARY || event.isConsumed()) return;
           if (selectedRow == null || selectedRow.getTaskId() == null) return;
-          eventPublisher.publishEvent(
-              new WindowMenuTaskOpenedEvent(
-                  selectedRow.getTaskId(),
-                  new Point((int) event.getScreenX(), (int) event.getScreenY())));
+          showTaskContextMenu(event.getScreenX(), event.getScreenY());
           event.consume();
         });
 
@@ -465,22 +427,23 @@ public class MainSceneController extends UiScreenController {
           loadTasks();
         });
 
-    // Play a type-writer effect on the title and the hello label when the screen starts
-    try {
-      if (lbTitle != null) {
-        // Use a short interval for a snappy effect
-        com.davidpe.tasker.application.ui.effects.TypeWriterEffect.playTypeWriterEffect(
-            " | tasker", lbTitle, 0.05);
-      }
+  }
 
-      if (lblHello != null) {
-        String helloText = lblHello.getText() != null ? lblHello.getText() : "";
-        com.davidpe.tasker.application.ui.effects.TypeWriterEffect.playTypeWriterEffect(
-            helloText, lblHello, 0.08);
-      }
-    } catch (Throwable t) {
-      // don't break initialization if the effect fails
-    }
+  private void configureProjectComboCells() {
+    cbxProject.setCellFactory(
+        ignored ->
+            new ListCell<>() {
+              @Override
+              protected void updateItem(Project project, boolean empty) {
+                super.updateItem(project, empty);
+                setText(empty || project == null ? null : project.getName());
+                getStyleClass().removeAll("tasker-popup-light", "tasker-popup-night");
+                getStyleClass().add(
+                    mainPane.getStyleClass().contains("night-mode")
+                        ? "tasker-popup-night"
+                        : "tasker-popup-light");
+              }
+            });
   }
 
   @Override
@@ -500,8 +463,7 @@ public class MainSceneController extends UiScreenController {
             case DELETE -> {
               pendingTaskId = event.getTaskId();
               pendingTaskAction = PendingTaskAction.DELETE;
-              pnlMessage.setMessage("Do you really want to delete this task?");
-              showDeletePanel(pnlMessage);
+              showDeleteConfirmation();
             }
             case PRIORITY_UP ->
                 updateTaskSequenceUseCase.updateSequence(
@@ -533,23 +495,115 @@ public class MainSceneController extends UiScreenController {
     }
     selectedRow = row;
     selectedRow.setSelected(true);
+    refreshTaskOutline();
   }
 
-  private void moveMainWindowsSetUp() {
-
-    mainPane.setOnMousePressed(
-        event -> {
-          xOffset = event.getSceneX();
-          yOffset = event.getSceneY();
+  private void configureTaskOutline() {
+    outlineButton.selectedProperty().addListener((ignored, oldValue, visible) -> setTaskOutlineVisible(visible));
+    taskOutlinePanel.setOnEdit(
+        () -> {
+          if (selectedRow != null && selectedRow.getTaskId() != null) {
+            eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(selectedRow.getTaskId()));
+          }
         });
-
-    mainPane.setOnMouseDragged(
-        event -> {
-          Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-          stage.setX(event.getScreenX() - xOffset);
-          stage.setY(event.getScreenY() - yOffset);
+    taskOutlinePanel.setOnAccept(
+        () -> {
+          if (selectedRow != null && selectedRow.getTaskId() != null && !selectedRow.isDone()) {
+            setTaskStatusUseCase.setStatus(
+                new SetTaskStatusCommand(selectedRow.getTaskId(), TaskStatus.DONE));
+          }
         });
+    setTaskOutlineVisible(outlineButton.isSelected());
+  }
+
+  private void setTaskOutlineVisible(boolean visible) {
+    taskOutlinePanel.setVisible(visible);
+    taskOutlinePanel.setManaged(visible);
+    if (visible) refreshTaskOutline();
+  }
+
+  private void refreshTaskOutline() {
+    if (taskOutlinePanel == null) return;
+    if (selectedRow == null || selectedRow.getTask() == null) {
+      taskOutlinePanel.showEmpty();
+      return;
+    }
+    Task task = selectedRow.getTask();
+    String projectName = taskService.getProjectsByUserId(userService.getSelectedUser().getId()).stream()
+        .filter(project -> task.getProjectId().equals(project.getId()))
+        .map(Project::getName)
+        .findFirst().orElse("");
+    String priorityName = task.getPriorityId() == null ? "" : taskService.getPriorityById(task.getPriorityId())
+        .map(priority -> priority.getDescription()).orElse("");
+    String tagName = task.getTagId() == null ? "" : taskService.getTagById(task.getTagId())
+        .map(Tag::getName).orElse("");
+    taskOutlinePanel.showTask(task, projectName, priorityName, tagName);
+  }
+
+  private void configureTaskContextMenu() {
+    taskContextMenu.clearItems();
+    taskContextMenu.addItem(
+        "Edit task",
+        () -> {
+          if (selectedRow != null && selectedRow.getTaskId() != null) {
+            eventPublisher.publishEvent(new WindowEditTaskOpenedEvent(selectedRow.getTaskId()));
+          }
+        });
+    taskContextMenu.addItem(
+        "Mark as complete",
+        () -> {
+          if (selectedRow != null && selectedRow.getTaskId() != null && !selectedRow.isDone()) {
+            setTaskStatusUseCase.setStatus(
+                new SetTaskStatusCommand(selectedRow.getTaskId(), TaskStatus.DONE));
+          }
+        });
+    taskContextMenu.addSeparator();
+    taskContextMenu.addItem(
+        "Move priority up",
+        () -> moveSelectedTask(TaskSequenceDirection.UP));
+    taskContextMenu.addItem(
+        "Move priority down",
+        () -> moveSelectedTask(TaskSequenceDirection.DOWN));
+    taskContextMenu.addSeparator();
+    taskContextMenu.addItem(
+        "Delete task",
+        () -> {
+          if (selectedRow != null && selectedRow.getTaskId() != null) {
+            pendingTaskId = selectedRow.getTaskId();
+            pendingTaskAction = PendingTaskAction.DELETE;
+            showDeleteConfirmation();
+          }
+        });
+  }
+
+  private void showTaskContextMenu(double screenX, double screenY) {
+    Point2D scenePoint = mainPane.screenToLocal(screenX, screenY);
+    taskContextMenu.showAtScene(scenePoint.getX(), scenePoint.getY());
+  }
+
+  private void moveSelectedTask(TaskSequenceDirection direction) {
+    if (selectedRow != null && selectedRow.getTaskId() != null) {
+      updateTaskSequenceUseCase.updateSequence(
+          new UpdateTaskSequenceCommand(selectedRow.getTaskId(), direction));
+    }
+  }
+
+  private void showDeleteConfirmation() {
+    taskMessage.show(
+        "Delete task",
+        "Do you really want to delete this task? This action cannot be undone.",
+        "Delete",
+        () -> {
+          if (pendingTaskId != null && pendingTaskAction == PendingTaskAction.DELETE) {
+            deleteTaskUseCase.deleteTask(new DeleteTaskCommand(pendingTaskId));
+          }
+          clearPendingTaskAction();
+        });
+  }
+
+  private void clearPendingTaskAction() {
+    pendingTaskId = null;
+    pendingTaskAction = null;
   }
 
   @EventListener
@@ -789,6 +843,7 @@ public class MainSceneController extends UiScreenController {
       } else if (selectedRow != null) {
         selectedRow.setSelected(false);
         selectedRow = null;
+        refreshTaskOutline();
       }
     }
   }

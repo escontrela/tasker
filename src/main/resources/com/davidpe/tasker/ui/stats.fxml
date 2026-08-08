@@ -1,78 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.davidpe.tasker.application.ui.controls.Chart2DController?>
+<?import com.davidpe.tasker.application.ui.controls.BreadcrumbBar?>
+<?import com.davidpe.tasker.application.ui.controls.ToolbarIconButton?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<Pane fx:id="mainPane" prefHeight="830.0" prefWidth="1290.0" styleClass="root-gemini-style" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.stats.StatsSceneController">
-   <children>
-      <Pane fx:id="pnlMessage11" layoutX="194.0" layoutY="55.0" prefHeight="760.0" prefWidth="1065.0" styleClass="panel-black" stylesheets="@styles.css" visible="false" />
-      <Text fx:id="lblChessboard" fill="#e55c45" layoutX="72.0" layoutY="786.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-blue-gradient-big" text="Settings" wrappingWidth="740.072021484375">
-         <font>
-            <Font name="Alatsi Regular" size="42.0" />
-         </font>
-      </Text>
-      <Text fx:id="lblPractice" fill="#686b75" layoutX="866.0" layoutY="783.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-gray-medium" text="— here the settings">
-         <font>
-            <Font name="Alatsi Regular" size="35.0" />
-         </font>
-      </Text>
-      <Button fx:id="btClose" alignment="BASELINE_CENTER" layoutX="1242.0" layoutY="14.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-simple" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgClose" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/close_18dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Button fx:id="btRight" alignment="BASELINE_CENTER" layoutX="1026.0" layoutY="700.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgMinimize12222" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/chevron_left_18dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Button fx:id="btLeft" alignment="BASELINE_CENTER" layoutX="1070.0" layoutY="700.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-regular" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgMinimize12223" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/chevron_right_18dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <DatePicker fx:id="dpStartDate" layoutX="111.0" layoutY="77.0" prefHeight="26.0" prefWidth="139.0" />
-      <DatePicker fx:id="dpEndDate" layoutX="287.0" layoutY="77.0" prefHeight="26.0" prefWidth="132.0" />
-      <ComboBox fx:id="cbxGroupBy" layoutX="507.0" layoutY="78.0" onAction="#onGroupByChanged" prefWidth="150.0" />
-      <Chart2DController fx:id="grhStats" layoutX="29.0" layoutY="176.0" prefHeight="508.0" prefWidth="1134.0" />
-      <Label fx:id="lblName" layoutX="62.0" layoutY="80.0" styleClass="note-label" text="From" />
-      <Label fx:id="lblName1" layoutX="264.0" layoutY="80.0" styleClass="note-label" text="To" />
-      <Label fx:id="lblName2" layoutX="442.0" layoutY="80.0" styleClass="note-label" text="GroupBy" />
-      <ComboBox fx:id="cbxProject" layoutX="870.0" layoutY="78.0" onAction="#onProjectChanged" prefWidth="150.0" />
-      <Label fx:id="lblName21" layoutX="812.0" layoutY="81.0" styleClass="note-label" text="Project" />
-      <Button fx:id="btnFilter" alignment="BASELINE_CENTER" layoutX="1061.0" layoutY="73.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="103.0" styleClass="button-cancel" stylesheets="@styles.css" text="Filter" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-      </Button>
-   </children>
-</Pane>
+<BorderPane prefHeight="760.0" prefWidth="1180.0" styleClass="app-shell stats-shell" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.stats.StatsSceneController">
+    <top>
+        <VBox styleClass="workspace-header">
+            <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="header-bar">
+                <VBox spacing="6.0">
+                    <BreadcrumbBar fx:id="breadcrumbBar" />
+                    <Label styleClass="app-title" text="Statistics" />
+                    <Label styleClass="hero-support" text="Understand how work evolves across your projects." />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <ToolbarIconButton accessibleText="Back to tasks" darkIconResource="/com/davidpe/tasker/ui/images/chevron_left_18dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/chevron_left_18dp_white.png" onAction="#backToMain" tooltipText="Back to tasks" />
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="18.0" styleClass="stats-content">
+            <padding><Insets bottom="28.0" left="56.0" right="56.0" top="28.0" /></padding>
+            <HBox alignment="BOTTOM_LEFT" spacing="14.0" styleClass="stats-filter-panel">
+                <VBox spacing="5.0"><Label styleClass="filter-caption" text="From" /><DatePicker fx:id="dpStartDate" styleClass="stats-input" /></VBox>
+                <VBox spacing="5.0"><Label styleClass="filter-caption" text="To" /><DatePicker fx:id="dpEndDate" styleClass="stats-input" /></VBox>
+                <VBox spacing="5.0"><Label styleClass="filter-caption" text="Group by" /><ComboBox fx:id="cbxGroupBy" onAction="#onGroupByChanged" prefWidth="170.0" styleClass="stats-input" /></VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <VBox spacing="5.0"><Label styleClass="filter-caption" text="Project" /><ComboBox fx:id="cbxProject" onAction="#onProjectChanged" prefWidth="230.0" styleClass="stats-input" /></VBox>
+                <Button fx:id="btnFilter" mnemonicParsing="false" onAction="#buttonAction" styleClass="primary-button" text="Refresh" />
+            </HBox>
+            <VBox spacing="8.0" styleClass="stats-chart-card" VBox.vgrow="ALWAYS">
+                <Label styleClass="section-title" text="Tasks created" />
+                <Label styleClass="section-support" text="Created tasks for the selected period and project." />
+                <Chart2DController fx:id="grhStats" VBox.vgrow="ALWAYS" />
+            </VBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="status-rail"><Label styleClass="eyebrow-label" text="Status" /><Label styleClass="status-text" text="Statistics ready" /></HBox>
+    </bottom>
+</BorderPane>

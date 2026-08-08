@@ -16,11 +16,13 @@ import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -44,14 +46,14 @@ public class Chart2DController extends Pane {
   // NUEVO: nombres de series (máx. 2) y título
   private final List<String> seriesNames = new ArrayList<>();
   private String chartTitle = "";
+  private Parent observedRoot;
+  private final ListChangeListener<String> themeStyleListener = change -> redrawChart();
 
   // Chart styling constants matching the app theme
 
   private static final Color BACKGROUND_COLOR = Color.TRANSPARENT;
-  private static final Color AXIS_COLOR = Color.web("#b3b3b3");
   private static final Color DATA_POINT_COLOR = Color.web("#3b82f6"); // Azul
   private static final Color BAR_BORDER_COLOR = Color.web("#4f46e5"); // Azul oscuro
-  private static final Color TEXT_COLOR = Color.web("#ffffff");
 
   private static final Color CHART_AREA_COLOR = Color.TRANSPARENT;
 
@@ -96,6 +98,7 @@ public class Chart2DController extends Pane {
       throw new RuntimeException(
           "No se pudo cargar el FXML: /com/davidpe/tasker/ui/controls/chart-2d.fxml", e);
     }
+    sceneProperty().addListener((ignored, oldScene, scene) -> observeThemeRoot(scene == null ? null : scene.getRoot()));
   }
 
   @FXML
@@ -114,6 +117,22 @@ public class Chart2DController extends Pane {
     // Initial draw
     redrawChart();
   }
+
+  private void observeThemeRoot(Parent root) {
+    if (observedRoot != null) observedRoot.getStyleClass().removeListener(themeStyleListener);
+    observedRoot = root;
+    if (observedRoot != null) {
+      observedRoot.getStyleClass().addListener(themeStyleListener);
+    }
+    redrawChart();
+  }
+
+  private boolean isNightMode() {
+    return observedRoot != null && observedRoot.getStyleClass().contains("night-mode");
+  }
+
+  private Color axisColor() { return isNightMode() ? Color.web("#607080") : Color.web("#c7ced7"); }
+  private Color textColor() { return isNightMode() ? Color.web("#f1f3f5") : Color.web("#262626"); }
 
   /**
    * Sets the dataset for the chart and redraws it.
@@ -369,7 +388,7 @@ public class Chart2DController extends Pane {
    */
   private void drawAxes(GraphicsContext gc, double chartWidth, double chartHeight) {
 
-    gc.setStroke(AXIS_COLOR);
+    gc.setStroke(axisColor());
     gc.setLineWidth(1);
     // X axis
     gc.strokeLine(
@@ -467,7 +486,7 @@ public class Chart2DController extends Pane {
   private void drawAxisLabels(
       GraphicsContext gc, double width, double height, double chartWidth, double chartHeight) {
 
-    gc.setFill(TEXT_COLOR);
+    gc.setFill(textColor());
     gc.setFont(Font.font("Alatsi", 12));
 
     // Modo multi-serie: centrar etiquetas en el centro del grupo
@@ -606,7 +625,7 @@ public class Chart2DController extends Pane {
     if (chartTitle == null || chartTitle.isEmpty()) {
       return;
     }
-    gc.setFill(TEXT_COLOR);
+    gc.setFill(textColor());
     Font prev = gc.getFont();
     gc.setFont(Font.font("Alatsi", 16));
     double x = MARGIN_LEFT + 10;
@@ -669,7 +688,7 @@ public class Chart2DController extends Pane {
       gc.setStroke(border);
       gc.strokeRect(x, y - box + 2, box, box);
       x += box + gapBoxText;
-      gc.setFill(TEXT_COLOR);
+      gc.setFill(textColor());
       gc.fillText(labels[i], x, y);
       x += labels[i].length() * approxChar + itemSpacing;
     }

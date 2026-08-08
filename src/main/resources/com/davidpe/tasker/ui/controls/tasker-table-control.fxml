@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<fx:root fx:id="paneTableTask" prefHeight="533.0" prefWidth="1144.0" styleClass="note-panel" stylesheets="@../styles.css" type="Pane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="paneTableTask" prefHeight="533.0" prefWidth="1144.0" styleClass="note-panel" stylesheets="@../styles.css" type="Pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
 
    <children>
       <Separator fx:id="sepTasker" layoutX="15.0" layoutY="473.0" opacity="0.17" prefHeight="0.0" prefWidth="1105.0" />

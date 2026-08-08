@@ -8,6 +8,8 @@ import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
 import com.davidpe.tasker.application.ui.common.UiScreenController;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
 import com.davidpe.tasker.application.ui.controls.Chart2DController;
+import com.davidpe.tasker.application.ui.controls.BreadcrumbBar;
+import com.davidpe.tasker.application.ui.controls.BreadcrumbBar.BreadcrumbItem;
 import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
 import com.davidpe.tasker.domain.project.Project;
 import com.davidpe.tasker.domain.stats.StatsAggregationLevel;
@@ -31,10 +33,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
@@ -44,25 +42,6 @@ import org.springframework.stereotype.Component;
 public class StatsSceneController extends UiScreenController
     implements UiControllerDataAware<StatsSceneData> {
 
-  @FXML private Button btClose;
-
-  @FXML private Button btLeft;
-
-  @FXML private Button btRight;
-
-  @FXML private Button btSettings;
-
-  @FXML private ImageView imgClose;
-
-  @FXML private ImageView imgMinimize12222;
-
-  @FXML private ImageView imgMinimize12223;
-
-  @FXML private Text lblChessboard;
-
-  @FXML private Text lblPractice;
-
-  @FXML private Pane mainPane;
   @FXML private Button btnFilter;
 
   @FXML private ComboBox<StatsAggregationLevel> cbxGroupBy;
@@ -74,6 +53,8 @@ public class StatsSceneController extends UiScreenController
   @FXML private DatePicker dpStartDate;
 
   @FXML private Chart2DController grhStats;
+
+  @FXML private BreadcrumbBar breadcrumbBar;
 
   private final TaskService taskService;
   private final UserService userService;
@@ -97,22 +78,14 @@ public class StatsSceneController extends UiScreenController
   @FXML
   void buttonAction(ActionEvent event) {
 
-    if (isButtonCloseClicked(event)) {
-
-      lblPractice.setText("Bye.");
-      eventPublisher.publishEvent(new WindowClosedEvent(UiScreenId.STATS));
-
-      return;
-    }
-
-    if (isButtonLeftClicked(event)) {
-
-      return;
-    }
-
     if (isButtonFilterClicked(event)) {
       refreshChart();
     }
+  }
+
+  @FXML
+  void backToMain() {
+    eventPublisher.publishEvent(new WindowClosedEvent(UiScreenId.STATS));
   }
 
   @FXML
@@ -125,19 +98,6 @@ public class StatsSceneController extends UiScreenController
     refreshChart();
   }
 
-  @FXML
-  void handleButtonClick(MouseEvent event) {}
-
-  private boolean isButtonCloseClicked(ActionEvent event) {
-
-    return event.getSource() == btClose || event.getSource() == imgClose;
-  }
-
-  private boolean isButtonLeftClicked(ActionEvent event) {
-
-    return event.getSource() == btLeft || event.getSource() == imgMinimize12222;
-  }
-
   private boolean isButtonFilterClicked(ActionEvent event) {
 
     return event.getSource() == btnFilter;
@@ -145,6 +105,10 @@ public class StatsSceneController extends UiScreenController
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    breadcrumbBar.setItems(
+        BreadcrumbItem.link("Tasker", this::backToMain),
+        BreadcrumbItem.current("Statistics"),
+        BreadcrumbItem.current("Overview"));
     cbxGroupBy.setItems(FXCollections.observableArrayList(StatsAggregationLevel.values()));
     cbxGroupBy.setConverter(
         new StringConverter<>() {
@@ -182,14 +146,12 @@ public class StatsSceneController extends UiScreenController
 
   @Override
   public void resetData() {
-
-    lblPractice.setText("reseted to init state!");
+    refreshChart();
   }
 
   @Override
   public void setData(StatsSceneData data) {
-    // setea campos en la UI antes de show()
-    lblPractice.setText(data.ninghtModeEnabled().toString());
+    // Appearance is resolved by ApplicationThemeService at the screen root.
   }
 
   @Override

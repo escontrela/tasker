@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<fx:root fx:id="paneRow" prefHeight="88.0" prefWidth="548.0" styleClass="score-strip" stylesheets="@../styles.css" type="Pane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="paneRow" prefHeight="88.0" prefWidth="548.0" styleClass="score-strip" stylesheets="@../styles.css" type="Pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
 
    <children>
       <Label fx:id="lblName" layoutX="108.0" layoutY="17.0" prefHeight="22.0" prefWidth="294.0" text="Implement the new UI row style" textFill="WHITE">

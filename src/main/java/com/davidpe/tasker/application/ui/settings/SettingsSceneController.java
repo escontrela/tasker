@@ -1,131 +1,103 @@
 package com.davidpe.tasker.application.ui.settings;
 
+import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
+import com.davidpe.tasker.application.ui.common.UiScreenController;
+import com.davidpe.tasker.application.ui.common.UiScreenId;
+import com.davidpe.tasker.application.ui.controls.BreadcrumbBar;
+import com.davidpe.tasker.application.ui.controls.BreadcrumbBar.BreadcrumbItem;
+import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
+import com.davidpe.tasker.application.ui.theme.ApplicationThemeService;
+import com.davidpe.tasker.application.ui.theme.TaskerPreferences;
 import java.net.URL;
 import java.util.ResourceBundle;
-
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
-import com.davidpe.tasker.application.ui.common.UiScreen;
-import com.davidpe.tasker.application.ui.common.UiScreenController;
-import com.davidpe.tasker.application.ui.common.UiScreenFactory;
-import com.davidpe.tasker.application.ui.common.UiScreenId;
-import com.davidpe.tasker.application.ui.events.WindowClosedEvent;
-import com.davidpe.tasker.application.ui.tasks.NewTaskPanelData;
-
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
-
+/** Functional application preferences screen backed by local Java preferences. */
 @Component
-public class SettingsSceneController  extends UiScreenController implements UiControllerDataAware<SettingsSceneData>{
+public class SettingsSceneController extends UiScreenController
+    implements UiControllerDataAware<SettingsSceneData> {
 
-  @FXML
-  private Button btClose;
+  private final ApplicationEventPublisher eventPublisher;
+  private final TaskerPreferences preferences;
+  private final ApplicationThemeService themeService;
+  private boolean loading;
+  private boolean persistedNightMode;
 
-  @FXML
-  private Button btLeft;
-
-  @FXML
-  private Button btRight;
-
-  @FXML
-  private Button btSettings;
-
-  @FXML
-  private ImageView imgClose;
-
-  @FXML
-  private ImageView imgMinimize12222;
-
-  @FXML
-  private ImageView imgMinimize12223;
-
-  @FXML
-  private Text lblChessboard;
-
-  @FXML
-  private Text lblPractice;
-
-  @FXML
-  private Pane mainPane;
-
-  private final UiScreenFactory screenFactory;
-
-  private ApplicationEventPublisher eventPublisher;
+  @FXML private CheckBox nightModeCheckBox;
+  @FXML private Button applyButton;
+  @FXML private BreadcrumbBar breadcrumbBar;
 
   @Lazy
-  public SettingsSceneController(UiScreenFactory screenFactory,ApplicationEventPublisher eventPublisher) {
-
-      this.eventPublisher = eventPublisher;
-      this.screenFactory = screenFactory;
-  }
-
-  @FXML
-  void buttonAction(ActionEvent event) {
-
-    if (isButtonCloseClicked(event)) {
-
-      lblPractice.setText("Bye.");
-      eventPublisher.publishEvent(new WindowClosedEvent(UiScreenId.SETTINGS));
-
-      //UiScreen returnToMainScreen = screenFactory.create(UiScreenId.MAIN);
-      //returnToMainScreen.show();
-      return;
-    }
-
-    if (isButtonLeftClicked(event)) {
-
-      UiScreen newTaskModalScreen = screenFactory.create(UiScreenId.NEW_TASK_DIALOG);
-      newTaskModalScreen.reset();
-      newTaskModalScreen.setData(new NewTaskPanelData(NewTaskPanelData.OperationType.CREATE, null));
-      newTaskModalScreen.show();
-      return;
-    }
-
-  }
-
-  @FXML
-  void handleButtonClick(MouseEvent event) {
-
-  }
-
-  private boolean isButtonCloseClicked(ActionEvent event) {
-
-    return event.getSource() == btClose || event.getSource() == imgClose;
-  }
-
-  private boolean isButtonLeftClicked(ActionEvent event) {
-
-    return event.getSource() == btLeft || event.getSource() == imgMinimize12222;
+  public SettingsSceneController(
+      ApplicationEventPublisher eventPublisher,
+      TaskerPreferences preferences,
+      ApplicationThemeService themeService) {
+    this.eventPublisher = eventPublisher;
+    this.preferences = preferences;
+    this.themeService = themeService;
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    breadcrumbBar.setItems(
+        BreadcrumbItem.link("Tasker", this::backToMain),
+        BreadcrumbItem.current("Settings"),
+        BreadcrumbItem.current("Appearance"));
+    nightModeCheckBox.selectedProperty().addListener((ignored, oldValue, value) -> refreshDirtyState());
+  }
+
+  @Override
+  public void onShow() {
+    loadPreferences();
+  }
+
+  @FXML
+  void applySettings() {
+    if (applyButton.isDisabled()) return;
+    preferences.setNightModeEnabled(nightModeCheckBox.isSelected());
+    persistedNightMode = nightModeCheckBox.isSelected();
+    themeService.refreshRegisteredRoots();
+    refreshDirtyState();
+  }
+
+  @FXML
+  void backToMain() {
+    eventPublisher.publishEvent(new WindowClosedEvent(UiScreenId.SETTINGS));
   }
 
   @Override
   public void resetData() {
-
-    lblPractice.setText("reseted to init state!");
+    loadPreferences();
   }
 
   @Override
   public void setData(SettingsSceneData data) {
-        // setea campos en la UI antes de show()
-        lblPractice.setText(data.ninghtModeEnabled().toString());
+    // The local preference is the source of truth; retained for existing callers.
   }
 
   @Override
   public SettingsSceneData getData() {
-    
-    return new SettingsSceneData(Boolean.TRUE);
+    return new SettingsSceneData(preferences.isNightModeEnabled());
   }
 
+  private void loadPreferences() {
+    loading = true;
+    persistedNightMode = preferences.isNightModeEnabled();
+    nightModeCheckBox.setSelected(persistedNightMode);
+    loading = false;
+    refreshDirtyState();
+  }
+
+  private void refreshDirtyState() {
+    if (loading || applyButton == null || nightModeCheckBox == null) return;
+    boolean dirty = nightModeCheckBox.isSelected() != persistedNightMode;
+    applyButton.setVisible(dirty);
+    applyButton.setManaged(dirty);
+    applyButton.setDisable(!dirty);
+  }
 }

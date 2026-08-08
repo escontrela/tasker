@@ -27,11 +27,19 @@ import org.springframework.stereotype.Component;
 public class UiFlowManager {
 
   private final UiScreenFactory screenFactory;
+  private UiScreen currentPrimaryScreen;
 
   @Lazy
   public UiFlowManager(UiScreenFactory screenFactory) {
 
     this.screenFactory = screenFactory;
+  }
+
+  /** Shows a primary workspace in the shared application window. */
+  public void show(UiScreenId screenId) {
+    UiScreen screen = screenFactory.create(screenId);
+    screen.show();
+    currentPrimaryScreen = screen;
   }
 
   @EventListener

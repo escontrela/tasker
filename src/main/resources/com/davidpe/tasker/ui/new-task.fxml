@@ -7,68 +7,42 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
 
-<Pane prefHeight="655.0" prefWidth="770.0" styleClass="note-panel-shadow-strong" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.tasks.NewTaskPanelController">
+<Pane prefHeight="655.0" prefWidth="770.0" styleClass="task-modal-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.tasks.NewTaskPanelController">
               
        <children>
-            <Label fx:id="lblTitle" layoutX="25.0" layoutY="14.0" styleClass="modal-title-text" text="Nueva tarea" />
-      <Label fx:id="lblSubtitle" layoutX="25.0" layoutY="47.0" styleClass="button-ok" text="General Project">
-         <font>
-            <Font size="12.0" />
-         </font>
-      </Label>
-      <Button fx:id="btnClose" alignment="BASELINE_CENTER" layoutX="730.0" layoutY="10.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-simple" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgClose" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/close_18dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
+            <Label fx:id="lblTitle" layoutX="25.0" layoutY="14.0" styleClass="modal-title" text="Nueva tarea" />
+      <Label fx:id="lblSubtitle" layoutX="25.0" layoutY="47.0" styleClass="modal-subtitle" text="General Project" />
+      <Button fx:id="btnClose" alignment="CENTER" layoutX="724.0" layoutY="10.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="34.0" prefWidth="34.0" styleClass="message-box-close-button" text="×" />
       <Separator layoutX="3.0" layoutY="84.0" opacity="0.2" prefHeight="0.0" prefWidth="764.0" />
-            <Button fx:id="btnCancel" alignment="BASELINE_CENTER" layoutX="525.0" layoutY="606.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="103.0" styleClass="button-cancel" stylesheets="@styles.css" text="Cancel" textFill="WHITE">
-                  <font>
-                     <Font name="Alatsi Regular" size="18.0" />
-                  </font>
-            </Button>
-            <Button fx:id="btnOk" alignment="BASELINE_CENTER" layoutX="648.0" layoutY="606.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="103.0" styleClass="button-ok" stylesheets="@styles.css" text="Save" textFill="WHITE">
-                  <font>
-                     <Font name="Alatsi Regular" size="18.0" />
-                  </font>
-            </Button> 
-            <TextArea fx:id="taDescription" layoutX="73.0" layoutY="445.0" prefHeight="123.0" prefRowCount="4" prefWidth="653.0" styleClass="popup-text-field" wrapText="true" />
+            <Button fx:id="btnCancel" alignment="CENTER" layoutX="525.0" layoutY="596.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="44.0" prefWidth="103.0" styleClass="message-box-button message-box-cancel-button" text="Cancel" />
+            <Button fx:id="btnOk" alignment="CENTER" layoutX="648.0" layoutY="596.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="44.0" prefWidth="103.0" styleClass="message-box-button message-box-accept-button" text="Save" />
+            <TextArea fx:id="taDescription" layoutX="73.0" layoutY="445.0" prefHeight="123.0" prefRowCount="4" prefWidth="653.0" styleClass="task-modal-input" wrapText="true" />
 
 
-            <Label fx:id="lblError" layoutX="76.0" layoutY="609.0" prefHeight="17.0" prefWidth="399.0" textFill="red" />
-             <TextField fx:id="txtTitle" layoutX="70.0" layoutY="142.0" prefHeight="32.0" prefWidth="452.0" promptText="Título" styleClass="popup-text-field" />
-             <Label fx:id="lblName" layoutX="73.0" layoutY="116.0" styleClass="note-label" text="Título" />
+            <Label fx:id="lblError" layoutX="76.0" layoutY="609.0" prefHeight="17.0" prefWidth="399.0" styleClass="modal-error-label" />
+             <TextField fx:id="txtTitle" layoutX="70.0" layoutY="142.0" prefHeight="32.0" prefWidth="452.0" promptText="Título" styleClass="task-modal-input" />
+             <Label fx:id="lblName" layoutX="73.0" layoutY="116.0" styleClass="modal-field-label" text="Título" />
 
-             <Label fx:id="lblCode" layoutX="549.0" layoutY="116.0" styleClass="note-label" text="External Code" />
-             <TextField fx:id="txtExtCode" layoutX="550.0" layoutY="142.0" promptText="ABC-123" styleClass="popup-text-field" />
+             <Label fx:id="lblCode" layoutX="549.0" layoutY="116.0" styleClass="modal-field-label" text="External Code" />
+             <TextField fx:id="txtExtCode" layoutX="550.0" layoutY="142.0" promptText="ABC-123" styleClass="task-modal-input" />
 
-             <Label layoutX="73.0" layoutY="188.0" styleClass="note-label" text="Proyecto" />
-             <ComboBox fx:id="cbxProject" layoutX="73.0" layoutY="213.0" onAction="#onProjectChanged" prefHeight="19.0" prefWidth="200" styleClass="popup-text-field" />
+             <Label layoutX="73.0" layoutY="188.0" styleClass="modal-field-label" text="Proyecto" />
+             <ComboBox fx:id="cbxProject" layoutX="73.0" layoutY="213.0" onAction="#onProjectChanged" prefHeight="36.0" prefWidth="200" styleClass="task-modal-input" />
 
-             <Label layoutX="327.0" layoutY="188.0" styleClass="note-label" text="Prioridad" />
-             <ComboBox fx:id="cbxPriority" layoutX="327.0" layoutY="213.0" prefWidth="200" styleClass="popup-text-field" />
+             <Label layoutX="327.0" layoutY="188.0" styleClass="modal-field-label" text="Prioridad" />
+             <ComboBox fx:id="cbxPriority" layoutX="327.0" layoutY="213.0" prefHeight="36.0" prefWidth="200" styleClass="task-modal-input" />
 
-             <Label layoutX="73.0" layoutY="264.0" styleClass="note-label" text="Tag" />
-             <ComboBox fx:id="cbxTag" layoutX="73.0" layoutY="289.0" prefWidth="200" styleClass="popup-text-field" />
+             <Label layoutX="73.0" layoutY="264.0" styleClass="modal-field-label" text="Tag" />
+             <ComboBox fx:id="cbxTag" layoutX="73.0" layoutY="289.0" prefHeight="36.0" prefWidth="200" styleClass="task-modal-input" />
 
-             <Label layoutX="74.0" layoutY="340.0" styleClass="note-label" text="Inicio" />
-             <DatePicker fx:id="dpStartDate" layoutX="73.0" layoutY="366.0" styleClass="popup-text-field" />
+             <Label layoutX="74.0" layoutY="340.0" styleClass="modal-field-label" text="Inicio" />
+             <DatePicker fx:id="dpStartDate" layoutX="73.0" layoutY="366.0" styleClass="task-modal-input" />
 
-             <Label layoutX="327.0" layoutY="340.0" styleClass="note-label" text="Fin" />
-             <DatePicker fx:id="dpEndDate" layoutX="327.0" layoutY="366.0" styleClass="popup-text-field" />
-      <Label layoutX="73.0" layoutY="420.0" styleClass="note-label" text="Descripcion" />
+             <Label layoutX="327.0" layoutY="340.0" styleClass="modal-field-label" text="Fin" />
+             <DatePicker fx:id="dpEndDate" layoutX="327.0" layoutY="366.0" styleClass="task-modal-input" />
+      <Label layoutX="73.0" layoutY="420.0" styleClass="modal-field-label" text="Descripcion" />
             
    </children>
 </Pane>

@@ -4,48 +4,22 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
 
-<Pane prefHeight="322.0" prefWidth="577.0" styleClass="note-panel-shadow-strong" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.project.NewProjectPanelController">
+<Pane prefHeight="322.0" prefWidth="577.0" styleClass="task-modal-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.project.NewProjectPanelController">
               
        <children>
-            <Label fx:id="lblTitle" layoutX="25.0" layoutY="14.0" styleClass="modal-title-text" text="Nuevo Proyecto" />
-      <Label fx:id="lblSubtitle" layoutX="25.0" layoutY="47.0" styleClass="button-ok" text="General UserId">
-         <font>
-            <Font size="12.0" />
-         </font>
-      </Label>
-      <Button fx:id="btnClose" alignment="BASELINE_CENTER" layoutX="525.0" layoutY="14.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="35.0" styleClass="button-simple" stylesheets="@styles.css" textFill="WHITE">
-         <font>
-            <Font name="Alatsi Regular" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="imgClose" fitHeight="16.0" fitWidth="25.0" preserveRatio="true">
-               <image>
-                  <Image url="@images/close_18dp_white.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
+            <Label fx:id="lblTitle" layoutX="25.0" layoutY="14.0" styleClass="modal-title" text="Nuevo Proyecto" />
+      <Label fx:id="lblSubtitle" layoutX="25.0" layoutY="47.0" styleClass="modal-subtitle" text="General UserId" />
+      <Button fx:id="btnClose" alignment="CENTER" layoutX="520.0" layoutY="10.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="34.0" prefWidth="34.0" styleClass="message-box-close-button" text="×" />
       <Separator layoutX="3.0" layoutY="84.0" opacity="0.2" prefHeight="4.0" prefWidth="563.0" />
-            <Button fx:id="btnCancel" alignment="BASELINE_CENTER" layoutX="316.0" layoutY="238.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="103.0" styleClass="button-cancel" stylesheets="@styles.css" text="Cancel" textFill="WHITE">
-                  <font>
-                     <Font name="Alatsi Regular" size="18.0" />
-                  </font>
-            </Button>
-            <Button fx:id="btnOk" alignment="BASELINE_CENTER" layoutX="439.0" layoutY="238.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="33.0" prefWidth="103.0" styleClass="button-ok" stylesheets="@styles.css" text="Save" textFill="WHITE">
-                  <font>
-                     <Font name="Alatsi Regular" size="18.0" />
-                  </font>
-            </Button>
+            <Button fx:id="btnCancel" alignment="CENTER" layoutX="316.0" layoutY="228.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="44.0" prefWidth="103.0" styleClass="message-box-button message-box-cancel-button" text="Cancel" />
+            <Button fx:id="btnOk" alignment="CENTER" layoutX="439.0" layoutY="228.0" mnemonicParsing="false" onAction="#buttonAction" prefHeight="44.0" prefWidth="103.0" styleClass="message-box-button message-box-accept-button" text="Save" />
 
 
             <Label fx:id="lblError" layoutX="117.0" layoutY="200.0" prefHeight="17.0" prefWidth="399.0" textFill="red" />
-             <TextField fx:id="txtTitle" layoutX="70.0" layoutY="142.0" prefHeight="32.0" prefWidth="452.0" promptText="Título" styleClass="popup-text-field" />
-             <Label fx:id="lblName" layoutX="73.0" layoutY="116.0" styleClass="note-label" text="Título" />
+             <TextField fx:id="txtTitle" layoutX="70.0" layoutY="142.0" prefHeight="36.0" prefWidth="452.0" promptText="Título" styleClass="task-modal-input" />
+             <Label fx:id="lblName" layoutX="73.0" layoutY="116.0" styleClass="modal-field-label" text="Título" />
             
    </children>
 </Pane>

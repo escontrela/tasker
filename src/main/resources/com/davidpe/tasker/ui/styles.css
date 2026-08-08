@@ -896,6 +896,341 @@
     -fx-background-radius: 20;
 }
 
+/* -------------------------------------------------------------------------
+ * Tasker workspace design system. These rules intentionally override the
+ * legacy neon styles above while keeping existing dialog FXML compatible.
+ * ------------------------------------------------------------------------- */
+.root {
+    -fx-font-family: "BMW Type Next", "Inter", "Helvetica Neue", Arial, sans-serif;
+    -fx-background-color: #ffffff;
+}
+
+.app-shell {
+    -fx-background-color: #ffffff;
+}
+
+.stats-shell {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-border-width: 0;
+    -fx-effect: null;
+}
+
+.workspace-header {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #e6e6e6 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.header-bar { -fx-padding: 30 40 26 40; }
+.breadcrumb-bar {
+    -fx-padding: 0 0 2 0;
+}
+.breadcrumb-item,
+.breadcrumb-current,
+.breadcrumb-separator {
+    -fx-font-size: 12px;
+}
+.breadcrumb-item {
+    -fx-text-fill: #66727f;
+    -fx-font-weight: 600;
+}
+.breadcrumb-link {
+    -fx-cursor: hand;
+}
+.breadcrumb-link:hover,
+.breadcrumb-link:focused {
+    -fx-text-fill: #1c69d4;
+    -fx-underline: true;
+}
+.breadcrumb-current {
+    -fx-text-fill: #262626;
+    -fx-font-weight: 700;
+}
+.breadcrumb-separator {
+    -fx-text-fill: #9aa4af;
+    -fx-font-weight: 700;
+}
+.task-filter-bar {
+    -fx-padding: 14 40 14 40;
+    -fx-background-color: #f7f7f7;
+    -fx-border-color: transparent transparent #e6e6e6 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.eyebrow-label, .filter-caption {
+    -fx-text-fill: #66727f;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+.app-title {
+    -fx-text-fill: #262626;
+    -fx-font-size: 32px;
+    -fx-font-weight: 700;
+}
+.hero-support, .section-support, .status-text, .task-card-meta, .card-copy {
+    -fx-text-fill: #5d6975;
+    -fx-font-size: 14px;
+}
+.main-content-shell, .settings-content { -fx-background-color: #ffffff; }
+.section-title { -fx-text-fill: #262626; -fx-font-size: 22px; -fx-font-weight: 700; }
+
+.button.primary-button, .primary-button {
+    -fx-background-color: #1c69d4;
+    -fx-border-color: #1c69d4;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 16 10 16;
+    -fx-cursor: hand;
+}
+.button.primary-button:hover, .primary-button:hover { -fx-background-color: #0653b6; -fx-border-color: #0653b6; }
+.button.primary-button:pressed, .primary-button:pressed { -fx-background-color: #004a9f; -fx-border-color: #004a9f; }
+.button.secondary-button, .secondary-button {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-text-fill: #262626;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 16 10 16;
+    -fx-cursor: hand;
+}
+.button.secondary-button:hover, .secondary-button:hover { -fx-background-color: #f4f7fb; -fx-border-color: #9ab7db; }
+.button.secondary-button:pressed, .secondary-button:pressed { -fx-background-color: #eaf1fa; -fx-border-color: #1c69d4; }
+
+.toolbar-icon-button {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+.toolbar-icon-button:hover { -fx-background-color: #f4f7fb; -fx-border-color: #c3d3e8; }
+.toolbar-icon-button:pressed { -fx-background-color: #eaf1fa; -fx-border-color: #8eb5e8; }
+.toolbar-icon-button:disabled { -fx-opacity: 0.46; }
+.toolbar-icon-button:toolbar-selected { -fx-background-color: rgba(28,105,212,0.10); -fx-border-color: #1c69d4; }
+
+.task-filter-option {
+    -fx-padding: 7 12 7 12;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+.task-filter-option .label { -fx-text-fill: #52606d; -fx-font-size: 13px; -fx-font-weight: 700; }
+.task-filter-option:hover { -fx-background-color: #eaf1fa; }
+.task-filter-option.selected { -fx-background-color: #1c69d4; -fx-border-color: #1c69d4; }
+.task-filter-option.selected .label { -fx-text-fill: #ffffff; }
+.combo-box.project-combo {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-padding: 5 8 5 8;
+}
+.project-combo .list-cell { -fx-text-fill: #262626; }
+
+.task-grid-shell { -fx-background-color: #ffffff; }
+.task-grid-scroll, .task-grid-scroll > .viewport { -fx-background-color: transparent; }
+.task-grid-scroll { -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0; }
+.task-grid { -fx-background-color: #ffffff; }
+.task-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-cursor: hand;
+}
+.task-card:hover { -fx-background-color: #f7f9fc; -fx-border-color: #9ab7db; }
+.task-card.selected { -fx-background-color: #f4f7fb; -fx-border-color: #1c69d4; -fx-border-width: 2; }
+.task-card-title { -fx-text-fill: #262626; -fx-font-size: 17px; -fx-font-weight: 700; }
+.task-card-tag { -fx-text-fill: #1c69d4; -fx-font-size: 12px; -fx-font-weight: 700; }
+.task-status-pill { -fx-padding: 4 7 4 7; -fx-font-size: 11px; -fx-font-weight: 700; -fx-background-radius: 0; }
+.status-backlog { -fx-background-color: #edf1f5; -fx-text-fill: #46515d; }
+.status-planned { -fx-background-color: #eaf1fa; -fx-text-fill: #1c69d4; }
+.status-in-progress { -fx-background-color: #fff2d9; -fx-text-fill: #8a5500; }
+.status-done { -fx-background-color: #e6f4ea; -fx-text-fill: #276a3d; }
+.task-card-action { -fx-padding: 7 11 7 11; -fx-font-size: 12px; }
+
+.status-rail {
+    -fx-padding: 11 40 11 40;
+    -fx-background-color: #f7f7f7;
+    -fx-border-color: #e6e6e6 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+.settings-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-pref-width: 680px;
+    -fx-max-width: 680px;
+    -fx-pref-height: 230px;
+    -fx-max-height: 230px;
+}
+.card-title { -fx-text-fill: #262626; -fx-font-size: 22px; -fx-font-weight: 700; }
+.settings-check-box { -fx-text-fill: #262626; -fx-font-size: 14px; -fx-font-weight: 700; }
+
+.message-box-overlay { -fx-background-color: rgba(24, 33, 42, 0.32); }
+.message-box-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(20, 31, 43, 0.22), 28, 0.18, 0, 10);
+}
+.message-box-title { -fx-text-fill: #262626; -fx-font-size: 20px; -fx-font-weight: 700; }
+.message-box-message { -fx-text-fill: #5d6975; -fx-font-size: 15px; }
+.button.message-box-close-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #66727f;
+    -fx-font-size: 24px;
+    -fx-min-width: 34px;
+    -fx-min-height: 34px;
+    -fx-pref-width: 34px;
+    -fx-pref-height: 34px;
+    -fx-background-radius: 12;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+.button.message-box-close-button:hover { -fx-background-color: #f4f7fb; -fx-text-fill: #262626; }
+.button.message-box-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 16 10 16;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+.button.message-box-accept-button { -fx-background-color: #1c69d4; -fx-border-color: #1c69d4; -fx-text-fill: #ffffff; }
+.button.message-box-accept-button:hover { -fx-background-color: #0653b6; -fx-border-color: #0653b6; }
+.button.message-box-cancel-button { -fx-background-color: #ffffff; -fx-border-color: #c7ced7; -fx-text-fill: #262626; }
+.button.message-box-cancel-button:hover { -fx-background-color: #f4f7fb; -fx-border-color: #9ab7db; }
+
+.context-menu-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(20, 31, 43, 0.20), 22, 0.18, 0, 8);
+    -fx-min-width: 0;
+    -fx-pref-width: 230;
+    -fx-max-width: 230;
+}
+.button.context-menu-close-button { -fx-background-color: transparent; -fx-text-fill: #66727f; -fx-font-size: 18px; -fx-padding: 0 5 0 5; }
+.button.context-menu-close-button:hover { -fx-text-fill: #262626; }
+.button.context-menu-item { -fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-padding: 9 12 9 12; -fx-cursor: hand; }
+.button.context-menu-item:hover { -fx-background-color: #eaf1fa; }
+.context-menu-item-text { -fx-text-fill: #262626; -fx-font-size: 14px; -fx-font-weight: 700; }
+.context-menu-card .separator .line { -fx-border-color: #e6e6e6 transparent transparent transparent; }
+
+.task-modal-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(20, 31, 43, 0.22), 28, 0.18, 0, 10);
+}
+.modal-title { -fx-text-fill: #262626; -fx-font-size: 20px; -fx-font-weight: 700; }
+.modal-subtitle { -fx-text-fill: #66727f; -fx-font-size: 12px; -fx-font-weight: 700; }
+.modal-field-label { -fx-text-fill: #52606d; -fx-font-size: 13px; -fx-font-weight: 700; }
+.modal-error-label { -fx-text-fill: #b42318; -fx-font-size: 12px; -fx-font-weight: 700; }
+.text-field.task-modal-input,
+.text-area.task-modal-input,
+.combo-box.task-modal-input,
+.date-picker.task-modal-input {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-text-fill: #262626;
+    -fx-font-size: 14px;
+}
+.text-field.task-modal-input:focused,
+.text-area.task-modal-input:focused,
+.combo-box.task-modal-input:focused,
+.date-picker.task-modal-input:focused { -fx-border-color: #1c69d4; -fx-background-color: #ffffff; }
+.text-area.task-modal-input .content { -fx-background-color: #ffffff; -fx-background-radius: 8; }
+.combo-box.task-modal-input .list-cell,
+.date-picker.task-modal-input .text-field { -fx-text-fill: #262626; -fx-background-color: #ffffff; }
+.date-picker.task-modal-input .arrow-button,
+.combo-box.task-modal-input .arrow-button { -fx-background-color: transparent; }
+
+.night-mode, .night-mode.app-shell, .night-mode .app-shell { -fx-background-color: #1a2129; }
+.night-mode .stats-shell { -fx-background-color: #1a2129; }
+.night-mode .workspace-header { -fx-background-color: #1c2430; -fx-border-color: transparent transparent #334151 transparent; }
+.night-mode .header-bar { -fx-background-color: #1c2430; }
+.night-mode .breadcrumb-item { -fx-text-fill: #9fadb9; }
+.night-mode .breadcrumb-link:hover,
+.night-mode .breadcrumb-link:focused { -fx-text-fill: #79aeef; }
+.night-mode .breadcrumb-current { -fx-text-fill: #f1f3f5; }
+.night-mode .breadcrumb-separator { -fx-text-fill: #607080; }
+.night-mode .task-filter-bar, .night-mode .status-rail { -fx-background-color: #1c2430; -fx-border-color: #334151; }
+.night-mode .main-content-shell, .night-mode .settings-content, .night-mode .task-grid, .night-mode .task-grid-shell { -fx-background-color: #1a2129; }
+.night-mode .app-title, .night-mode .section-title, .night-mode .card-title, .night-mode .task-card-title { -fx-text-fill: #f1f3f5; }
+.night-mode .hero-support, .night-mode .section-support, .night-mode .status-text, .night-mode .task-card-meta, .night-mode .card-copy, .night-mode .eyebrow-label, .night-mode .filter-caption { -fx-text-fill: #b8c5d3; }
+.night-mode .toolbar-icon-button { -fx-background-color: #1c2430; -fx-border-color: #334151; }
+.night-mode .toolbar-icon-button:hover { -fx-background-color: #243243; -fx-border-color: #5d8fd0; }
+.night-mode .toolbar-icon-button:pressed { -fx-background-color: #2b3b4d; -fx-border-color: #6ba5f0; }
+.night-mode .toolbar-icon-button:toolbar-selected { -fx-background-color: rgba(107,165,240,0.14); -fx-border-color: #6ba5f0; }
+.night-mode .button.secondary-button, .night-mode .secondary-button { -fx-background-color: #1c2430; -fx-border-color: #465465; -fx-text-fill: #f1f3f5; }
+.night-mode .button.secondary-button:hover, .night-mode .secondary-button:hover { -fx-background-color: #243243; -fx-border-color: #6ba5f0; }
+.night-mode .task-filter-option .label { -fx-text-fill: #b8c5d3; }
+.night-mode .task-filter-option:hover { -fx-background-color: #243243; }
+.night-mode .task-filter-option.selected { -fx-background-color: #1c69d4; }
+.night-mode .combo-box.project-combo { -fx-background-color: #1c2430; -fx-border-color: #465465; }
+.night-mode .project-combo .list-cell { -fx-text-fill: #f1f3f5; }
+.night-mode .task-card { -fx-background-color: #1c2430; -fx-border-color: #334151; }
+.night-mode .task-card:hover { -fx-background-color: #243243; -fx-border-color: #5d8fd0; }
+.night-mode .task-card.selected { -fx-background-color: #243243; -fx-border-color: #6ba5f0; }
+.night-mode .task-card-tag { -fx-text-fill: #79aeef; }
+.night-mode .status-backlog { -fx-background-color: #334151; -fx-text-fill: #c3d0dc; }
+.night-mode .status-planned { -fx-background-color: #253e5e; -fx-text-fill: #9fc7ff; }
+.night-mode .status-in-progress { -fx-background-color: #52411f; -fx-text-fill: #ffd98d; }
+.night-mode .status-done { -fx-background-color: #244b35; -fx-text-fill: #9eddb6; }
+.night-mode .settings-card { -fx-background-color: #1c2430; -fx-border-color: #334151; }
+.night-mode .settings-check-box { -fx-text-fill: #f1f3f5; }
+.night-mode .message-box-overlay { -fx-background-color: rgba(0, 0, 0, 0.48); }
+.night-mode .message-box-card, .night-mode .context-menu-card { -fx-background-color: #1c2430; -fx-border-color: #465465; }
+.night-mode .message-box-title, .night-mode .context-menu-item-text { -fx-text-fill: #f1f3f5; }
+.night-mode .message-box-message { -fx-text-fill: #b8c5d3; }
+.night-mode .button.message-box-cancel-button { -fx-background-color: #1c2430; -fx-border-color: #465465; -fx-text-fill: #f1f3f5; }
+.night-mode .button.message-box-cancel-button:hover, .night-mode .button.context-menu-item:hover { -fx-background-color: #2b3b4d; }
+.night-mode .button.message-box-close-button, .night-mode .button.context-menu-close-button { -fx-text-fill: #b8c5d3; }
+.night-mode .button.message-box-close-button:hover { -fx-background-color: #243243; -fx-text-fill: #f1f3f5; }
+.night-mode .context-menu-card .separator .line { -fx-border-color: #465465 transparent transparent transparent; }
+.night-mode .task-modal-card { -fx-background-color: #1c2430; -fx-border-color: #465465; }
+.night-mode .modal-title { -fx-text-fill: #f1f3f5; }
+.night-mode .modal-subtitle, .night-mode .modal-field-label { -fx-text-fill: #b8c5d3; }
+.night-mode .text-field.task-modal-input,
+.night-mode .text-area.task-modal-input,
+.night-mode .combo-box.task-modal-input,
+.night-mode .date-picker.task-modal-input {
+    -fx-background-color: #1a2129;
+    -fx-border-color: #465465;
+    -fx-text-fill: #f1f3f5;
+}
+.night-mode .text-area.task-modal-input .content,
+.night-mode .combo-box.task-modal-input .list-cell,
+.night-mode .date-picker.task-modal-input .text-field { -fx-background-color: #1a2129; -fx-text-fill: #f1f3f5; }
+.night-mode .text-field.task-modal-input:focused,
+.night-mode .text-area.task-modal-input:focused,
+.night-mode .combo-box.task-modal-input:focused,
+.night-mode .date-picker.task-modal-input:focused { -fx-border-color: #6ba5f0; -fx-background-color: #1a2129; }
+
 
 
 .panel-black{
@@ -1487,3 +1822,169 @@
 /******************************************/
 /** END: NEW SYSTEM DESIGN  10-01-2025 **/
 /******************************************
+
+/* ComboBox popups are rendered in a separate popup scene, so they need explicit
+   light-theme rules instead of inheriting the legacy dark list defaults. */
+.combo-box-popup > .list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(20, 31, 43, 0.16), 16, 0.14, 0, 5);
+}
+.combo-box-popup > .list-view .list-cell {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #262626;
+    -fx-font-size: 14px;
+    -fx-padding: 8 10 8 10;
+}
+.combo-box-popup > .list-view .list-cell:filled:hover,
+.combo-box-popup > .list-view .list-cell:filled:selected {
+    -fx-background-color: #eaf1fa;
+    -fx-text-fill: #262626;
+}
+
+.main-workspace { -fx-background-color: #ffffff; }
+.task-outline-panel {
+    -fx-background-color: #f7f9fc;
+    -fx-border-color: transparent transparent transparent #d8dde3;
+    -fx-border-width: 0 0 0 1;
+}
+.outline-eyebrow, .outline-detail-caption { -fx-text-fill: #66727f; -fx-font-size: 12px; -fx-font-weight: 700; }
+.outline-title { -fx-text-fill: #262626; -fx-font-size: 18px; -fx-font-weight: 700; }
+.outline-status { -fx-text-fill: #1c69d4; -fx-font-size: 12px; -fx-font-weight: 700; }
+.outline-detail-value { -fx-text-fill: #262626; -fx-font-size: 14px; }
+.outline-description { -fx-text-fill: #5d6975; -fx-font-size: 14px; }
+.button.outline-action { -fx-font-size: 12px; -fx-padding: 8 10 8 10; }
+.night-mode .main-workspace { -fx-background-color: #1a2129; }
+.night-mode .task-outline-panel { -fx-background-color: #1c2430; -fx-border-color: transparent transparent transparent #334151; }
+.night-mode .outline-title, .night-mode .outline-detail-value { -fx-text-fill: #f1f3f5; }
+.night-mode .outline-eyebrow, .night-mode .outline-detail-caption, .night-mode .outline-description { -fx-text-fill: #b8c5d3; }
+.night-mode .outline-status { -fx-text-fill: #79aeef; }
+
+.stats-content { -fx-background-color: #ffffff; }
+.stats-filter-panel {
+    -fx-background-color: #f7f9fc;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-padding: 14 16 14 16;
+}
+.date-picker.stats-input, .combo-box.stats-input {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-pref-height: 36px;
+}
+.date-picker.stats-input .text-field, .combo-box.stats-input .list-cell { -fx-background-color: #ffffff; -fx-text-fill: #262626; }
+.stats-chart-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-padding: 20;
+}
+.chart-2d { -fx-background-color: #f7f9fc; -fx-background-radius: 10; -fx-border-color: #e1e6ec; -fx-border-radius: 10; -fx-border-width: 1; -fx-effect: null; }
+.night-mode .stats-content { -fx-background-color: #1a2129; }
+.night-mode .stats-filter-panel, .night-mode .stats-chart-card { -fx-background-color: #1c2430; -fx-border-color: #334151; }
+.night-mode .date-picker.stats-input, .night-mode .combo-box.stats-input { -fx-background-color: #1a2129; -fx-border-color: #465465; }
+.night-mode .date-picker.stats-input .text-field, .night-mode .combo-box.stats-input .list-cell { -fx-background-color: #1a2129; -fx-text-fill: #f1f3f5; }
+.night-mode .chart-2d { -fx-background-color: #1a2129; -fx-border-color: #334151; }
+
+/* Composite modal controls: their inner field and arrow share the same rounded shell. */
+.combo-box.task-modal-input,
+.date-picker.task-modal-input {
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-insets: 0;
+    -fx-border-radius: 8;
+}
+.combo-box.task-modal-input > .list-cell,
+.date-picker.task-modal-input > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8 0 0 8;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-text-fill: #262626;
+}
+.combo-box.task-modal-input > .arrow-button,
+.date-picker.task-modal-input > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0 8 8 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+.night-mode .combo-box.task-modal-input > .list-cell,
+.night-mode .date-picker.task-modal-input > .text-field { -fx-background-color: transparent; -fx-text-fill: #f1f3f5; }
+.night-mode .text-area.task-modal-input .scroll-pane,
+.night-mode .text-area.task-modal-input .viewport,
+.night-mode .text-area.task-modal-input .scroll-bar { -fx-background-color: #1a2129; }
+.night-mode .text-area.task-modal-input .scroll-bar .thumb { -fx-background-color: #465465; }
+
+/* Popup cells need their own class because JavaFX opens the list in a separate scene. */
+.combo-box-popup > .list-view .list-cell.tasker-popup-night {
+    -fx-background-color: #1c2430;
+    -fx-text-fill: #f1f3f5;
+}
+.combo-box-popup > .list-view .list-cell.tasker-popup-night:filled:hover,
+.combo-box-popup > .list-view .list-cell.tasker-popup-night:filled:selected {
+    -fx-background-color: #2b3b4d;
+    -fx-text-fill: #f1f3f5;
+}
+
+/* Shared control geometry: primary workspaces and dialogs use the same soft corners. */
+.button.primary-button, .primary-button,
+.button.secondary-button, .secondary-button {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+.task-filter-option,
+.task-filter-option.selected {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+.combo-box.project-combo {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-background-insets: 0;
+}
+.combo-box.project-combo > .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 12 0 0 12;
+    -fx-text-fill: #262626;
+}
+.combo-box.project-combo > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 12 12 0;
+}
+.night-mode .combo-box.project-combo > .list-cell { -fx-text-fill: #f1f3f5; }
+
+/* TextArea has a ScrollPane and a Content region; style all three layers as one rounded input. */
+.text-area.task-modal-input {
+    -fx-background-color: #ffffff;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 1;
+}
+.text-area.task-modal-input .scroll-pane,
+.text-area.task-modal-input .viewport {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 7;
+    -fx-padding: 0;
+}
+.text-area.task-modal-input .content {
+    -fx-background-color: #ffffff;
+    -fx-background-insets: 0;
+    -fx-background-radius: 7;
+}
+.night-mode .text-area.task-modal-input {
+    -fx-background-color: #1a2129;
+    -fx-border-color: #465465;
+}
+.night-mode .text-area.task-modal-input .content { -fx-background-color: #1a2129; }
