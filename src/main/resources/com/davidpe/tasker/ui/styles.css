@@ -1899,3 +1899,59 @@
     -fx-background-color: #2b3b4d;
     -fx-text-fill: #f1f3f5;
 }
+
+/* Shared control geometry: primary workspaces and dialogs use the same soft corners. */
+.button.primary-button, .primary-button,
+.button.secondary-button, .secondary-button {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+.task-filter-option,
+.task-filter-option.selected {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+.combo-box.project-combo {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-background-insets: 0;
+}
+.combo-box.project-combo > .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 12 0 0 12;
+    -fx-text-fill: #262626;
+}
+.combo-box.project-combo > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 12 12 0;
+}
+.night-mode .combo-box.project-combo > .list-cell { -fx-text-fill: #f1f3f5; }
+
+/* TextArea has a ScrollPane and a Content region; style all three layers as one rounded input. */
+.text-area.task-modal-input {
+    -fx-background-color: #ffffff;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 1;
+}
+.text-area.task-modal-input .scroll-pane,
+.text-area.task-modal-input .viewport {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 7;
+    -fx-padding: 0;
+}
+.text-area.task-modal-input .content {
+    -fx-background-color: #ffffff;
+    -fx-background-insets: 0;
+    -fx-background-radius: 7;
+}
+.night-mode .text-area.task-modal-input {
+    -fx-background-color: #1a2129;
+    -fx-border-color: #465465;
+}
+.night-mode .text-area.task-modal-input .content { -fx-background-color: #1a2129; }
