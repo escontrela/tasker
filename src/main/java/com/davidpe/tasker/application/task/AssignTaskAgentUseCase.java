@@ -3,6 +3,7 @@ package com.davidpe.tasker.application.task;
 import com.davidpe.tasker.domain.agents.AgentRepository;
 import com.davidpe.tasker.domain.task.Task;
 import com.davidpe.tasker.domain.task.TaskRepository;
+import com.davidpe.tasker.domain.task.TaskUpdatedEvent;
 import java.time.Instant;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
