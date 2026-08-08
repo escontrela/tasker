@@ -10,6 +10,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -26,7 +28,14 @@
                     <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="header-bar">
                         <VBox spacing="6.0">
                             <Label styleClass="eyebrow-label" text="Task workspace" />
-                            <Label styleClass="app-title" text="Tasker" />
+                            <StackPane alignment="CENTER_LEFT" maxHeight="48.0" maxWidth="220.0" minHeight="48.0" minWidth="220.0" prefHeight="48.0" prefWidth="220.0" styleClass="main-brand-logo">
+                                <ImageView accessibleText="Tasker" fitHeight="48.0" fitWidth="220.0" preserveRatio="true" smooth="true" styleClass="main-brand-logo-light">
+                                    <image><Image url="@../tasker-logo-light.png" /></image>
+                                </ImageView>
+                                <ImageView accessibleText="Tasker" fitHeight="48.0" fitWidth="220.0" preserveRatio="true" smooth="true" styleClass="main-brand-logo-dark">
+                                    <image><Image url="@../tasker-logo-dark.png" /></image>
+                                </ImageView>
+                            </StackPane>
                             <Label fx:id="lblHello" styleClass="hero-support" text="Plan the work that matters today." />
                         </VBox>
                         <Region HBox.hgrow="ALWAYS" />

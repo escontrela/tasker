@@ -990,6 +990,9 @@
     -fx-font-size: 32px;
     -fx-font-weight: 700;
 }
+.main-brand-logo-dark { -fx-opacity: 0; }
+.night-mode .main-brand-logo-light { -fx-opacity: 0; }
+.night-mode .main-brand-logo-dark { -fx-opacity: 1; }
 .hero-support, .section-support, .status-text, .task-card-meta, .card-copy {
     -fx-text-fill: #5d6975;
     -fx-font-size: 14px;
@@ -1096,11 +1099,41 @@
     -fx-border-width: 1;
     -fx-pref-width: 680px;
     -fx-max-width: 680px;
-    -fx-pref-height: 230px;
-    -fx-max-height: 230px;
+    -fx-pref-height: 350px;
+    -fx-max-height: 350px;
 }
 .card-title { -fx-text-fill: #262626; -fx-font-size: 22px; -fx-font-weight: 700; }
+.settings-section-title { -fx-padding: 14 0 0 0; }
 .settings-check-box { -fx-text-fill: #262626; -fx-font-size: 14px; -fx-font-weight: 700; }
+
+.splash-shell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-padding: 34 48 30 48;
+}
+.splash-tagline {
+    -fx-text-fill: #5d6975;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+}
+.splash-loading-status {
+    -fx-text-fill: #66727f;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+.splash-loader-cell {
+    -fx-background-color: #1c69d4;
+    -fx-background-radius: 3;
+    -fx-min-width: 8px;
+    -fx-min-height: 8px;
+    -fx-pref-width: 8px;
+    -fx-pref-height: 8px;
+}
+.night-mode.splash-shell { -fx-background-color: #1a2129; -fx-border-color: #334151; }
+.night-mode .splash-tagline,
+.night-mode .splash-loading-status { -fx-text-fill: #b8c5d3; }
+.night-mode .splash-loader-cell { -fx-background-color: #6ba5f0; }
 
 .message-box-overlay { -fx-background-color: rgba(24, 33, 42, 0.32); }
 .message-box-card {
