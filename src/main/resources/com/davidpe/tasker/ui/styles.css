@@ -1856,3 +1856,46 @@
 .night-mode .date-picker.stats-input, .night-mode .combo-box.stats-input { -fx-background-color: #1a2129; -fx-border-color: #465465; }
 .night-mode .date-picker.stats-input .text-field, .night-mode .combo-box.stats-input .list-cell { -fx-background-color: #1a2129; -fx-text-fill: #f1f3f5; }
 .night-mode .chart-2d { -fx-background-color: #1a2129; -fx-border-color: #334151; }
+
+/* Composite modal controls: their inner field and arrow share the same rounded shell. */
+.combo-box.task-modal-input,
+.date-picker.task-modal-input {
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-insets: 0;
+    -fx-border-radius: 8;
+}
+.combo-box.task-modal-input > .list-cell,
+.date-picker.task-modal-input > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8 0 0 8;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-text-fill: #262626;
+}
+.combo-box.task-modal-input > .arrow-button,
+.date-picker.task-modal-input > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0 8 8 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+.night-mode .combo-box.task-modal-input > .list-cell,
+.night-mode .date-picker.task-modal-input > .text-field { -fx-background-color: transparent; -fx-text-fill: #f1f3f5; }
+.night-mode .text-area.task-modal-input .scroll-pane,
+.night-mode .text-area.task-modal-input .viewport,
+.night-mode .text-area.task-modal-input .scroll-bar { -fx-background-color: #1a2129; }
+.night-mode .text-area.task-modal-input .scroll-bar .thumb { -fx-background-color: #465465; }
+
+/* Popup cells need their own class because JavaFX opens the list in a separate scene. */
+.combo-box-popup > .list-view .list-cell.tasker-popup-night {
+    -fx-background-color: #1c2430;
+    -fx-text-fill: #f1f3f5;
+}
+.combo-box-popup > .list-view .list-cell.tasker-popup-night:filled:hover,
+.combo-box-popup > .list-view .list-cell.tasker-popup-night:filled:selected {
+    -fx-background-color: #2b3b4d;
+    -fx-text-fill: #f1f3f5;
+}

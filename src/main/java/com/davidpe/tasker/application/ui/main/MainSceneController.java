@@ -48,6 +48,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -315,6 +316,7 @@ public class MainSceneController extends UiScreenController {
     }
 
     taskStatusFilter = TaskStatusFilter.ALL;
+    configureProjectComboCells();
     updateTaskFilterStyles();
     updateFilterIcon();
 
@@ -425,6 +427,23 @@ public class MainSceneController extends UiScreenController {
           loadTasks();
         });
 
+  }
+
+  private void configureProjectComboCells() {
+    cbxProject.setCellFactory(
+        ignored ->
+            new ListCell<>() {
+              @Override
+              protected void updateItem(Project project, boolean empty) {
+                super.updateItem(project, empty);
+                setText(empty || project == null ? null : project.getName());
+                getStyleClass().removeAll("tasker-popup-light", "tasker-popup-night");
+                getStyleClass().add(
+                    mainPane.getStyleClass().contains("night-mode")
+                        ? "tasker-popup-night"
+                        : "tasker-popup-light");
+              }
+            });
   }
 
   @Override
