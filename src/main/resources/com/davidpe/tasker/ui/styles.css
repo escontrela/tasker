@@ -2055,3 +2055,93 @@
     -fx-border-color: #465465;
 }
 .night-mode .text-area.task-modal-input .content { -fx-background-color: #1a2129; }
+
+/* Agent directory --------------------------------------------------------- */
+.agent-content { -fx-background-color: #ffffff; }
+.agent-form-card,
+.agent-role-card,
+.agent-list-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 22;
+}
+.agent-form-card { -fx-pref-width: 620; }
+.agent-role-card { -fx-pref-width: 400; }
+.text-field.agent-input,
+.combo-box.agent-input {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-text-fill: #262626;
+    -fx-font-size: 14px;
+    -fx-padding: 8 10 8 10;
+}
+.text-field.agent-input:focused,
+.combo-box.agent-input:focused { -fx-border-color: #1c69d4; }
+.combo-box.agent-input > .list-cell { -fx-background-color: transparent; -fx-text-fill: #262626; }
+.combo-box.agent-input > .arrow-button { -fx-background-color: transparent; }
+.agent-role-list { -fx-padding: 4 0 0 0; }
+.agent-role-row {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 7 9 7 9;
+    -fx-background-color: #f7f9fc;
+    -fx-background-radius: 9;
+}
+.agent-role-code,
+.agent-code-pill,
+.agent-role-pill,
+.agent-count {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+.agent-role-code { -fx-text-fill: #52606d; }
+.agent-code-pill {
+    -fx-text-fill: #1c69d4;
+    -fx-background-color: #eaf1fa;
+    -fx-background-radius: 8;
+    -fx-padding: 4 7 4 7;
+}
+.agent-role-pill {
+    -fx-text-fill: #276a3d;
+    -fx-background-color: #e6f4ea;
+    -fx-background-radius: 8;
+    -fx-padding: 4 8 4 8;
+}
+.agent-count { -fx-text-fill: #66727f; }
+.agent-list-scroll,
+.agent-list-scroll > .viewport { -fx-background-color: transparent; }
+.agent-list-scroll { -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0; }
+.agent-directory-row {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 15 16 15 16;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e1e6ed;
+    -fx-border-width: 1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+.agent-row-title { -fx-text-fill: #262626; -fx-font-size: 14px; -fx-font-weight: 700; }
+.agent-empty-state { -fx-text-fill: #66727f; -fx-font-size: 14px; -fx-padding: 12 0 12 0; }
+
+.night-mode .agent-content { -fx-background-color: #1a2129; }
+.night-mode .agent-form-card,
+.night-mode .agent-role-card,
+.night-mode .agent-list-card,
+.night-mode .agent-directory-row { -fx-background-color: #1c2430; -fx-border-color: #334151; }
+.night-mode .text-field.agent-input,
+.night-mode .combo-box.agent-input { -fx-background-color: #1a2129; -fx-border-color: #465465; -fx-text-fill: #f1f3f5; }
+.night-mode .text-field.agent-input:focused,
+.night-mode .combo-box.agent-input:focused { -fx-border-color: #6ba5f0; }
+.night-mode .combo-box.agent-input > .list-cell { -fx-text-fill: #f1f3f5; }
+.night-mode .agent-role-row { -fx-background-color: #243243; }
+.night-mode .agent-role-code,
+.night-mode .agent-count,
+.night-mode .agent-empty-state { -fx-text-fill: #b8c5d3; }
+.night-mode .agent-code-pill { -fx-background-color: #253e5e; -fx-text-fill: #9fc7ff; }
+.night-mode .agent-role-pill { -fx-background-color: #244b35; -fx-text-fill: #9eddb6; }
+.night-mode .agent-row-title { -fx-text-fill: #f1f3f5; }

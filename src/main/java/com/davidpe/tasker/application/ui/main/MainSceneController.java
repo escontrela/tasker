@@ -130,6 +130,8 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Button btnNewTask;
 
+  @FXML private Button btnManageAgents;
+
   @FXML private Button btnShowStats;
 
   @FXML private Button btnSearch;
@@ -249,6 +251,12 @@ public class MainSceneController extends UiScreenController {
       return;
     }
 
+    if (isButtonManageAgentsClicked(event)) {
+
+      uiFlowManager.show(UiScreenId.AGENTS);
+      return;
+    }
+
     if (isButtonFilterClicked(event)) {
       applyTaskFilter(TaskStatusFilter.ALL);
       return;
@@ -288,6 +296,11 @@ public class MainSceneController extends UiScreenController {
   private boolean isButtonShowStatsClicked(ActionEvent event) {
 
     return event.getSource() == btnShowStats;
+  }
+
+  private boolean isButtonManageAgentsClicked(ActionEvent event) {
+
+    return event.getSource() == btnManageAgents;
   }
 
   private boolean isButtonSettingsClicked(ActionEvent event) {

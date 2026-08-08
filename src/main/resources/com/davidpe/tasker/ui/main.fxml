@@ -42,6 +42,7 @@
                         <HBox alignment="CENTER_RIGHT" spacing="8.0">
                             <Button fx:id="btnNewTask" mnemonicParsing="false" onAction="#buttonAction" styleClass="primary-button" text="New task" />
                             <Button fx:id="btnNewProject" mnemonicParsing="false" onAction="#buttonAction" styleClass="secondary-button" text="New project" />
+                            <Button fx:id="btnManageAgents" mnemonicParsing="false" onAction="#buttonAction" styleClass="secondary-button" text="Agents" />
                             <Button fx:id="btnShowStats" mnemonicParsing="false" onAction="#buttonAction" styleClass="secondary-button" text="Statistics" />
                             <ToolbarIconButton fx:id="outlineButton" accessibleText="Toggle task outline" darkIconResource="/com/davidpe/tasker/ui/images/view_column_2_24dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/view_column_2_24dp_white.png" toggleMode="true" tooltipText="Outline" />
                             <ToolbarIconButton fx:id="btSettings" accessibleText="Open settings" darkIconResource="/com/davidpe/tasker/ui/images/settings_18dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/settings_18dp_white.png" onAction="#buttonAction" tooltipText="Settings" />

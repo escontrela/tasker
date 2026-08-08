@@ -1,6 +1,7 @@
 package com.davidpe.tasker.application.ui.common;
 
 import com.davidpe.tasker.application.ui.main.MainSceneController;
+import com.davidpe.tasker.application.ui.agents.AgentsSceneController;
 import com.davidpe.tasker.application.ui.project.NewProjectPanelController;
 import com.davidpe.tasker.application.ui.settings.SettingsSceneController;
 import com.davidpe.tasker.application.ui.stats.StatsSceneController;
@@ -61,6 +62,12 @@ public class UiScreenFactory {
                   (stage, supplier, controller) ->
                       new UiPrimaryScreen(UiScreenId.STATS, stage, supplier, controller),
                   StatsSceneController.class),
+              UiScreenId.AGENTS,
+              new UiScreenDescriptor<>(
+                  UiScreenId.AGENTS.getResourcePath(),
+                  (stage, supplier, controller) ->
+                      new UiPrimaryScreen(UiScreenId.AGENTS, stage, supplier, controller),
+                  AgentsSceneController.class),
               UiScreenId.NEW_PROJECT_DIALOG,
               new UiScreenDescriptor<>(
                   UiScreenId.NEW_PROJECT_DIALOG.getResourcePath(),
