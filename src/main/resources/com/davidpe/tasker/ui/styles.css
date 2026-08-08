@@ -957,6 +957,29 @@
     -fx-border-color: transparent transparent #e6e6e6 transparent;
     -fx-border-width: 0 0 1 0;
 }
+.task-search-box {
+    -fx-min-width: 188px;
+    -fx-max-width: 258px;
+}
+.text-field.task-search-input {
+    -fx-background-color: #ffffff;
+    -fx-background-insets: 0;
+    -fx-background-radius: 12;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-text-fill: #262626;
+    -fx-prompt-text-fill: #87919c;
+    -fx-font-size: 13px;
+    -fx-padding: 10 12 10 12;
+}
+.text-field.task-search-input:focused {
+    -fx-border-color: #1c69d4;
+}
+.text-field.task-search-input:regex-invalid {
+    -fx-border-color: #b42318;
+    -fx-background-color: #fff6f5;
+}
 .eyebrow-label, .filter-caption {
     -fx-text-fill: #66727f;
     -fx-font-size: 12px;
@@ -1179,6 +1202,17 @@
 .night-mode .breadcrumb-current { -fx-text-fill: #f1f3f5; }
 .night-mode .breadcrumb-separator { -fx-text-fill: #607080; }
 .night-mode .task-filter-bar, .night-mode .status-rail { -fx-background-color: #1c2430; -fx-border-color: #334151; }
+.night-mode .text-field.task-search-input {
+    -fx-background-color: #1a2129;
+    -fx-border-color: #465465;
+    -fx-text-fill: #f1f3f5;
+    -fx-prompt-text-fill: #82909e;
+}
+.night-mode .text-field.task-search-input:focused { -fx-border-color: #6ba5f0; }
+.night-mode .text-field.task-search-input:regex-invalid {
+    -fx-border-color: #ef7b72;
+    -fx-background-color: #302126;
+}
 .night-mode .main-content-shell, .night-mode .settings-content, .night-mode .task-grid, .night-mode .task-grid-shell { -fx-background-color: #1a2129; }
 .night-mode .app-title, .night-mode .section-title, .night-mode .card-title, .night-mode .task-card-title { -fx-text-fill: #f1f3f5; }
 .night-mode .hero-support, .night-mode .section-support, .night-mode .status-text, .night-mode .task-card-meta, .night-mode .card-copy, .night-mode .eyebrow-label, .night-mode .filter-caption { -fx-text-fill: #b8c5d3; }

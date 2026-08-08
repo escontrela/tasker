@@ -42,13 +42,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+import java.util.regex.PatternSyntaxException;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -64,6 +67,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MainSceneController extends UiScreenController {
+
+  private static final PseudoClass REGEX_INVALID_PSEUDO_CLASS =
+      PseudoClass.getPseudoClass("regex-invalid");
+  private static final DateTimeFormatter TASK_DATE_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
   private double xOffset = 0;
   private double yOffset = 0;
@@ -126,15 +134,17 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Button btnSearch;
 
+  @FXML private TextField txtTaskSearch;
+
   @FXML private ImageView imgNewProject;
 
   @FXML private ImageView imgNewTask;
 
   @FXML private ImageView imgShowStats;
 
-  @FXML private ImageView imgSearch;
-
   @FXML private ComboBox<Project> cbxProject;
+
+  @FXML private Label lblStatus;
 
   @FXML private Label lblBacklog;
 
@@ -150,6 +160,7 @@ public class MainSceneController extends UiScreenController {
   private boolean filterOn = false;
 
   private TaskStatusFilter taskStatusFilter = TaskStatusFilter.ALL;
+  private TaskSearchExpression taskSearchExpression;
 
   // Reusable notification panel (separate from pnlMessage which is used for delete confirmation)
   private MessagePanelController pnlNotification;
@@ -294,11 +305,6 @@ public class MainSceneController extends UiScreenController {
     return event.getSource() == btFilter || event.getSource() == imgFilter;
   }
 
-  private boolean isButtonSearchClicked(ActionEvent event) {
-
-    return event.getSource() == btnSearch || event.getSource() == imgSearch;
-  }
-
   @Override
   public void initialize(URL location, ResourceBundle resources) {
 
@@ -317,6 +323,7 @@ public class MainSceneController extends UiScreenController {
 
     taskStatusFilter = TaskStatusFilter.ALL;
     configureProjectComboCells();
+    configureTaskSearch();
     updateTaskFilterStyles();
     updateFilterIcon();
 
@@ -713,12 +720,113 @@ public class MainSceneController extends UiScreenController {
 
     // Populate the Tasker table panel with tasks.
     Long projectId = selectedProjectId();
-    List<Task> tasks = getFilteredTasks(projectId);
+    List<Task> tasks = applyTaskSearch(getFilteredTasks(projectId));
     List<Task> orderedTasks = new ArrayList<>(tasks);
     orderedTasks.sort(
         Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
             .thenComparing(Task::getCreatedAt, Comparator.reverseOrder()));
     populateTaskerPanel(orderedTasks, preserveTaskId);
+    updateTaskListStatus(orderedTasks.size());
+  }
+
+  private List<Task> applyTaskSearch(List<Task> tasks) {
+    if (taskSearchExpression == null || tasks == null || tasks.isEmpty()) {
+      return tasks == null ? List.of() : tasks;
+    }
+    return tasks.stream().filter(this::matchesTaskSearch).toList();
+  }
+
+  private boolean matchesTaskSearch(Task task) {
+    if (task == null || taskSearchExpression == null) return false;
+    if (matchesSearchValue(task.getId())) return true;
+    if (matchesSearchValue(task.getTitle())) return true;
+    if (matchesSearchValue(task.getExternalCode())) return true;
+    if (matchesSearchValue(task.getDescription())) return true;
+    if (matchesSearchValue(task.getTaskStatus().getCode())) return true;
+    if (task.getStartAt() != null
+        && matchesSearchValue(
+            TASK_DATE_FORMATTER.format(
+                LocalDateTime.ofInstant(task.getStartAt(), ZoneId.systemDefault())))) {
+      return true;
+    }
+
+    String priority =
+        task.getPriorityId() == null
+            ? ""
+            : taskService
+                .getPriorityById(task.getPriorityId())
+                .map(value -> value.getDescription())
+                .orElse("");
+    if (matchesSearchValue(priority)) return true;
+
+    String tag =
+        task.getTagId() == null
+            ? ""
+            : taskService.getTagById(task.getTagId()).map(Tag::getName).orElse("");
+    return matchesSearchValue(tag);
+  }
+
+  private boolean matchesSearchValue(Object value) {
+    return taskSearchExpression != null && taskSearchExpression.matches(value);
+  }
+
+  private void configureTaskSearch() {
+    if (txtTaskSearch == null) return;
+    txtTaskSearch
+        .textProperty()
+        .addListener(
+            (ignored, oldValue, value) -> {
+              txtTaskSearch.pseudoClassStateChanged(REGEX_INVALID_PSEUDO_CLASS, false);
+              if (value == null || value.isBlank()) {
+                clearTaskSearch();
+              }
+            });
+  }
+
+  @FXML
+  void onSearchRequested() {
+    String expression = txtTaskSearch == null ? "" : txtTaskSearch.getText();
+    if (expression == null || expression.isBlank()) {
+      clearTaskSearch();
+      return;
+    }
+
+    try {
+      taskSearchExpression = TaskSearchExpression.compile(expression);
+      txtTaskSearch.pseudoClassStateChanged(REGEX_INVALID_PSEUDO_CLASS, false);
+      Long selectedTaskId = selectedRow != null ? selectedRow.getTaskId() : null;
+      loadTasks(selectedTaskId);
+    } catch (PatternSyntaxException exception) {
+      txtTaskSearch.pseudoClassStateChanged(REGEX_INVALID_PSEUDO_CLASS, true);
+      lblStatus.setText("Invalid regular expression: " + exception.getDescription());
+    }
+  }
+
+  private void clearTaskSearch() {
+    boolean searchWasActive = taskSearchExpression != null;
+    taskSearchExpression = null;
+    if (searchWasActive) {
+      Long selectedTaskId = selectedRow != null ? selectedRow.getTaskId() : null;
+      loadTasks(selectedTaskId);
+    } else if (lblStatus != null) {
+      lblStatus.setText("Ready to organise your work");
+    }
+  }
+
+  private void updateTaskListStatus(int visibleTaskCount) {
+    if (lblStatus == null) return;
+    if (taskSearchExpression == null) {
+      lblStatus.setText("Ready to organise your work");
+      return;
+    }
+    String ticketLabel = visibleTaskCount == 1 ? "ticket" : "tickets";
+    lblStatus.setText(
+        "Search “"
+            + taskSearchExpression.source()
+            + "”: "
+            + visibleTaskCount
+            + " "
+            + ticketLabel);
   }
 
   private List<Task> getFilteredTasks(Long projectId) {
