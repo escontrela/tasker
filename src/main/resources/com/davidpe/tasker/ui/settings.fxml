@@ -38,6 +38,9 @@
                 <Label styleClass="card-title" text="Night mode" />
                 <Label styleClass="card-copy" text="Use the dark Tasker workspace across every screen. The preference is stored locally for your next session." wrapText="true" />
                 <CheckBox fx:id="nightModeCheckBox" mnemonicParsing="false" styleClass="settings-check-box" text="Enable night mode" />
+                <Label styleClass="card-title settings-section-title" text="Startup" />
+                <Label styleClass="card-copy" text="Show the Tasker welcome screen while the application prepares your workspace." wrapText="true" />
+                <CheckBox fx:id="showSplashCheckBox" mnemonicParsing="false" styleClass="settings-check-box" text="Show splash screen on startup" />
             </VBox>
         </StackPane>
     </center>

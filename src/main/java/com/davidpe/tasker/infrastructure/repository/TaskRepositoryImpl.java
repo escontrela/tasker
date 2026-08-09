@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 public class TaskRepositoryImpl implements TaskRepository {
 
   private static final String SELECT_TASK_FIELDS =
-      "SELECT t.id, t.project_id, t.priority_id, t.tag_id, t.external_code, t.title, t.description, "
+      "SELECT t.id, t.project_id, t.priority_id, t.tag_id, t.agent_id, t.external_code, t.title, t.description, "
           + "t.start_at, t.end_at, t.sequence, t.task_status_id, t.created_at, t.updated_at, ts.code AS task_status_code "
           + "FROM tasks t "
           + "JOIN task_status ts ON ts.id = t.task_status_id ";
@@ -40,7 +40,8 @@ public class TaskRepositoryImpl implements TaskRepository {
               rs.getBigDecimal("sequence"),
               new TaskStatus(rs.getLong("task_status_id"), rs.getString("task_status_code")),
               rs.getTimestamp("created_at").toInstant(),
-              rs.getTimestamp("updated_at").toInstant());
+              rs.getTimestamp("updated_at").toInstant(),
+              rs.getObject("agent_id") != null ? rs.getLong("agent_id") : null);
 
   public TaskRepositoryImpl(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
@@ -103,7 +104,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
   private Task insert(Task task) {
     String sql =
-        "INSERT INTO tasks (project_id, priority_id, tag_id, external_code, title, description, start_at, end_at, sequence, task_status_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO tasks (project_id, priority_id, tag_id, agent_id, external_code, title, description, start_at, end_at, sequence, task_status_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     KeyHolder keyHolder = new GeneratedKeyHolder();
     jdbcTemplate.update(
         connection -> {
@@ -115,19 +116,24 @@ public class TaskRepositoryImpl implements TaskRepository {
           } else {
             statement.setNull(3, Types.BIGINT);
           }
-          statement.setString(4, task.getExternalCode());
-          statement.setString(5, task.getTitle());
-          statement.setString(6, task.getDescription());
-          statement.setTimestamp(7, toTimestamp(task.getStartAt()));
-          statement.setTimestamp(8, toTimestamp(task.getEndAt()));
-          if (task.getSequence() != null) {
-            statement.setBigDecimal(9, task.getSequence());
+          if (task.getAgentId() != null) {
+            statement.setLong(4, task.getAgentId());
           } else {
-            statement.setNull(9, Types.NUMERIC);
+            statement.setNull(4, Types.BIGINT);
           }
-          statement.setLong(10, task.getTaskStatus().getId());
-          statement.setTimestamp(11, Timestamp.from(task.getCreatedAt()));
-          statement.setTimestamp(12, Timestamp.from(task.getUpdatedAt()));
+          statement.setString(5, task.getExternalCode());
+          statement.setString(6, task.getTitle());
+          statement.setString(7, task.getDescription());
+          statement.setTimestamp(8, toTimestamp(task.getStartAt()));
+          statement.setTimestamp(9, toTimestamp(task.getEndAt()));
+          if (task.getSequence() != null) {
+            statement.setBigDecimal(10, task.getSequence());
+          } else {
+            statement.setNull(10, Types.NUMERIC);
+          }
+          statement.setLong(11, task.getTaskStatus().getId());
+          statement.setTimestamp(12, Timestamp.from(task.getCreatedAt()));
+          statement.setTimestamp(13, Timestamp.from(task.getUpdatedAt()));
           return statement;
         },
         keyHolder);
@@ -147,17 +153,19 @@ public class TaskRepositoryImpl implements TaskRepository {
         task.getSequence(),
         task.getTaskStatus(),
         task.getCreatedAt(),
-        task.getUpdatedAt());
+        task.getUpdatedAt(),
+        task.getAgentId());
   }
 
   private void update(Task task) {
     String sql =
-        "UPDATE tasks SET project_id = ?, priority_id = ?, tag_id = ?, external_code = ?, title = ?, description = ?, start_at = ?, end_at = ?, sequence = ?, task_status_id = ?, created_at = ?, updated_at = ? WHERE id = ?";
+        "UPDATE tasks SET project_id = ?, priority_id = ?, tag_id = ?, agent_id = ?, external_code = ?, title = ?, description = ?, start_at = ?, end_at = ?, sequence = ?, task_status_id = ?, created_at = ?, updated_at = ? WHERE id = ?";
     jdbcTemplate.update(
         sql,
         task.getProjectId(),
         task.getPriorityId(),
         task.getTagId(),
+        task.getAgentId(),
         task.getExternalCode(),
         task.getTitle(),
         task.getDescription(),

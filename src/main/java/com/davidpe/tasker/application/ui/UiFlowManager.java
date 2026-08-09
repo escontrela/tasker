@@ -56,13 +56,9 @@ public class UiFlowManager {
 
   private void handleClosed(WindowClosedEvent ev) {
 
-    if (ev.screenId() == UiScreenId.SETTINGS) {
-
-      UiScreen mainScreen = screenFactory.create(UiScreenId.MAIN);
-      mainScreen.show();
-      return;
-    }
-    if (ev.screenId() == UiScreenId.STATS) {
+    if (ev.screenId() == UiScreenId.SETTINGS
+        || ev.screenId() == UiScreenId.STATS
+        || ev.screenId() == UiScreenId.AGENTS) {
 
       UiScreen mainScreen = screenFactory.create(UiScreenId.MAIN);
       mainScreen.show();

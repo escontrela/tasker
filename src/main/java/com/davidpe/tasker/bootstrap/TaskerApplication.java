@@ -3,6 +3,7 @@ package com.davidpe.tasker.bootstrap;
 import com.davidpe.tasker.application.ui.common.UiScreenFactory;
 import com.davidpe.tasker.application.ui.common.UiScreenId;
 import com.davidpe.tasker.application.ui.UiFlowManager;
+import com.davidpe.tasker.application.ui.startup.SplashScreenService;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -52,6 +53,9 @@ public class TaskerApplication extends Application {
     applicationContext.getBeanFactory().registerSingleton("primaryStage", primaryStage);
 
     screenFactory = applicationContext.getBean(UiScreenFactory.class);
-    applicationContext.getBean(UiFlowManager.class).show(UiScreenId.MAIN);
+    UiFlowManager flowManager = applicationContext.getBean(UiFlowManager.class);
+    applicationContext
+        .getBean(SplashScreenService.class)
+        .showIfEnabled(() -> flowManager.show(UiScreenId.MAIN));
   }
 }

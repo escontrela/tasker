@@ -25,6 +25,7 @@ public class TaskOutlinePanel extends VBox {
   private final Label project = new Label();
   private final Label priority = new Label();
   private final Label tag = new Label();
+  private final Label agent = new Label();
   private final Label schedule = new Label();
   private final Label description = new Label("Select a task card to inspect its details.");
   private final Button editButton = new Button("Edit");
@@ -47,7 +48,7 @@ public class TaskOutlinePanel extends VBox {
     description.setWrapText(true);
 
     VBox details = new VBox(8,
-        detail("Project", project), detail("Priority", priority), detail("Tag", tag), detail("Schedule", schedule));
+        detail("Project", project), detail("Priority", priority), detail("Tag", tag), detail("Agent", agent), detail("Schedule", schedule));
     details.getStyleClass().add("outline-details");
 
     Region spacer = new Region();
@@ -63,7 +64,8 @@ public class TaskOutlinePanel extends VBox {
   public void setOnEdit(Runnable action) { editButton.setOnAction(event -> run(action)); }
   public void setOnAccept(Runnable action) { acceptButton.setOnAction(event -> run(action)); }
 
-  public void showTask(Task task, String projectName, String priorityName, String tagName) {
+  public void showTask(
+      Task task, String projectName, String priorityName, String tagName, String agentName) {
     if (task == null) {
       showEmpty();
       return;
@@ -73,6 +75,7 @@ public class TaskOutlinePanel extends VBox {
     project.setText(value(projectName, "No project"));
     priority.setText(value(priorityName, "No priority"));
     tag.setText(value(tagName, "No tag"));
+    agent.setText(value(agentName, "No agent"));
     schedule.setText(formatSchedule(task));
     description.setText(value(task.getDescription(), "No description"));
     boolean completed = task.getTaskStatus().getCode().equalsIgnoreCase("done");
@@ -86,6 +89,7 @@ public class TaskOutlinePanel extends VBox {
     project.setText("—");
     priority.setText("—");
     tag.setText("—");
+    agent.setText("—");
     schedule.setText("—");
     description.setText("Select a task card to inspect its details.");
     acceptButton.setVisible(false);

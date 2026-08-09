@@ -138,7 +138,8 @@ public class TaskMcpService {
             task.getSequence(),
             statusEntity,
             task.getCreatedAt(),
-            Instant.now());
+            Instant.now(),
+            task.getAgentId());
 
     return toDto(taskRepository.save(updated));
   }
@@ -178,7 +179,8 @@ public class TaskMcpService {
             existing.getSequence(),
             existing.getTaskStatus(),
             existing.getCreatedAt(),
-            Instant.now());
+            Instant.now(),
+            existing.getAgentId());
 
     return toDto(taskRepository.save(updated));
   }

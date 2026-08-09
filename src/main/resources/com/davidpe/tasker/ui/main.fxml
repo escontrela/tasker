@@ -9,6 +9,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -25,13 +28,21 @@
                     <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="header-bar">
                         <VBox spacing="6.0">
                             <Label styleClass="eyebrow-label" text="Task workspace" />
-                            <Label styleClass="app-title" text="Tasker" />
+                            <StackPane alignment="CENTER_LEFT" maxHeight="48.0" maxWidth="220.0" minHeight="48.0" minWidth="220.0" prefHeight="48.0" prefWidth="220.0" styleClass="main-brand-logo">
+                                <ImageView accessibleText="Tasker" fitHeight="48.0" fitWidth="220.0" preserveRatio="true" smooth="true" styleClass="main-brand-logo-light">
+                                    <image><Image url="@../tasker-logo-light.png" /></image>
+                                </ImageView>
+                                <ImageView accessibleText="Tasker" fitHeight="48.0" fitWidth="220.0" preserveRatio="true" smooth="true" styleClass="main-brand-logo-dark">
+                                    <image><Image url="@../tasker-logo-dark.png" /></image>
+                                </ImageView>
+                            </StackPane>
                             <Label fx:id="lblHello" styleClass="hero-support" text="Plan the work that matters today." />
                         </VBox>
                         <Region HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="8.0">
                             <Button fx:id="btnNewTask" mnemonicParsing="false" onAction="#buttonAction" styleClass="primary-button" text="New task" />
                             <Button fx:id="btnNewProject" mnemonicParsing="false" onAction="#buttonAction" styleClass="secondary-button" text="New project" />
+                            <Button fx:id="btnManageAgents" mnemonicParsing="false" onAction="#buttonAction" styleClass="secondary-button" text="Agents" />
                             <Button fx:id="btnShowStats" mnemonicParsing="false" onAction="#buttonAction" styleClass="secondary-button" text="Statistics" />
                             <ToolbarIconButton fx:id="outlineButton" accessibleText="Toggle task outline" darkIconResource="/com/davidpe/tasker/ui/images/view_column_2_24dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/view_column_2_24dp_white.png" toggleMode="true" tooltipText="Outline" />
                             <ToolbarIconButton fx:id="btSettings" accessibleText="Open settings" darkIconResource="/com/davidpe/tasker/ui/images/settings_18dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/settings_18dp_white.png" onAction="#buttonAction" tooltipText="Settings" />
@@ -47,6 +58,10 @@
                             <StackPane fx:id="taskOption_done" onMouseClicked="#onTaskFilterClicked" styleClass="task-filter-option"><Label fx:id="lblDone" text="Done" /></StackPane>
                         </HBox>
                         <Region HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="task-search-box">
+                            <TextField fx:id="txtTaskSearch" minWidth="140.0" onAction="#onSearchRequested" prefWidth="210.0" promptText="Search tickets (regex)" styleClass="task-search-input" HBox.hgrow="ALWAYS" />
+                            <ToolbarIconButton fx:id="btnSearch" accessibleText="Search visible tickets" darkIconResource="/com/davidpe/tasker/ui/images/search_18dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/search_18dp_white.png" onAction="#onSearchRequested" tooltipText="Search tickets" />
+                        </HBox>
                         <Label styleClass="filter-caption" text="Project" />
                         <ComboBox fx:id="cbxProject" onAction="#onProjectChanged" prefWidth="230.0" styleClass="project-combo" />
                     </HBox>
@@ -65,7 +80,7 @@
                 </HBox>
             </center>
             <bottom>
-                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="status-rail"><Label styleClass="eyebrow-label" text="Status" /><Label styleClass="status-text" text="Ready to organise your work" /></HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="status-rail"><Label styleClass="eyebrow-label" text="Status" /><Label fx:id="lblStatus" styleClass="status-text" text="Ready to organise your work" /></HBox>
             </bottom>
         </BorderPane>
         <MessageBox fx:id="taskMessage" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />

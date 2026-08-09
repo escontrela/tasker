@@ -957,6 +957,29 @@
     -fx-border-color: transparent transparent #e6e6e6 transparent;
     -fx-border-width: 0 0 1 0;
 }
+.task-search-box {
+    -fx-min-width: 188px;
+    -fx-max-width: 258px;
+}
+.text-field.task-search-input {
+    -fx-background-color: #ffffff;
+    -fx-background-insets: 0;
+    -fx-background-radius: 12;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-text-fill: #262626;
+    -fx-prompt-text-fill: #87919c;
+    -fx-font-size: 13px;
+    -fx-padding: 10 12 10 12;
+}
+.text-field.task-search-input:focused {
+    -fx-border-color: #1c69d4;
+}
+.text-field.task-search-input:regex-invalid {
+    -fx-border-color: #b42318;
+    -fx-background-color: #fff6f5;
+}
 .eyebrow-label, .filter-caption {
     -fx-text-fill: #66727f;
     -fx-font-size: 12px;
@@ -967,6 +990,9 @@
     -fx-font-size: 32px;
     -fx-font-weight: 700;
 }
+.main-brand-logo-dark { -fx-opacity: 0; }
+.night-mode .main-brand-logo-light { -fx-opacity: 0; }
+.night-mode .main-brand-logo-dark { -fx-opacity: 1; }
 .hero-support, .section-support, .status-text, .task-card-meta, .card-copy {
     -fx-text-fill: #5d6975;
     -fx-font-size: 14px;
@@ -1073,11 +1099,41 @@
     -fx-border-width: 1;
     -fx-pref-width: 680px;
     -fx-max-width: 680px;
-    -fx-pref-height: 230px;
-    -fx-max-height: 230px;
+    -fx-pref-height: 350px;
+    -fx-max-height: 350px;
 }
 .card-title { -fx-text-fill: #262626; -fx-font-size: 22px; -fx-font-weight: 700; }
+.settings-section-title { -fx-padding: 14 0 0 0; }
 .settings-check-box { -fx-text-fill: #262626; -fx-font-size: 14px; -fx-font-weight: 700; }
+
+.splash-shell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-padding: 34 48 30 48;
+}
+.splash-tagline {
+    -fx-text-fill: #5d6975;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+}
+.splash-loading-status {
+    -fx-text-fill: #66727f;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+.splash-loader-cell {
+    -fx-background-color: #1c69d4;
+    -fx-background-radius: 3;
+    -fx-min-width: 8px;
+    -fx-min-height: 8px;
+    -fx-pref-width: 8px;
+    -fx-pref-height: 8px;
+}
+.night-mode.splash-shell { -fx-background-color: #1a2129; -fx-border-color: #334151; }
+.night-mode .splash-tagline,
+.night-mode .splash-loading-status { -fx-text-fill: #b8c5d3; }
+.night-mode .splash-loader-cell { -fx-background-color: #6ba5f0; }
 
 .message-box-overlay { -fx-background-color: rgba(24, 33, 42, 0.32); }
 .message-box-card {
@@ -1133,6 +1189,7 @@
 .button.context-menu-item { -fx-background-color: transparent; -fx-alignment: CENTER_LEFT; -fx-padding: 9 12 9 12; -fx-cursor: hand; }
 .button.context-menu-item:hover { -fx-background-color: #eaf1fa; }
 .context-menu-item-text { -fx-text-fill: #262626; -fx-font-size: 14px; -fx-font-weight: 700; }
+.context-menu-submenu-title { -fx-text-fill: #66727f; -fx-font-size: 12px; -fx-font-weight: 700; -fx-padding: 5 10 7 10; }
 .context-menu-card .separator .line { -fx-border-color: #e6e6e6 transparent transparent transparent; }
 
 .task-modal-card {
@@ -1179,6 +1236,17 @@
 .night-mode .breadcrumb-current { -fx-text-fill: #f1f3f5; }
 .night-mode .breadcrumb-separator { -fx-text-fill: #607080; }
 .night-mode .task-filter-bar, .night-mode .status-rail { -fx-background-color: #1c2430; -fx-border-color: #334151; }
+.night-mode .text-field.task-search-input {
+    -fx-background-color: #1a2129;
+    -fx-border-color: #465465;
+    -fx-text-fill: #f1f3f5;
+    -fx-prompt-text-fill: #82909e;
+}
+.night-mode .text-field.task-search-input:focused { -fx-border-color: #6ba5f0; }
+.night-mode .text-field.task-search-input:regex-invalid {
+    -fx-border-color: #ef7b72;
+    -fx-background-color: #302126;
+}
 .night-mode .main-content-shell, .night-mode .settings-content, .night-mode .task-grid, .night-mode .task-grid-shell { -fx-background-color: #1a2129; }
 .night-mode .app-title, .night-mode .section-title, .night-mode .card-title, .night-mode .task-card-title { -fx-text-fill: #f1f3f5; }
 .night-mode .hero-support, .night-mode .section-support, .night-mode .status-text, .night-mode .task-card-meta, .night-mode .card-copy, .night-mode .eyebrow-label, .night-mode .filter-caption { -fx-text-fill: #b8c5d3; }
@@ -1206,6 +1274,7 @@
 .night-mode .message-box-overlay { -fx-background-color: rgba(0, 0, 0, 0.48); }
 .night-mode .message-box-card, .night-mode .context-menu-card { -fx-background-color: #1c2430; -fx-border-color: #465465; }
 .night-mode .message-box-title, .night-mode .context-menu-item-text { -fx-text-fill: #f1f3f5; }
+.night-mode .context-menu-submenu-title { -fx-text-fill: #b8c5d3; }
 .night-mode .message-box-message { -fx-text-fill: #b8c5d3; }
 .night-mode .button.message-box-cancel-button { -fx-background-color: #1c2430; -fx-border-color: #465465; -fx-text-fill: #f1f3f5; }
 .night-mode .button.message-box-cancel-button:hover, .night-mode .button.context-menu-item:hover { -fx-background-color: #2b3b4d; }
@@ -1988,3 +2057,171 @@
     -fx-border-color: #465465;
 }
 .night-mode .text-area.task-modal-input .content { -fx-background-color: #1a2129; }
+
+/* Agent directory --------------------------------------------------------- */
+.agent-content { -fx-background-color: #ffffff; }
+.agent-form-card,
+.agent-role-card,
+.agent-list-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 22;
+}
+.agent-form-card { -fx-pref-width: 620; }
+.agent-role-card { -fx-pref-width: 400; }
+.text-field.agent-input,
+.combo-box.agent-input {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c7ced7;
+    -fx-border-width: 1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-text-fill: #262626;
+    -fx-font-size: 14px;
+    -fx-padding: 8 10 8 10;
+}
+.text-field.agent-input:focused,
+.combo-box.agent-input:focused { -fx-border-color: #1c69d4; }
+.combo-box.agent-input > .list-cell { -fx-background-color: transparent; -fx-text-fill: #262626; }
+.combo-box.agent-input > .arrow-button { -fx-background-color: transparent; }
+.agent-role-list { -fx-padding: 4 0 0 0; }
+.agent-role-row {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 7 9 7 9;
+    -fx-background-color: #f7f9fc;
+    -fx-background-radius: 9;
+}
+.agent-role-code,
+.agent-code-pill,
+.agent-role-pill,
+.agent-count {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+.agent-role-code { -fx-text-fill: #52606d; }
+.agent-code-pill {
+    -fx-text-fill: #1c69d4;
+    -fx-background-color: #eaf1fa;
+    -fx-background-radius: 8;
+    -fx-padding: 4 7 4 7;
+}
+.agent-role-pill {
+    -fx-text-fill: #276a3d;
+    -fx-background-color: #e6f4ea;
+    -fx-background-radius: 8;
+    -fx-padding: 4 8 4 8;
+}
+.agent-count { -fx-text-fill: #66727f; }
+.agent-list-scroll,
+.agent-list-scroll > .viewport { -fx-background-color: transparent; }
+.agent-list-scroll { -fx-background: transparent; -fx-border-color: transparent; -fx-padding: 0; }
+.agent-directory-row {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 15 16 15 16;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e1e6ed;
+    -fx-border-width: 1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+.agent-row-title { -fx-text-fill: #262626; -fx-font-size: 14px; -fx-font-weight: 700; }
+.agent-empty-state { -fx-text-fill: #66727f; -fx-font-size: 14px; -fx-padding: 12 0 12 0; }
+
+.night-mode .agent-content { -fx-background-color: #1a2129; }
+.night-mode .agent-form-card,
+.night-mode .agent-role-card,
+.night-mode .agent-list-card,
+.night-mode .agent-directory-row { -fx-background-color: #1c2430; -fx-border-color: #334151; }
+.night-mode .text-field.agent-input,
+.night-mode .combo-box.agent-input { -fx-background-color: #1a2129; -fx-border-color: #465465; -fx-text-fill: #f1f3f5; }
+.night-mode .text-field.agent-input:focused,
+.night-mode .combo-box.agent-input:focused { -fx-border-color: #6ba5f0; }
+.night-mode .combo-box.agent-input > .list-cell { -fx-text-fill: #f1f3f5; }
+.night-mode .agent-role-row { -fx-background-color: #243243; }
+.night-mode .agent-role-code,
+.night-mode .agent-count,
+.night-mode .agent-empty-state { -fx-text-fill: #b8c5d3; }
+.night-mode .agent-code-pill { -fx-background-color: #253e5e; -fx-text-fill: #9fc7ff; }
+.night-mode .agent-role-pill { -fx-background-color: #244b35; -fx-text-fill: #9eddb6; }
+.night-mode .agent-row-title { -fx-text-fill: #f1f3f5; }
+
+/* ComboBox popup is rendered in its own scene; style its cells explicitly instead of relying on
+   the owner scene's night-mode selector. */
+.list-cell.agent-combo-cell-light {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #262626;
+    -fx-padding: 9 14 9 14;
+}
+.list-cell.agent-combo-cell-light:filled:hover,
+.list-cell.agent-combo-cell-light:filled:selected {
+    -fx-background-color: #eaf1fa;
+    -fx-text-fill: #262626;
+}
+.list-cell.agent-combo-cell-night {
+    -fx-background-color: #1a2129;
+    -fx-text-fill: #f1f3f5;
+    -fx-padding: 9 14 9 14;
+}
+.list-cell.agent-combo-cell-night:filled:hover,
+.list-cell.agent-combo-cell-night:filled:selected {
+    -fx-background-color: #2b3b4d;
+    -fx-text-fill: #ffffff;
+}
+.combo-box-popup .list-view {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0 0 12 12;
+    -fx-border-color: #c7ced7;
+    -fx-border-radius: 0 0 12 12;
+}
+
+/* Compact workspace notification ------------------------------------------------ */
+.notification-panel {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dde3;
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(25, 35, 48, 0.18), 18, 0.22, 0, 7);
+}
+.notification-title {
+    -fx-text-fill: #202a35;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+.notification-message {
+    -fx-text-fill: #66727f;
+    -fx-font-size: 13px;
+    -fx-line-spacing: 1px;
+}
+.button.notification-close-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 14;
+    -fx-border-color: transparent;
+    -fx-border-radius: 14;
+    -fx-text-fill: #66727f;
+    -fx-font-size: 22px;
+    -fx-font-weight: 400;
+    -fx-padding: -2 0 2 0;
+    -fx-cursor: hand;
+}
+.button.notification-close-button:hover {
+    -fx-background-color: #f4f7fb;
+    -fx-text-fill: #202a35;
+}
+.button.notification-close-button:pressed { -fx-background-color: #eaf1fa; }
+.night-mode .notification-panel {
+    -fx-background-color: #1c2430;
+    -fx-border-color: #465465;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.42), 18, 0.24, 0, 7);
+}
+.night-mode .notification-title { -fx-text-fill: #f1f3f5; }
+.night-mode .notification-message { -fx-text-fill: #b8c5d3; }
+.night-mode .button.notification-close-button { -fx-text-fill: #b8c5d3; }
+.night-mode .button.notification-close-button:hover {
+    -fx-background-color: #243243;
+    -fx-text-fill: #f1f3f5;
+}
+.night-mode .button.notification-close-button:pressed { -fx-background-color: #2b3b4d; }

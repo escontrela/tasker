@@ -28,21 +28,24 @@
              <Label fx:id="lblCode" layoutX="549.0" layoutY="116.0" styleClass="modal-field-label" text="External Code" />
              <TextField fx:id="txtExtCode" layoutX="550.0" layoutY="142.0" promptText="ABC-123" styleClass="task-modal-input" />
 
-             <Label layoutX="73.0" layoutY="188.0" styleClass="modal-field-label" text="Proyecto" />
+             <Label fx:id="lblProject" layoutX="73.0" layoutY="188.0" styleClass="modal-field-label" text="Proyecto" />
              <ComboBox fx:id="cbxProject" layoutX="73.0" layoutY="213.0" onAction="#onProjectChanged" prefHeight="36.0" prefWidth="200" styleClass="task-modal-input" />
 
-             <Label layoutX="327.0" layoutY="188.0" styleClass="modal-field-label" text="Prioridad" />
+             <Label fx:id="lblPriority" layoutX="327.0" layoutY="188.0" styleClass="modal-field-label" text="Prioridad" />
              <ComboBox fx:id="cbxPriority" layoutX="327.0" layoutY="213.0" prefHeight="36.0" prefWidth="200" styleClass="task-modal-input" />
 
-             <Label layoutX="73.0" layoutY="264.0" styleClass="modal-field-label" text="Tag" />
+             <Label fx:id="lblTag" layoutX="73.0" layoutY="264.0" styleClass="modal-field-label" text="Tag" />
              <ComboBox fx:id="cbxTag" layoutX="73.0" layoutY="289.0" prefHeight="36.0" prefWidth="200" styleClass="task-modal-input" />
 
-             <Label layoutX="74.0" layoutY="340.0" styleClass="modal-field-label" text="Inicio" />
+             <Label fx:id="lblAgent" layoutX="327.0" layoutY="264.0" styleClass="modal-field-label" text="Agent" />
+             <ComboBox fx:id="cbxAgent" layoutX="327.0" layoutY="289.0" prefHeight="36.0" prefWidth="200" styleClass="task-modal-input" />
+
+             <Label fx:id="lblStartDate" layoutX="74.0" layoutY="340.0" styleClass="modal-field-label" text="Inicio" />
              <DatePicker fx:id="dpStartDate" layoutX="73.0" layoutY="366.0" styleClass="task-modal-input" />
 
-             <Label layoutX="327.0" layoutY="340.0" styleClass="modal-field-label" text="Fin" />
+             <Label fx:id="lblEndDate" layoutX="327.0" layoutY="340.0" styleClass="modal-field-label" text="Fin" />
              <DatePicker fx:id="dpEndDate" layoutX="327.0" layoutY="366.0" styleClass="task-modal-input" />
-      <Label layoutX="73.0" layoutY="420.0" styleClass="modal-field-label" text="Descripcion" />
+      <Label fx:id="lblDescription" layoutX="73.0" layoutY="420.0" styleClass="modal-field-label" text="Descripcion" />
             
    </children>
 </Pane>

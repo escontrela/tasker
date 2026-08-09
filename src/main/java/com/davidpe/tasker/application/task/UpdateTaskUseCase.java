@@ -1,6 +1,7 @@
 package com.davidpe.tasker.application.task;
 
 import com.davidpe.tasker.domain.project.ProjectRepository;
+import com.davidpe.tasker.domain.agents.AgentRepository;
 import com.davidpe.tasker.domain.task.PriorityRepository;
 import com.davidpe.tasker.domain.task.TagRepository;
 import com.davidpe.tasker.domain.task.Task;
@@ -20,6 +21,7 @@ public class UpdateTaskUseCase {
   private final ProjectRepository projectRepository;
   private final PriorityRepository priorityRepository;
   private final TagRepository tagRepository;
+  private final AgentRepository agentRepository;
   private final ApplicationEventPublisher eventPublisher;
 
   public UpdateTaskUseCase(
@@ -27,11 +29,13 @@ public class UpdateTaskUseCase {
       ProjectRepository projectRepository,
       PriorityRepository priorityRepository,
       TagRepository tagRepository,
+      AgentRepository agentRepository,
       ApplicationEventPublisher eventPublisher) {
     this.taskRepository = taskRepository;
     this.projectRepository = projectRepository;
     this.priorityRepository = priorityRepository;
     this.tagRepository = tagRepository;
+    this.agentRepository = agentRepository;
     this.eventPublisher = eventPublisher;
   }
 
@@ -57,7 +61,8 @@ public class UpdateTaskUseCase {
             existing.getSequence(),
             existing.getTaskStatus(),
             existing.getCreatedAt(),
-            now);
+            now,
+            command.agentId());
     Task toReturn = taskRepository.save(updated);
     eventPublisher.publishEvent(new TaskUpdatedEvent(toReturn));
     return toReturn;
@@ -98,6 +103,11 @@ public class UpdateTaskUseCase {
       tagRepository
           .findById(command.tagId())
           .orElseThrow(() -> new IllegalArgumentException("Tag not found"));
+    }
+    if (command.agentId() != null) {
+      agentRepository
+          .findById(command.agentId())
+          .orElseThrow(() -> new IllegalArgumentException("Agent not found"));
     }
   }
 

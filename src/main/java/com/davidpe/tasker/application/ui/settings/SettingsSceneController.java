@@ -27,8 +27,10 @@ public class SettingsSceneController extends UiScreenController
   private final ApplicationThemeService themeService;
   private boolean loading;
   private boolean persistedNightMode;
+  private boolean persistedShowSplash;
 
   @FXML private CheckBox nightModeCheckBox;
+  @FXML private CheckBox showSplashCheckBox;
   @FXML private Button applyButton;
   @FXML private BreadcrumbBar breadcrumbBar;
 
@@ -47,8 +49,13 @@ public class SettingsSceneController extends UiScreenController
     breadcrumbBar.setItems(
         BreadcrumbItem.link("Tasker", this::backToMain),
         BreadcrumbItem.current("Settings"),
-        BreadcrumbItem.current("Appearance"));
-    nightModeCheckBox.selectedProperty().addListener((ignored, oldValue, value) -> refreshDirtyState());
+        BreadcrumbItem.current("General"));
+    nightModeCheckBox
+        .selectedProperty()
+        .addListener((ignored, oldValue, value) -> refreshDirtyState());
+    showSplashCheckBox
+        .selectedProperty()
+        .addListener((ignored, oldValue, value) -> refreshDirtyState());
   }
 
   @Override
@@ -60,7 +67,9 @@ public class SettingsSceneController extends UiScreenController
   void applySettings() {
     if (applyButton.isDisabled()) return;
     preferences.setNightModeEnabled(nightModeCheckBox.isSelected());
+    preferences.setSplashScreenEnabled(showSplashCheckBox.isSelected());
     persistedNightMode = nightModeCheckBox.isSelected();
+    persistedShowSplash = showSplashCheckBox.isSelected();
     themeService.refreshRegisteredRoots();
     refreshDirtyState();
   }
@@ -82,20 +91,28 @@ public class SettingsSceneController extends UiScreenController
 
   @Override
   public SettingsSceneData getData() {
-    return new SettingsSceneData(preferences.isNightModeEnabled());
+    return new SettingsSceneData(
+        preferences.isNightModeEnabled(), preferences.isSplashScreenEnabled());
   }
 
   private void loadPreferences() {
     loading = true;
     persistedNightMode = preferences.isNightModeEnabled();
+    persistedShowSplash = preferences.isSplashScreenEnabled();
     nightModeCheckBox.setSelected(persistedNightMode);
+    showSplashCheckBox.setSelected(persistedShowSplash);
     loading = false;
     refreshDirtyState();
   }
 
   private void refreshDirtyState() {
-    if (loading || applyButton == null || nightModeCheckBox == null) return;
-    boolean dirty = nightModeCheckBox.isSelected() != persistedNightMode;
+    if (loading
+        || applyButton == null
+        || nightModeCheckBox == null
+        || showSplashCheckBox == null) return;
+    boolean dirty =
+        nightModeCheckBox.isSelected() != persistedNightMode
+            || showSplashCheckBox.isSelected() != persistedShowSplash;
     applyButton.setVisible(dirty);
     applyButton.setManaged(dirty);
     applyButton.setDisable(!dirty);

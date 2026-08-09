@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.davidpe.tasker.application.ui.controls.BreadcrumbBar?>
+<?import com.davidpe.tasker.application.ui.controls.ToolbarIconButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="760.0" prefWidth="1180.0" styleClass="app-shell" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidpe.tasker.application.ui.agents.AgentsSceneController">
+    <top>
+        <VBox styleClass="workspace-header">
+            <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="header-bar">
+                <VBox spacing="6.0">
+                    <BreadcrumbBar fx:id="breadcrumbBar" />
+                    <Label styleClass="app-title" text="Agents" />
+                    <Label styleClass="hero-support" text="Create the people and roles that will collaborate on your workspace." />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <ToolbarIconButton accessibleText="Back to tasks" darkIconResource="/com/davidpe/tasker/ui/images/chevron_left_18dp_white.png" lightIconResource="/com/davidpe/tasker/ui/images/chevron_left_18dp_white.png" onAction="#backToMain" tooltipText="Back to tasks" />
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="22.0" styleClass="agent-content">
+            <padding><Insets bottom="28.0" left="56.0" right="56.0" top="28.0" /></padding>
+            <HBox spacing="18.0">
+                <VBox spacing="14.0" styleClass="agent-form-card" HBox.hgrow="ALWAYS">
+                    <Label styleClass="card-title" text="Add agent" />
+                    <Label styleClass="card-copy" text="Agents can be assigned to tasks in a future workspace update." wrapText="true" />
+                    <HBox spacing="12.0">
+                        <VBox spacing="5.0"><Label styleClass="modal-field-label" text="Code" /><TextField fx:id="agentCodeField" promptText="DAVID" styleClass="agent-input" /></VBox>
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS"><Label styleClass="modal-field-label" text="Agent name" /><TextField fx:id="agentNameField" promptText="David Pérez" styleClass="agent-input" maxWidth="1.7976931348623157E308" /></VBox>
+                    </HBox>
+                    <VBox spacing="5.0" maxWidth="280.0"><Label styleClass="modal-field-label" text="Role" /><ComboBox fx:id="agentRoleCombo" maxWidth="1.7976931348623157E308" styleClass="agent-input" /></VBox>
+                    <HBox alignment="CENTER_LEFT" spacing="12.0"><Label fx:id="agentErrorLabel" maxWidth="1.7976931348623157E308" styleClass="modal-error-label" HBox.hgrow="ALWAYS" /><Button mnemonicParsing="false" onAction="#addAgent" styleClass="primary-button" text="Add agent" /></HBox>
+                </VBox>
+                <VBox spacing="14.0" styleClass="agent-role-card">
+                    <Label styleClass="card-title" text="Role catalog" />
+                    <Label styleClass="card-copy" text="Architect, Manager and Developer are available by default." wrapText="true" />
+                    <HBox spacing="10.0"><TextField fx:id="roleCodeField" promptText="QA" styleClass="agent-input" /><TextField fx:id="roleNameField" promptText="Quality analyst" styleClass="agent-input" HBox.hgrow="ALWAYS" /></HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0"><Label fx:id="roleErrorLabel" maxWidth="1.7976931348623157E308" styleClass="modal-error-label" HBox.hgrow="ALWAYS" /><Button mnemonicParsing="false" onAction="#addRole" styleClass="secondary-button" text="Add role" /></HBox>
+                    <VBox fx:id="rolesList" spacing="6.0" styleClass="agent-role-list" />
+                </VBox>
+            </HBox>
+            <VBox spacing="12.0" styleClass="agent-list-card" VBox.vgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT"><VBox spacing="4.0"><Label styleClass="section-title" text="Agent directory" /><Label styleClass="section-support" text="A workspace-level directory, ready for future task assignments." /></VBox><Region HBox.hgrow="ALWAYS" /><Label fx:id="agentCountLabel" styleClass="agent-count" text="0 agents" /></HBox>
+                <ScrollPane fitToWidth="true" styleClass="agent-list-scroll" VBox.vgrow="ALWAYS"><content><VBox fx:id="agentsList" spacing="8.0" /></content></ScrollPane>
+            </VBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="status-rail"><Label styleClass="eyebrow-label" text="Status" /><Label styleClass="status-text" text="Agent directory ready" /></HBox>
+    </bottom>
+</BorderPane>

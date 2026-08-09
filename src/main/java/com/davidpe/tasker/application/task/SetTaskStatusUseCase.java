@@ -67,7 +67,8 @@ public class SetTaskStatusUseCase {
             existing.getSequence(),
             targetStatus,
             existing.getCreatedAt(),
-            Instant.now());
+            Instant.now(),
+            existing.getAgentId());
 
     Task saved = taskRepository.save(updated);
     eventPublisher.publishEvent(new TaskStatusUpdatedEvent(saved));

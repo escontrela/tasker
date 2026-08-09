@@ -2,6 +2,7 @@ package com.davidpe.tasker.application.ui.tasks;
 
 import com.davidpe.tasker.application.ui.common.UiControllerDataAware;
 import com.davidpe.tasker.domain.project.Project;
+import com.davidpe.tasker.domain.agents.Agent;
 import com.davidpe.tasker.domain.task.Priority;
 import com.davidpe.tasker.domain.task.Tag;
 import com.davidpe.tasker.domain.task.Task;
@@ -22,11 +23,15 @@ public interface NewTaskView extends UiControllerDataAware<NewTaskPanelData> {
 
   void showTags(List<Tag> tags);
 
+  void showAgents(List<Agent> agents);
+
   Long selectedProjectId();
 
   Long selectedPriorityId();
 
   Long selectedTagId();
+
+  Long selectedAgentId();
 
   String titleInput();
 
@@ -49,6 +54,8 @@ public interface NewTaskView extends UiControllerDataAware<NewTaskPanelData> {
   void selectPriority(Long priorityId);
 
   void selectProject(Long projectId);
+
+  void selectAgent(Long agentId);
 
   void populateProjectOnSubtitle(String projectName);
 }

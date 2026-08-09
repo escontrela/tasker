@@ -2,6 +2,9 @@ package com.davidpe.tasker.application.ui.main;
 
 import com.davidpe.tasker.application.service.task.TaskService;
 import com.davidpe.tasker.application.service.user.UserService;
+import com.davidpe.tasker.application.agents.AgentManagementService;
+import com.davidpe.tasker.application.task.AssignTaskAgentCommand;
+import com.davidpe.tasker.application.task.AssignTaskAgentUseCase;
 import com.davidpe.tasker.application.task.DeleteTaskCommand;
 import com.davidpe.tasker.application.task.DeleteTaskUseCase;
 import com.davidpe.tasker.application.task.SetTaskStatusCommand;
@@ -24,6 +27,7 @@ import com.davidpe.tasker.application.ui.events.WindowMenuTaskSelectedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewProjectOpenedEvent;
 import com.davidpe.tasker.application.ui.events.WindowNewTaskOpenedEvent;
 import com.davidpe.tasker.domain.project.Project;
+import com.davidpe.tasker.domain.agents.Agent;
 import com.davidpe.tasker.domain.project.ProjectCreatedEvent;
 import com.davidpe.tasker.domain.task.Tag;
 import com.davidpe.tasker.domain.task.Task;
@@ -42,19 +46,23 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+import java.util.regex.PatternSyntaxException;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.springframework.context.ApplicationEventPublisher;
@@ -64,6 +72,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MainSceneController extends UiScreenController {
+
+  private static final PseudoClass REGEX_INVALID_PSEUDO_CLASS =
+      PseudoClass.getPseudoClass("regex-invalid");
+  private static final DateTimeFormatter TASK_DATE_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
   private double xOffset = 0;
   private double yOffset = 0;
@@ -122,9 +135,13 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private Button btnNewTask;
 
+  @FXML private Button btnManageAgents;
+
   @FXML private Button btnShowStats;
 
   @FXML private Button btnSearch;
+
+  @FXML private TextField txtTaskSearch;
 
   @FXML private ImageView imgNewProject;
 
@@ -132,9 +149,9 @@ public class MainSceneController extends UiScreenController {
 
   @FXML private ImageView imgShowStats;
 
-  @FXML private ImageView imgSearch;
-
   @FXML private ComboBox<Project> cbxProject;
+
+  @FXML private Label lblStatus;
 
   @FXML private Label lblBacklog;
 
@@ -150,6 +167,7 @@ public class MainSceneController extends UiScreenController {
   private boolean filterOn = false;
 
   private TaskStatusFilter taskStatusFilter = TaskStatusFilter.ALL;
+  private TaskSearchExpression taskSearchExpression;
 
   // Reusable notification panel (separate from pnlMessage which is used for delete confirmation)
   private MessagePanelController pnlNotification;
@@ -161,6 +179,8 @@ public class MainSceneController extends UiScreenController {
   private final DeleteTaskUseCase deleteTaskUseCase;
   private final SetTaskStatusUseCase setTaskStatusUseCase;
   private final UpdateTaskSequenceUseCase updateTaskSequenceUseCase;
+  private final AssignTaskAgentUseCase assignTaskAgentUseCase;
+  private final AgentManagementService agentManagementService;
 
   private Long pendingTaskId;
   private PendingTaskAction pendingTaskAction;
@@ -189,6 +209,8 @@ public class MainSceneController extends UiScreenController {
       DeleteTaskUseCase deleteTaskUseCase,
       SetTaskStatusUseCase setTaskStatusUseCase,
       UpdateTaskSequenceUseCase updateTaskSequenceUseCase,
+      AssignTaskAgentUseCase assignTaskAgentUseCase,
+      AgentManagementService agentManagementService,
       UserService userService,
       Logger logger) {
 
@@ -198,6 +220,8 @@ public class MainSceneController extends UiScreenController {
     this.deleteTaskUseCase = deleteTaskUseCase;
     this.setTaskStatusUseCase = setTaskStatusUseCase;
     this.updateTaskSequenceUseCase = updateTaskSequenceUseCase;
+    this.assignTaskAgentUseCase = assignTaskAgentUseCase;
+    this.agentManagementService = agentManagementService;
     this.userService = userService;
     this.logger = logger;
 
@@ -235,6 +259,12 @@ public class MainSceneController extends UiScreenController {
     if (isButtonShowStatsClicked(event)) {
 
       uiFlowManager.show(UiScreenId.STATS);
+      return;
+    }
+
+    if (isButtonManageAgentsClicked(event)) {
+
+      uiFlowManager.show(UiScreenId.AGENTS);
       return;
     }
 
@@ -279,6 +309,11 @@ public class MainSceneController extends UiScreenController {
     return event.getSource() == btnShowStats;
   }
 
+  private boolean isButtonManageAgentsClicked(ActionEvent event) {
+
+    return event.getSource() == btnManageAgents;
+  }
+
   private boolean isButtonSettingsClicked(ActionEvent event) {
 
     return event.getSource() == btSettings || event.getSource() == imgSettings;
@@ -292,11 +327,6 @@ public class MainSceneController extends UiScreenController {
   private boolean isButtonFilterClicked(ActionEvent event) {
 
     return event.getSource() == btFilter || event.getSource() == imgFilter;
-  }
-
-  private boolean isButtonSearchClicked(ActionEvent event) {
-
-    return event.getSource() == btnSearch || event.getSource() == imgSearch;
   }
 
   @Override
@@ -317,6 +347,7 @@ public class MainSceneController extends UiScreenController {
 
     taskStatusFilter = TaskStatusFilter.ALL;
     configureProjectComboCells();
+    configureTaskSearch();
     updateTaskFilterStyles();
     updateFilterIcon();
 
@@ -537,7 +568,11 @@ public class MainSceneController extends UiScreenController {
         .map(priority -> priority.getDescription()).orElse("");
     String tagName = task.getTagId() == null ? "" : taskService.getTagById(task.getTagId())
         .map(Tag::getName).orElse("");
-    taskOutlinePanel.showTask(task, projectName, priorityName, tagName);
+    String agentName = task.getAgentId() == null ? "" : agentManagementService.getAgents().stream()
+        .filter(agent -> task.getAgentId().equals(agent.getId()))
+        .map(Agent::getName)
+        .findFirst().orElse("");
+    taskOutlinePanel.showTask(task, projectName, priorityName, tagName, agentName);
   }
 
   private void configureTaskContextMenu() {
@@ -557,6 +592,7 @@ public class MainSceneController extends UiScreenController {
                 new SetTaskStatusCommand(selectedRow.getTaskId(), TaskStatus.DONE));
           }
         });
+    taskContextMenu.addSubmenu("Assign agent", this::showAgentAssignmentMenu);
     taskContextMenu.addSeparator();
     taskContextMenu.addItem(
         "Move priority up",
@@ -574,6 +610,36 @@ public class MainSceneController extends UiScreenController {
             showDeleteConfirmation();
           }
         });
+  }
+
+  private void showAgentAssignmentMenu() {
+    if (selectedRow == null || selectedRow.getTaskId() == null) {
+      return;
+    }
+    Long assignedAgentId = selectedRow.getTask().getAgentId();
+    List<ContextualMenuPanel.MenuItem> items = new ArrayList<>();
+    items.add(
+        new ContextualMenuPanel.MenuItem(
+            assignedAgentId == null ? "✓  No agent" : "No agent",
+            () -> assignAgentToSelectedTask(null)));
+    for (Agent agent : agentManagementService.getAgents()) {
+      String label = (agent.getId().equals(assignedAgentId) ? "✓  " : "")
+          + agent.getName()
+          + "  ·  "
+          + agent.getRole().getName();
+      items.add(new ContextualMenuPanel.MenuItem(label, () -> assignAgentToSelectedTask(agent.getId())));
+    }
+    if (items.size() == 1) {
+      items.add(new ContextualMenuPanel.MenuItem("No agents available", null));
+    }
+    taskContextMenu.showSubmenu("Assign agent", items);
+  }
+
+  private void assignAgentToSelectedTask(Long agentId) {
+    if (selectedRow == null || selectedRow.getTaskId() == null) {
+      return;
+    }
+    assignTaskAgentUseCase.assign(new AssignTaskAgentCommand(selectedRow.getTaskId(), agentId));
   }
 
   private void showTaskContextMenu(double screenX, double screenY) {
@@ -672,6 +738,7 @@ public class MainSceneController extends UiScreenController {
     String title = task.getTitle() != null ? " : " + task.getTitle() : "";
     String message = prefix + task.getId() + title;
 
+    pnlNotification.setTitle("Task updated");
     pnlNotification.setMessage(message);
     pnlNotification.setVisible(true);
   }
@@ -683,7 +750,7 @@ public class MainSceneController extends UiScreenController {
     pnlNotification = new MessagePanelController();
     pnlNotification.setVisible(false);
 
-    // Hide the notification when user clicks any button
+    // The notification is dismissible and remains independent from confirmation dialogs.
     pnlNotification.setMessagePanelActionListener(
         new MessagePanelController.MessagePanelActionListener() {
           @Override
@@ -698,11 +765,8 @@ public class MainSceneController extends UiScreenController {
         });
 
     mainPane.getChildren().add(pnlNotification);
-
-    pnlNotification.setLayoutX(20);
-    pnlNotification
-        .layoutYProperty()
-        .bind(mainPane.heightProperty().subtract(pnlNotification.heightProperty()).subtract(20));
+    AnchorPane.setLeftAnchor(pnlNotification, 20.0);
+    AnchorPane.setBottomAnchor(pnlNotification, 20.0);
   }
 
   private void loadTasks() {
@@ -713,12 +777,113 @@ public class MainSceneController extends UiScreenController {
 
     // Populate the Tasker table panel with tasks.
     Long projectId = selectedProjectId();
-    List<Task> tasks = getFilteredTasks(projectId);
+    List<Task> tasks = applyTaskSearch(getFilteredTasks(projectId));
     List<Task> orderedTasks = new ArrayList<>(tasks);
     orderedTasks.sort(
         Comparator.comparing(Task::getSequence, Comparator.nullsLast(Comparator.reverseOrder()))
             .thenComparing(Task::getCreatedAt, Comparator.reverseOrder()));
     populateTaskerPanel(orderedTasks, preserveTaskId);
+    updateTaskListStatus(orderedTasks.size());
+  }
+
+  private List<Task> applyTaskSearch(List<Task> tasks) {
+    if (taskSearchExpression == null || tasks == null || tasks.isEmpty()) {
+      return tasks == null ? List.of() : tasks;
+    }
+    return tasks.stream().filter(this::matchesTaskSearch).toList();
+  }
+
+  private boolean matchesTaskSearch(Task task) {
+    if (task == null || taskSearchExpression == null) return false;
+    if (matchesSearchValue(task.getId())) return true;
+    if (matchesSearchValue(task.getTitle())) return true;
+    if (matchesSearchValue(task.getExternalCode())) return true;
+    if (matchesSearchValue(task.getDescription())) return true;
+    if (matchesSearchValue(task.getTaskStatus().getCode())) return true;
+    if (task.getStartAt() != null
+        && matchesSearchValue(
+            TASK_DATE_FORMATTER.format(
+                LocalDateTime.ofInstant(task.getStartAt(), ZoneId.systemDefault())))) {
+      return true;
+    }
+
+    String priority =
+        task.getPriorityId() == null
+            ? ""
+            : taskService
+                .getPriorityById(task.getPriorityId())
+                .map(value -> value.getDescription())
+                .orElse("");
+    if (matchesSearchValue(priority)) return true;
+
+    String tag =
+        task.getTagId() == null
+            ? ""
+            : taskService.getTagById(task.getTagId()).map(Tag::getName).orElse("");
+    return matchesSearchValue(tag);
+  }
+
+  private boolean matchesSearchValue(Object value) {
+    return taskSearchExpression != null && taskSearchExpression.matches(value);
+  }
+
+  private void configureTaskSearch() {
+    if (txtTaskSearch == null) return;
+    txtTaskSearch
+        .textProperty()
+        .addListener(
+            (ignored, oldValue, value) -> {
+              txtTaskSearch.pseudoClassStateChanged(REGEX_INVALID_PSEUDO_CLASS, false);
+              if (value == null || value.isBlank()) {
+                clearTaskSearch();
+              }
+            });
+  }
+
+  @FXML
+  void onSearchRequested() {
+    String expression = txtTaskSearch == null ? "" : txtTaskSearch.getText();
+    if (expression == null || expression.isBlank()) {
+      clearTaskSearch();
+      return;
+    }
+
+    try {
+      taskSearchExpression = TaskSearchExpression.compile(expression);
+      txtTaskSearch.pseudoClassStateChanged(REGEX_INVALID_PSEUDO_CLASS, false);
+      Long selectedTaskId = selectedRow != null ? selectedRow.getTaskId() : null;
+      loadTasks(selectedTaskId);
+    } catch (PatternSyntaxException exception) {
+      txtTaskSearch.pseudoClassStateChanged(REGEX_INVALID_PSEUDO_CLASS, true);
+      lblStatus.setText("Invalid regular expression: " + exception.getDescription());
+    }
+  }
+
+  private void clearTaskSearch() {
+    boolean searchWasActive = taskSearchExpression != null;
+    taskSearchExpression = null;
+    if (searchWasActive) {
+      Long selectedTaskId = selectedRow != null ? selectedRow.getTaskId() : null;
+      loadTasks(selectedTaskId);
+    } else if (lblStatus != null) {
+      lblStatus.setText("Ready to organise your work");
+    }
+  }
+
+  private void updateTaskListStatus(int visibleTaskCount) {
+    if (lblStatus == null) return;
+    if (taskSearchExpression == null) {
+      lblStatus.setText("Ready to organise your work");
+      return;
+    }
+    String ticketLabel = visibleTaskCount == 1 ? "ticket" : "tickets";
+    lblStatus.setText(
+        "Search “"
+            + taskSearchExpression.source()
+            + "”: "
+            + visibleTaskCount
+            + " "
+            + ticketLabel);
   }
 
   private List<Task> getFilteredTasks(Long projectId) {
@@ -833,6 +998,15 @@ public class MainSceneController extends UiScreenController {
               ? taskService.getTagById(task.getTagId()).map(Tag::getName).orElse("")
               : "";
       row.setTags(tagText, "");
+      String agentName =
+          task.getAgentId() != null
+              ? agentManagementService.getAgents().stream()
+                  .filter(agent -> task.getAgentId().equals(agent.getId()))
+                  .map(Agent::getName)
+                  .findFirst()
+                  .orElse("")
+              : "";
+      row.setAgent(agentName);
     }
 
     if (preserveTaskId != null) {
